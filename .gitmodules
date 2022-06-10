@@ -1,0 +1,9 @@
+[submodule "external/sabmodules/rapidjson"]
+	path = external/sabmodules/rapidjson
+	url = https://github.com/Tencent/rapidjson.git
+[submodule "external/sabmodules/glfw"]
+	path = external/sabmodules/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "external/sabmodules/glm"]
+	path = external/sabmodules/glm
+	url = https://github.com/g-truc/glm.git
