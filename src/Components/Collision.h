@@ -8,6 +8,7 @@ class CollisionComponent
 public:
 	CollisionComponent(bool collision = true);
 	CollisionComponent(const FRect& rect, bool collision = true);
+	CollisionComponent(float width, float hight, bool collision = true);
 	CollisionComponent(const std::vector<FPoint>& points, bool collision = true);
 	CollisionComponent(const CollisionComponent& collision);
 	CollisionComponent(CollisionComponent&& collision) noexcept;
@@ -28,8 +29,12 @@ public:
 			return m_form->getPoints().size() == 4 ? true : false;
 		return false;
 	}
-	bool isPolygons() const noexcept { return !isRect() && isValid(); }
+	bool isPolygons() const noexcept { return isValid() && !isRect(); }
 	FRect getRect() const;
+	FPoint getSize() const;
+	float getWidth() const;
+	float getHeight() const;
+	FPoint getCenterPoint() const;
 	std::vector<FPoint> getPolygons() const noexcept
 	{
 		if (m_form)

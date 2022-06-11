@@ -8,11 +8,21 @@ RenderSystem& RenderSystem::Instanse()
 	return render_system;
 }
 
-void RenderSystem::Render(const RenderEngine::Image2D& image, const PositionComponent& position, const SizeComponent& size)
+void RenderSystem::Render(const RenderEngine::Image2D& image, const PositionComponent& position, const CollisionComponent& collision)
 {
 	const auto shader = RES.getShader("image_shader");
-	shader->use();
-	shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.getWidth(), size.getHeight(), position.getRotation()));
+    if(!shader || !image.isValid())
+    {
+        return;
+    }
+    auto size = image.getTextureSize();
+    if (collision.isValid())
+    {
+        size = collision.getSize();
+    }
+
+    shader->use();
+	shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX, size.mY, position.getRotation()));
 	shader->setFloat("layer", position.getLayer());
     shader->setInt("tex", image.getTexture2D()->getSlot());
     image.getTexture2D()->bind();
@@ -65,7 +75,7 @@ void RenderSystem::setViewport(unsigned int width, unsigned int height, unsigned
     glViewport(leftOffset, bottomOffset, width, height);
 }
 
-glm::mat4 RenderSystem::getTransformMatrix(const int x, const int y, const int width, const int height, float rotation)
+glm::mat4 RenderSystem::getTransformMatrix(const float x, const float y, const float width, const float height, float rotation)
 {
     glm::mat4 model(1.f);
     model = glm::translate(model, glm::vec3(x, y, 0.f));

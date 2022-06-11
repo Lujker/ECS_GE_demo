@@ -8,6 +8,9 @@ public:
 	PositionComponent(const FPoint& position,
 		float layer = 0,
 		float rotation = 0);
+	PositionComponent(int x, int y,
+		float layer = 0,
+		float rotation = 0);
 	PositionComponent(const PositionComponent& position_component) = default;
 	~PositionComponent() = default;
 

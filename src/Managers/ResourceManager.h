@@ -18,6 +18,7 @@ namespace RenderEngine
 {
 	class ShaderProgram;
 	class Texture2D;
+	class Image2D;
 	class Sprite;
 	class TextureAtlas;
 }
@@ -34,13 +35,13 @@ public:
 	static std::shared_ptr<RenderEngine::ShaderProgram> getShader(const std::string& shaderName);
 	static std::shared_ptr<RenderEngine::Texture2D> loadTexture(const std::string& textureName, const std::string& texturePath);
 	static std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
-
+	static std::shared_ptr<RenderEngine::Image2D> loadImage(const std::string& imageName, const std::string& textureName, const std::string& texturePath);
+	static std::shared_ptr<RenderEngine::Image2D> getImage(const std::string& imageName);
 	static std::shared_ptr<RenderEngine::TextureAtlas> loadTextureAtlas(const std::string& textureName,
 		std::vector<std::string> subTextures,
 		const std::string& texturePath,
 		const unsigned int subTextureWidth,
 		const unsigned int subTextureHeight);
-
 	static std::shared_ptr<RenderEngine::TextureAtlas> getAtlas(const std::string& textureName);
 
 	static bool loadResJSON(const std::string& path);
@@ -50,6 +51,7 @@ public:
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::ShaderProgram>> shaderProgramMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> texturesMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::TextureAtlas>> atlasMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Image2D>> imageMap;
 	typedef std::vector<std::vector<std::string>> levels;
 
 private:
@@ -71,6 +73,6 @@ private:
 	static texturesMap m_textures;
 	static atlasMap m_atlases;
 	static levels m_levels;
-
+	static imageMap m_images;
 	static std::string m_path;
 };

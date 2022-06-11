@@ -5,6 +5,11 @@ PositionComponent::PositionComponent(const FPoint& position, float layer, float 
 	m_position(position), m_layer(layer), m_rotation(rotation)
 {}
 
+PositionComponent::PositionComponent(int x, int y, float layer, float rotation):
+	m_position({static_cast<double>(x),static_cast<double>(y)}), m_layer(layer), m_rotation(rotation)
+{
+}
+
 PositionComponent& PositionComponent::operator+=(const FPoint& point)
 {
 	m_position += point;

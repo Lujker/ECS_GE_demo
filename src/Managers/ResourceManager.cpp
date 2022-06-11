@@ -2,6 +2,7 @@
 #include "ShaderProgram.h"
 #include "texture2D.h"
 #include "Atlas2D.h"
+#include "Image.h"
 #include "Sprite.h"
 #include "FileSystemManager.h"
 
@@ -14,6 +15,7 @@ ResourceManager::shaderProgramMap ResourceManager::m_shaderPrograms;
 ResourceManager::texturesMap ResourceManager::m_textures;
 ResourceManager::levels ResourceManager::m_levels;
 ResourceManager::atlasMap ResourceManager::m_atlases;
+ResourceManager::imageMap ResourceManager::m_images;
 std::string ResourceManager::m_path;
 
 void ResourceManager::loadShader(const rapidjson::Document::MemberIterator& shaders_iterator)
@@ -56,6 +58,13 @@ void ResourceManager::loadAtlas(const rapidjson::Document::MemberIterator& atlas
 
 void ResourceManager::loadImage(const rapidjson::Document::MemberIterator& image_iter)
 {
+	for (const auto& current_image : image_iter->value.GetArray())
+	{
+		std::string name = current_image["name"].GetString();
+		std::string texture_name = current_image["texture_name"].GetString();
+		std::string texture_path = current_image["texture_path"].GetString();
+		RES.loadImage(name, texture_name, texture_path);
+	}
 }
 
 void ResourceManager::loadLevel(const rapidjson::Document::MemberIterator& levels_iterator)
@@ -110,6 +119,7 @@ void ResourceManager::unloadAllResources()
 	m_shaderPrograms.clear();
 	m_textures.clear();
 	m_levels.clear();
+	m_images.clear();
 }
 
 std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath)
@@ -158,10 +168,11 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 		std::cerr << "Can't load image: " << texturePath << std::endl;
 		return nullptr;
 	}
-	std::shared_ptr<RenderEngine::Texture2D> newTexture = m_textures.emplace(
-														textureName, std::make_shared<RenderEngine::Texture2D>
-														(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
-	return newTexture;
+	const auto newTexture = m_textures.emplace(textureName, std::make_shared<RenderEngine::Texture2D>
+														(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE));
+	if (newTexture.second)
+		return newTexture.first->second;
+	return nullptr;
 }
 
 std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::string& textureName)
@@ -170,6 +181,24 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 	if (it != m_textures.end())
 		return it->second;
 	std::cerr << "Can't find the texture: " << textureName << std::endl;
+	return nullptr;
+}
+
+std::shared_ptr<RenderEngine::Image2D> ResourceManager::loadImage(const std::string& imageName, const std::string& textureName, const std::string& texturePath)
+{
+	auto texture = loadTexture(textureName, texturePath);
+	const auto image = m_images.emplace(imageName, std::make_shared<RenderEngine::Image2D>(texture));
+	if(image.second)
+		return image.first->second;
+	return nullptr;
+}
+
+std::shared_ptr<RenderEngine::Image2D> ResourceManager::getImage(const std::string& imageName)
+{
+	auto it = m_images.find(imageName);
+	if (it != m_images.end())
+		return it->second;
+	std::cerr << "Can't find the atlas: " << imageName << std::endl;
 	return nullptr;
 }
 
@@ -242,6 +271,10 @@ bool ResourceManager::loadResJSON(const std::string& path)
 	const auto& shaders_iterator = document.FindMember("shaders");
 	if (shaders_iterator != document.MemberEnd())	
 		loadShader(shaders_iterator);
+
+	const auto& images_iterator = document.FindMember("images");
+	if (images_iterator != document.MemberEnd())
+		loadImage(images_iterator);
 
 	const auto& textur_iterator = document.FindMember("textures");
 	if (textur_iterator != document.MemberEnd())

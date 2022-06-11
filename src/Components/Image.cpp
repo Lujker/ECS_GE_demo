@@ -14,9 +14,9 @@ namespace RenderEngine
 	}
 
 	Image2D::Image2D(const std::shared_ptr<TextureAtlas>& pAtlas, const std::string& initialSubTextureName):
-		m_pTexture(nullptr),  m_pAtlas(pAtlas)
+		m_pTexture(pAtlas)
 	{
-		m_subTexture = m_pAtlas->getSubTexture(initialSubTextureName);
+		m_subTexture = pAtlas->getSubTexture(initialSubTextureName);
 		init();
 	}
 
@@ -52,6 +52,15 @@ namespace RenderEngine
 		return *this;
 	}
 
+	FPoint Image2D::getTextureSize() const
+	{
+		if(m_pTexture)
+		{
+			return FPoint{ static_cast<double>(m_pTexture->getWidth()), static_cast<double>(m_pTexture->getHeight()) };
+		}
+		return FPoint();
+	}
+
 	//void Image2D::render(FRect rect, float rotation, float layer) const
 	//{
 	//	m_pShaderProgram->use();
@@ -63,6 +72,13 @@ namespace RenderEngine
 	//	RENDER.draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 	//}
 	
+	bool Image2D::isValid() const
+	{
+		if(m_pTexture)
+			return true;
+		return false;
+	}
+
 	void Image2D::init()
 	{
 		constexpr GLfloat vertex_coords[] =

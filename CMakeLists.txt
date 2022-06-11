@@ -47,8 +47,6 @@ add_executable(${PROJ_NAME}
 	src/Components/Move.h
 	src/Components/Position.cpp
 	src/Components/Position.h 
-	src/Components/Size.cpp
-	src/Components/Size.h 
 	src/Components/Sprite.cpp
 	src/Components/Sprite.h
 

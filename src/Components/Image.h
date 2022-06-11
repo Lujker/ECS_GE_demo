@@ -23,16 +23,17 @@ namespace RenderEngine
 		Image2D& operator=(const Image2D&);
 		Image2D(Image2D&&) noexcept;
 		Image2D& operator=(Image2D&&) noexcept;
+		FPoint getTextureSize() const;
 		std::shared_ptr<Texture2D> getTexture2D() const { return m_pTexture; }
 		const VertexArray& getVertexArray() const { return m_vertexArray; }
 		const VertexBuffer& getVertexCoordsBuffer() const { return m_vertexCoordsBuffer; }
 		const VertexBuffer& getTextureCoordsBuffer() const { return m_textureCoordsBuffer; }
 		const IndexBuffer& getIndexCoordsBuffer() const { return m_indexBuffer; }
+		bool isValid() const;
 
 	protected:
 		virtual void init();
 		std::shared_ptr<Texture2D> m_pTexture;
-		std::shared_ptr<TextureAtlas> m_pAtlas;
 		SubTexture2D m_subTexture;
 		VertexArray  m_vertexArray;
 		VertexBuffer m_vertexCoordsBuffer;
