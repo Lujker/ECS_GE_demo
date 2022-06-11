@@ -1,5 +1,5 @@
 #include "RenderSystem.h"
-
+#include "CameraManager.h"
 #include "ResourceManager.h"
 
 RenderSystem& RenderSystem::Instanse()

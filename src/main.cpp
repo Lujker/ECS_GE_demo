@@ -1,13 +1,12 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <iostream>
 #include <chrono>
 
+#include "CameraManager.h"
 #include "FileSystemManager.h"
 #include "ResourceManager.h"
 #include "Systems/RenderSystem.h"
 
-glm::vec2 windowSize { 640, 420 };
+glm::vec<2,double> windowSize { 640, 420 };
 
 int main(int argc, char** argv)
 {
@@ -38,6 +37,7 @@ int main(int argc, char** argv)
     std::cout << "Render: " << RENDER.getRendererStr() << std::endl;
     std::cout << "OpenGL version: " << RENDER.getVersionStr() << std::endl;
 
+    glfwSetWindowSizeCallback(window, CAMERA.glfwWindowsSizeCallback);
     RENDER.setClearColor(0, 0, 0, 1);
     RENDER.setBlendMode(true);
     RENDER.setDepthTest(true);
@@ -49,22 +49,8 @@ int main(int argc, char** argv)
         return 0;
 	}
 
-
-    const auto& pSpriteShaderProgram = RES.getShader("SpriteShader");
-    const auto& shader = RES.getShader("default");
-    const auto& imageShader = RES.getShader("image_shader");
-
-    const glm::mat4 projectionMatrix = glm::ortho(0.f, windowSize.x, 0.f, windowSize.y, -100.f, 100.f);
-
-    pSpriteShaderProgram->use();
-    pSpriteShaderProgram->setInt("tex", 0);
-    pSpriteShaderProgram->setMatrix4("projectionMatrix", projectionMatrix);
-
-    shader->use();
-    shader->setMatrix4("projectionMatrix", projectionMatrix);
-
-    imageShader->use();
-    imageShader->setMatrix4("projectionMatrix", projectionMatrix);
+    CAMERA.Init({ 0., 0., windowSize.x, windowSize.y }, -100., 100.);
+    CAMERA.UseShader(RES.getShader("image_shader"));
 
     {
     	const PositionComponent pos{ 100, 100 };

@@ -10,6 +10,8 @@ add_executable(${PROJ_NAME}
 	src/Managers/FileSystemManager.h
 	src/Managers/ResourceManager.cpp
 	src/Managers/ResourceManager.h
+	src/Managers/CameraManager.cpp
+	src/Managers/CameraManager.h
 	src/Managers/stb_image.h
 
 	src/Premitives/Animator.cpp
