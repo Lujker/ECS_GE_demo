@@ -1,4 +1,5 @@
 #pragma once
+#include "IComponent.h"
 #include "texture2D.h"
 
 namespace RenderEngine
@@ -19,7 +20,7 @@ namespace RenderEngine
 		bool operator!=(SubTexture2D right) { return !((*this) == right); }
 	};
 
-	class TextureAtlas : public  Texture2D
+	class TextureAtlas : public Texture2D, public IComponent
 	{
 	public:
 		TextureAtlas(const GLuint width, GLuint heigh,

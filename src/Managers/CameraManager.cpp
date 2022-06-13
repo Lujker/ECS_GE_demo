@@ -14,15 +14,14 @@ CameraManager& CameraManager::Instanse()
 
 void CameraManager::glfwWindowsSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
-	activeWindowSize.mWidth = width;
-	activeWindowSize.mHeight = height;
-	
-    RENDER.setViewport(activeWindowSize.mWidth, activeWindowSize.mHeight);
+	setActiveWindowSize(width, height);	
+    RENDER.setViewport(getActiveWindowRect().mWidth, getActiveWindowRect().mHeight);
 }
 
 void CameraManager::glfwWindowsResize(GLFWwindow* pWindow, int width, int height)
 {
-	glfwSetWindowSize(pWindow, width, height);
+	setActiveWindowSize(width, height);
+	glfwSetWindowSize(pWindow, getActiveWindowRect().mWidth, getActiveWindowRect().mHeight);
 }
 
 void CameraManager::Init(const FRect& rect, double near, double far)
@@ -32,11 +31,29 @@ void CameraManager::Init(const FRect& rect, double near, double far)
 	CameraManager::far = far;
 }
 
+void CameraManager::ReleaseShader()
+{
+	m_shader.reset();
+}
+
+void CameraManager::SetShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader)
+{
+	m_shader = shader;
+}
+
+void CameraManager::Update()
+{
+	if (!m_shader)
+		return;
+	const glm::mat4 projectionMatrix = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, near, far);
+	m_shader->use();
+	m_shader->setMatrix4("projectionMatrix", projectionMatrix);
+}
+
 void CameraManager::UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader)
 {
 	if(!shader)
 		return;
-	shader->use();
 	const glm::mat4 projectionMatrix = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, near, far);
 	shader->use();
 	shader->setMatrix4("projectionMatrix", projectionMatrix);
@@ -62,4 +79,14 @@ FRect CameraManager::getProjRect()
 const glm::mat4 CameraManager::getOrthMatrix()
 {
 	return glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, near, far);
+}
+
+FRect CameraManager::getActiveWindowRect()
+{
+	return activeWindowSize;
+}
+
+void CameraManager::setActiveWindowSize(int width, int height)
+{
+	activeWindowSize = { 0,0, static_cast<float>(width), static_cast<float>(height) };
 }

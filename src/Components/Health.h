@@ -1,6 +1,7 @@
 #pragma once
+#include "IComponent.h"
 
-class HealthComponent
+class HealthComponent: public IComponent
 {
 	
 };

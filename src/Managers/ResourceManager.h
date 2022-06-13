@@ -37,6 +37,8 @@ public:
 	static std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
 	static std::shared_ptr<RenderEngine::Image2D> loadImage(const std::string& imageName, const std::string& textureName, const std::string& texturePath);
 	static std::shared_ptr<RenderEngine::Image2D> getImage(const std::string& imageName);
+	static std::shared_ptr<RenderEngine::Image2D> getSharedImage(const std::string& path);
+	static bool removeSharedImage(const std::string& path);
 	static std::shared_ptr<RenderEngine::TextureAtlas> loadTextureAtlas(const std::string& textureName,
 		std::vector<std::string> subTextures,
 		const std::string& texturePath,
@@ -55,11 +57,13 @@ public:
 	typedef std::vector<std::vector<std::string>> levels;
 
 private:
+
 	static void loadShader(const rapidjson::Document::MemberIterator&);
 	static void loadTexture2D(const rapidjson::Document::MemberIterator&);
 	static void loadAtlas(const rapidjson::Document::MemberIterator&);
 	static void loadImage(const rapidjson::Document::MemberIterator&);
 	static void loadLevel(const rapidjson::Document::MemberIterator&);
+
 	ResourceManager() = default;
 	ResourceManager(const std::string& execPath);
 	~ResourceManager();

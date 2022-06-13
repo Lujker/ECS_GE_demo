@@ -1,9 +1,10 @@
 #pragma once
+#include "IComponent.h"
 #include "Shape.h"
 #include "Rect.h"
 #include "memory"
 
-class CollisionComponent
+class CollisionComponent:public IComponent
 {
 public:
 	CollisionComponent(bool collision = true);

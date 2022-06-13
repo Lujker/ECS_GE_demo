@@ -1,7 +1,8 @@
 #pragma once
+#include "IComponent.h"
 #include "Point.h"
 
-class PositionComponent
+class PositionComponent : public IComponent
 {
 public:
 	PositionComponent() = default;

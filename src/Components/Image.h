@@ -10,7 +10,7 @@
 
 namespace RenderEngine
 {
-	class Image2D
+	class Image2D: public IComponent
 	{
 	public:
 		Image2D(const std::shared_ptr<Texture2D>& pTexture);

@@ -3,9 +3,10 @@
 #include "Components/Image.h"
 #include "Components/Collision.h"
 #include "gl_Include.h"
+#include "ISystem.h"
 
 #define RENDER RenderSystem::Instanse()
-class RenderSystem
+class RenderSystem : public ISystem
 {
 public:
 	static RenderSystem& Instanse();

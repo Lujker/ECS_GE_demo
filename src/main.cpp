@@ -5,8 +5,8 @@
 #include "FileSystemManager.h"
 #include "ResourceManager.h"
 #include "Systems/RenderSystem.h"
+#include "Systems/UpdateSystem.h"
 
-glm::vec<2,double> windowSize { 640, 420 };
 
 int main(int argc, char** argv)
 {
@@ -21,7 +21,8 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow* window = glfwCreateWindow(windowSize.x, windowSize.y, "ECS_GE_demo", nullptr, nullptr);
+    CAMERA.setActiveWindowSize(640, 420);
+    GLFWwindow* window = glfwCreateWindow(CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight, "ECS_GE_demo", nullptr, nullptr);
     if (!window)
     {
         glfwTerminate();
@@ -48,23 +49,20 @@ int main(int argc, char** argv)
         glfwTerminate();
         return 0;
 	}
-
-    CAMERA.Init({ 0., 0., windowSize.x, windowSize.y }, -100., 100.);
-    CAMERA.UseShader(RES.getShader("image_shader"));
-
+    CAMERA.glfwWindowsResize(window, 1024, 640);
+    CAMERA.Init({ 0., 0., CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight });
+    CAMERA.SetShader(RES.getShader("image_shader"));
+    CAMERA.Update();
     {
     	const PositionComponent pos{ 100, 100 };
 		const CollisionComponent col{ 100, 100, false };
-		const auto image = RES.getImage("tank");
-        auto lastTime = std::chrono::high_resolution_clock::now();
+		const auto image = RES.getSharedImage("res/textures/tank.png");
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
             /* Poll for and process events */
             glfwPollEvents();
-            auto currentTime = std::chrono::high_resolution_clock::now();
-            float duration = std::chrono::duration<float, std::milli>(currentTime - lastTime).count();
-            lastTime = currentTime;
+            UPDATE.GlobalUpdate();
             /* Render here */
             RENDER.clear();
             RENDER.Render(*image, pos, col);
@@ -73,6 +71,7 @@ int main(int argc, char** argv)
         }
         RES.unloadAllResources();
         FILES.unloadAllFiles();
+        CAMERA.ReleaseShader();
     }
     glfwTerminate();
     return 0;

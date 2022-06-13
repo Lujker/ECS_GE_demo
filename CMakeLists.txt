@@ -5,7 +5,8 @@ project(${PROJ_NAME} )
 
 add_executable(${PROJ_NAME} 
 	src/main.cpp
-
+	src/gl_include.h
+	
 	src/Managers/FileSystemManager.cpp
 	src/Managers/FileSystemManager.h
 	src/Managers/ResourceManager.cpp
@@ -37,6 +38,7 @@ add_executable(${PROJ_NAME}
 	src/Premitives/Render/texture2D.h
 	src/Premitives/Render/texture2D.cpp
 
+	src/Components/IComponent.h
 	src/Components/Atlas2D.cpp
 	src/Components/Atlas2D.h
 	src/Components/Collision.cpp
@@ -52,10 +54,18 @@ add_executable(${PROJ_NAME}
 	src/Components/Sprite.cpp
 	src/Components/Sprite.h
 
+	src/Systems/ISystem.h
 	src/Systems/RenderSystem.h
 	src/Systems/RenderSystem.cpp
+	src/Systems/UpdateSystem.h
+	src/Systems/UpdateSystem.cpp
 	src/Systems/CollisionSystem.h
 	src/Systems/CollisionSystem.cpp
+	src/Systems/MoveSystem.h
+	src/Systems/MoveSystem.cpp
+
+	src/Widgets/Widget.cpp
+	src/Widgets/Widget.h
 )
 
 include_directories(
@@ -82,9 +92,7 @@ target_link_libraries(${PROJ_NAME} glad)
 add_subdirectory(external/sabmodules/glm)
 target_link_libraries(${PROJ_NAME} glm)
 
-find_package(RapidJSON)
 include_directories(external/sabmodules/rapidjson/include)
-
 
 set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 

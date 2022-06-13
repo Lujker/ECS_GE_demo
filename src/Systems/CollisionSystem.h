@@ -1,8 +1,9 @@
 #pragma once
 #include "Collision.h"
+#include "ISystem.h"
 
 #define COLLISION CollisionSystem::Instanse()
-class CollisionSystem
+class CollisionSystem: public ISystem
 {
 public:
 	static CollisionSystem& Instanse();
@@ -12,7 +13,8 @@ public:
 	static bool intersect2D(const CollisionComponent& collision_left, const Vector2& vector2);
 	static bool include2D(const CollisionComponent& collision_left, const CollisionComponent& collision_right);
 	static bool include2D(const FRect& rect_left, const FRect& rect_right);
-	static bool include2D(const FPoint& point_left, const FPoint& point_right);
+	static bool include2D(const FRect& rect_left, const FPoint& point_right);
+	static bool include2D(const CollisionComponent& collision_left, const FPoint& point_right);
 private:
 	CollisionSystem() = default;
 	~CollisionSystem() = default;

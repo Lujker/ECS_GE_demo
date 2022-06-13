@@ -5,9 +5,11 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
 namespace RenderEngine
 {
-	class ShaderProgram {
+	class ShaderProgram
+	{
 	public:
 		ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader);
 		ShaderProgram& operator=(ShaderProgram&&) noexcept;

@@ -60,10 +60,19 @@ void ResourceManager::loadImage(const rapidjson::Document::MemberIterator& image
 {
 	for (const auto& current_image : image_iter->value.GetArray())
 	{
-		std::string name = current_image["name"].GetString();
-		std::string texture_name = current_image["texture_name"].GetString();
-		std::string texture_path = current_image["texture_path"].GetString();
-		RES.loadImage(name, texture_name, texture_path);
+		std::string name;
+		std::string path;
+		if(!current_image["name"].IsNull())
+			name = current_image["name"].GetString();
+		if (!current_image["path"].IsNull())
+			path = current_image["path"].GetString();
+		if (!name.empty() && !path.empty())
+			RES.loadImage(name, path, path);
+		else if (!path.empty())
+			RES.getSharedImage(path);
+		else
+			std::cerr << "Empty image obj in parsed json" << std::endl;
+		
 	}
 }
 
@@ -172,7 +181,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 														(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE));
 	if (newTexture.second)
 		return newTexture.first->second;
-	return nullptr;
+	return getTexture(textureName);
 }
 
 std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::string& textureName)
@@ -190,6 +199,7 @@ std::shared_ptr<RenderEngine::Image2D> ResourceManager::loadImage(const std::str
 	const auto image = m_images.emplace(imageName, std::make_shared<RenderEngine::Image2D>(texture));
 	if(image.second)
 		return image.first->second;
+	std::cerr << "Can't load the image: " << imageName << std::endl;
 	return nullptr;
 }
 
@@ -198,8 +208,28 @@ std::shared_ptr<RenderEngine::Image2D> ResourceManager::getImage(const std::stri
 	auto it = m_images.find(imageName);
 	if (it != m_images.end())
 		return it->second;
-	std::cerr << "Can't find the atlas: " << imageName << std::endl;
+	std::cerr << "Can't find the image: " << imageName << std::endl;
 	return nullptr;
+}
+
+std::shared_ptr<RenderEngine::Image2D> ResourceManager::getSharedImage(const std::string& path)
+{
+	auto image = getImage(path);
+	if (!image)
+		image = loadImage(path, path, path);
+	return image;
+}
+
+bool ResourceManager::removeSharedImage(const std::string& path)
+{
+	auto it = m_images.find(path);
+	if (it != m_images.end())
+	{
+		m_images.erase(it);
+		return true;
+	}
+	std::cerr << "Can't find the image: " << path << std::endl;
+	return false;
 }
 
 std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::getAtlas(const std::string& textureName)

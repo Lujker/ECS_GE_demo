@@ -1,11 +1,12 @@
 #pragma once
+#include "IComponent.h"
 
 struct SpriteAnimation
 {
 	
 };
 
-class Sprite
+class Sprite : public IComponent
 {
 	
 };

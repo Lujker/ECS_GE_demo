@@ -16,15 +16,5 @@
       "fragment_path" :  "res/shaders/fImage.txt",
       "vertex_path" :  "res/shaders/vImage.txt"
     }
-
-  ],
-  "images" :
-  [
-    {
-      "name" :  "tank",
-		  "texture_name" : "res/textures/tank.png",
-		  "texture_path" : "res/textures/tank.png"
-    }
   ]
-
 }
