@@ -39,12 +39,12 @@ public:
 	static std::shared_ptr<RenderEngine::Image2D> getImage(const std::string& imageName);
 	static std::shared_ptr<RenderEngine::Image2D> getSharedImage(const std::string& path);
 	static bool removeSharedImage(const std::string& path);
-	static std::shared_ptr<RenderEngine::TextureAtlas> loadTextureAtlas(const std::string& textureName,
-		std::vector<std::string> subTextures,
-		const std::string& texturePath,
-		const unsigned int subTextureWidth,
-		const unsigned int subTextureHeight);
-	static std::shared_ptr<RenderEngine::TextureAtlas> getAtlas(const std::string& textureName);
+	//!TODO Atlas and sprite load
+
+	static std::shared_ptr<RenderEngine::TextureAtlas> loatAtlas(const std::string& name, const std::string& path);
+	static std::shared_ptr<RenderEngine::TextureAtlas> getAtlas(const std::string& path);
+	static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& path);
+	static std::shared_ptr<RenderEngine::Sprite> loatSprite(const std::string& path);
 
 	static bool loadResJSON(const std::string& path);
 	static const std::vector<std::vector<std::string>>& getLevels();
@@ -54,10 +54,10 @@ public:
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> texturesMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::TextureAtlas>> atlasMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Image2D>> imageMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> spriteMap;
 	typedef std::vector<std::vector<std::string>> levels;
 
 private:
-
 	static void loadShader(const rapidjson::Document::MemberIterator&);
 	static void loadTexture2D(const rapidjson::Document::MemberIterator&);
 	static void loadAtlas(const rapidjson::Document::MemberIterator&);
@@ -78,5 +78,6 @@ private:
 	static atlasMap m_atlases;
 	static levels m_levels;
 	static imageMap m_images;
+	static spriteMap m_sprites;
 	static std::string m_path;
 };

@@ -10,13 +10,17 @@
 
 namespace RenderEngine
 {
-	class Image2D: public IComponent
+	class Image2D
 	{
 	public:
+		Image2D() = default;
 		Image2D(const std::shared_ptr<Texture2D>& pTexture);
 
 		Image2D(const std::shared_ptr<TextureAtlas>& pAtlas,
 			const std::string& initialSubTextureName = "");
+
+		Image2D(const std::shared_ptr<TextureAtlas>& pAtlas,
+			const SubTexture2D& sub_texture);
 
 		virtual ~Image2D() = default;
 		Image2D(const Image2D&);
@@ -29,6 +33,7 @@ namespace RenderEngine
 		const VertexBuffer& getVertexCoordsBuffer() const { return m_vertexCoordsBuffer; }
 		const VertexBuffer& getTextureCoordsBuffer() const { return m_textureCoordsBuffer; }
 		const IndexBuffer& getIndexCoordsBuffer() const { return m_indexBuffer; }
+		void SetSubTexture(const SubTexture2D& sub_texture);
 		bool isValid() const;
 
 	protected:

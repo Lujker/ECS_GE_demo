@@ -20,6 +20,12 @@ namespace RenderEngine
 		init();
 	}
 
+	Image2D::Image2D(const std::shared_ptr<TextureAtlas>& pAtlas, const SubTexture2D& sub_texture) :
+		m_pTexture(pAtlas), m_subTexture(sub_texture)
+	{
+		init();
+	}
+
 	Image2D::Image2D(const Image2D& image):
 		m_pTexture(image.m_pTexture), m_subTexture(image.m_subTexture)
 		
@@ -72,6 +78,23 @@ namespace RenderEngine
 	//	RENDER.draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 	//}
 	
+	void Image2D::SetSubTexture(const SubTexture2D& sub_texture)
+	{
+		m_subTexture = sub_texture;
+		const GLfloat texture_coords[] =
+		{
+			//! U and V
+			m_subTexture.leftBottomUV.x, m_subTexture.leftBottomUV.y,
+			m_subTexture.leftBottomUV.x, m_subTexture.rightTopUV.y,
+			m_subTexture.rightTopUV.x, m_subTexture.rightTopUV.y,
+			m_subTexture.rightTopUV.x, m_subTexture.leftBottomUV.y,
+		};
+		m_textureCoordsBuffer.init(&texture_coords, sizeof(texture_coords));
+		VertexBufferLayout vertexTextureCoordsLayout;
+		vertexTextureCoordsLayout.addElementLayoutFloat(2, false);
+		m_vertexArray.addBuffer(m_textureCoordsBuffer, vertexTextureCoordsLayout);
+	}
+
 	bool Image2D::isValid() const
 	{
 		if(m_pTexture)

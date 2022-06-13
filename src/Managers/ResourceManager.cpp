@@ -16,6 +16,7 @@ ResourceManager::texturesMap ResourceManager::m_textures;
 ResourceManager::levels ResourceManager::m_levels;
 ResourceManager::atlasMap ResourceManager::m_atlases;
 ResourceManager::imageMap ResourceManager::m_images;
+ResourceManager::spriteMap ResourceManager::m_sprites;
 std::string ResourceManager::m_path;
 
 void ResourceManager::loadShader(const rapidjson::Document::MemberIterator& shaders_iterator)
@@ -43,16 +44,18 @@ void ResourceManager::loadAtlas(const rapidjson::Document::MemberIterator& atlas
 {
 	for (const auto& current_atlas : atlas_iterator->value.GetArray())
 	{
-		std::string name = current_atlas["name"].GetString();
-		std::string path = current_atlas["path"].GetString();
-		unsigned sub_texture_width = current_atlas["sub_texture_width"].GetUint();
-		unsigned sub_texture_height = current_atlas["sub_texture_height"].GetUint();
-		std::vector<std::string> subTexturesNames;
-		for (const auto& sub_text_it : current_atlas["sub_textures"].GetArray())
-		{
-			subTexturesNames.emplace_back(sub_text_it.GetString());
-		}
-		RES.loadTextureAtlas(name, subTexturesNames, path, sub_texture_width, sub_texture_height);
+		std::string name;
+		std::string path;
+		if (!current_atlas["name"].IsNull())
+			name = current_atlas["name"].GetString();
+		if (!current_atlas["path"].IsNull())
+			path = current_atlas["path"].GetString();
+		else continue;
+
+		if (!name.empty())
+			RES.loatAtlas(name, path);
+		else
+			RES.loatAtlas(path, path);
 	}
 }
 
@@ -241,44 +244,115 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::getAtlas(const std:
 	return nullptr;
 }
 
-std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loadTextureAtlas(const std::string& textureName,
-		std::vector<std::string> subTextures,
-		const std::string& texturePath,
-		const unsigned int subTextureWidth,
-		const unsigned int subTextureHeight)
+std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::string& path)
+{
+	return std::shared_ptr<RenderEngine::Sprite>();
+}
+
+std::shared_ptr<RenderEngine::Sprite> ResourceManager::loatSprite(const std::string& path)
+{
+	return std::shared_ptr<RenderEngine::Sprite>();
+}
+
+std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std::string& name, const std::string& path)
 {
 	///Загрузка пикселей в массив байт из файла текстуры
-	const auto& pixels = FILES.getPixelFile(texturePath);
+	const auto& pixels = FILES.getPixelFile(path + ".png");
 	if (!pixels->isLoaded() && !pixels->getData())
 	{
-		std::cerr << "Can't load image: " << texturePath << std::endl;
+		std::cerr << "Can't load atlas: " << path << std::endl;
 		return nullptr;
 	}	///Загрузка пикселей в массив байт из файла текстуры
 
-	std::shared_ptr<RenderEngine::TextureAtlas> newAtlas = m_atlases.emplace(
-		textureName, std::make_shared<RenderEngine::TextureAtlas>
-		(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
-	
-	if (newAtlas)
+	const auto& json_doc = getFileString(path + ".json");
+	if (json_doc.empty())
 	{
-		const unsigned int textureWidth = newAtlas->getWidth();
-		const unsigned int textureHeight = newAtlas->getHeight();
-		unsigned int currentTextureOffsetX = 0;
-		unsigned int currentTextureOffsetY = textureHeight;
-		for (const auto& currentSubTextureName : subTextures)
-		{
-			glm::vec2 leftBottomUV(static_cast<float>(currentTextureOffsetX + 0.01f) / textureWidth, static_cast<float>(currentTextureOffsetY - subTextureHeight + 0.01f) / textureHeight);
-			glm::vec2 rightTopUV(static_cast<float>(currentTextureOffsetX + subTextureWidth - 0.01f) / textureWidth, static_cast<float>(currentTextureOffsetY - 0.01f) / textureHeight );
-			newAtlas->addSubTexture(currentSubTextureName, leftBottomUV, rightTopUV);
-			currentTextureOffsetX += subTextureWidth;
-			if (currentTextureOffsetX >= textureWidth)
-			{
-				currentTextureOffsetX = 0;
-				currentTextureOffsetY -= subTextureHeight;
-			}
-		}
+		std::cerr << "Failed to parse json: " << path << std::endl;
+		return nullptr;
 	}
-	return newAtlas;
+	rapidjson::Document document;
+	rapidjson::ParseResult parse_result = document.Parse(json_doc.c_str());
+	if (!parse_result)
+	{
+		std::cerr << "Json parse error: " << rapidjson::GetParseError_En(parse_result.Code()) << " ("
+			<< parse_result.Offset() << ") in file: " << path << std::endl;
+		return nullptr;
+	}
+	std::shared_ptr<RenderEngine::TextureAtlas> newAtlas = std::make_shared<RenderEngine::TextureAtlas>
+		(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE);
+
+	unsigned atlas_width = newAtlas->getWidth(), atlas_height = newAtlas->getHeight(), default_frame_width = 0, default_frame_height = 0, default_duration = 1;
+	bool isLoop = false;
+	const auto& size_iterator = document.FindMember("info");
+	if (size_iterator != document.MemberEnd() && document["info"].IsObject())
+	{
+		if (!document["info"]["width"].IsNull())
+			atlas_width = document["info"]["width"].GetUint();
+		if (!document["info"]["height"].IsNull())
+			atlas_height = document["info"]["height"].GetUint();
+		if (!document["info"]["default_frame_width"].IsNull())
+			default_frame_width = document["info"]["default_frame_width"].GetUint();
+		if (!document["info"]["default_frame_height"].IsNull())
+			default_frame_height = document["info"]["default_frame_height"].GetUint();
+		if (!document["info"]["loop"].IsNull())
+			isLoop = document["info"]["loop"].GetBool();
+		if (!document["info"]["default_duration"].IsNull())
+			default_duration = document["info"]["default_duration"].GetUint();
+	}
+	unsigned x_offset = 0, y_offset = 0;
+	const auto& frames_iterator = document.FindMember("frames");
+	if (frames_iterator != document.MemberEnd())
+		for (const auto& current_frame : frames_iterator->value.GetArray())
+		{
+			std::string name = std::to_string(x_offset) + "x" + std::to_string(y_offset);
+			if (!current_frame["name"].IsNull())
+				name = current_frame["name"].GetString();
+			if (!current_frame["offset_x"].IsNull())
+				x_offset = current_frame["offset_x"].GetUint();
+			if (!current_frame["offset_y"].IsNull())
+				y_offset = current_frame["offset_y"].GetUint();
+
+			unsigned width = 0, height = 0, duration = 0;
+			if (!current_frame["width"].IsNull())
+				width = current_frame["width"].GetUint();
+			else if (default_frame_width > 0)
+				width = default_frame_width;
+			else
+			{
+				std::cerr << "Default_frame_width is null and width is null!" << std::endl;
+				return nullptr;
+			}
+			if (!current_frame["height"].IsNull())
+				height = current_frame["height"].GetUint();
+			else if (default_frame_height > 0)
+				height = default_frame_height;
+			else
+			{
+				std::cerr << "Default_frame_height is null and height is null!" << std::endl;
+				return nullptr;
+			}
+			if (!current_frame["duration"].IsNull())
+				duration = current_frame["duration"].GetUint();
+			else if (default_duration > 0)
+				duration = default_duration;
+			else
+			{
+				std::cerr << "Default_frame_width is null and width is null!" << std::endl;
+				return nullptr;
+			}
+
+			RenderEngine::SubTexture2D sub_texture({ x_offset / atlas_width, y_offset / atlas_height }, { x_offset + width / atlas_width, y_offset + height / atlas_height }, duration);
+			newAtlas->addSubTexture(name, sub_texture);
+			//...
+
+			x_offset += width;
+			y_offset += height;
+		}
+	auto emp = m_atlases.emplace(
+		name, newAtlas);
+	if (emp.second)
+		return newAtlas;
+	return nullptr;
 }
 
 bool ResourceManager::loadResJSON(const std::string& path)

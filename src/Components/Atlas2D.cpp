@@ -1,4 +1,5 @@
 #include "Atlas2D.h"
+
 namespace RenderEngine
 {
 	TextureAtlas::TextureAtlas(const GLuint width, GLuint heigh, 
@@ -10,17 +11,22 @@ namespace RenderEngine
 
 	const SubTexture2D& TextureAtlas::addSubTexture(std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV)
 	{
-		auto it = m_subTexture.emplace(std::move(name), SubTexture2D(leftBottomUV, rightTopUV));
+		auto it = m_subTextures.emplace(std::move(name), SubTexture2D(leftBottomUV, rightTopUV));
 		if (it.second)
 			return it.first->second;
-		const static  SubTexture2D def_texture;
+		const static SubTexture2D def_texture;
 		return def_texture;
+	}
+
+	void TextureAtlas::addSubTexture(std::string name, const SubTexture2D& sub_texture)
+	{
+		m_subTextures.emplace(std::move(name), sub_texture);
 	}
 
 	const SubTexture2D& TextureAtlas::getSubTexture(std::string name)
 	{
-		auto it = m_subTexture.find(name);
-		if (it != m_subTexture.end())
+		auto it = m_subTextures.find(name);
+		if (it != m_subTextures.end())
 		{
 			return it->second;
 		}
