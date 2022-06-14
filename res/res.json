@@ -5,6 +5,11 @@
       "name" :  "image_shader",
       "fragment_path" :  "res/shaders/fImage.txt",
       "vertex_path" :  "res/shaders/vImage.txt"
+    },
+    {
+      "name" :  "default",
+      "fragment_path" :  "res/shaders/fragment.txt",
+      "vertex_path" :  "res/shaders/vertex.txt"
     }
   ]
 }

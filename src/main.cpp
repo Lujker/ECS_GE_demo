@@ -54,11 +54,14 @@ int main(int argc, char** argv)
     CAMERA.Init({ 0., 0., CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight });
     CAMERA.SetShader(RES.getShader("image_shader"));
     CAMERA.Update();
+
+    CAMERA.SetShader(RES.getShader("default"));
+    CAMERA.Update();
     {
     	const PositionComponent pos_img{ 100, 100 };
 		const CollisionComponent col_img{ 100, 100, false };
         const PositionComponent pos_sprite{ 50, 100 };
-        const CollisionComponent col_sprite{ 120, 80, false };
+        const CollisionComponent col_sprite{ 240, 160, false };
 		const auto image = RES.getSharedImage("res/textures/tank.png");
         const auto sprite = RES.getSprite("res/sprites/test/Kinght");
         sprite->setAnimation("idle");
@@ -79,6 +82,7 @@ int main(int argc, char** argv)
             if (sprite)
                 RENDER.Render(sprite, pos_sprite, col_sprite);
             RENDER.Render(image, pos_img, col_img);
+            RENDER.Render(FRect{ pos_sprite.getPosition().mX, pos_sprite.getPosition().mY, col_sprite.getWidth(), col_sprite.getHeight()});
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
         }
