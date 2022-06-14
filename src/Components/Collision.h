@@ -9,7 +9,7 @@ class CollisionComponent:public IComponent
 public:
 	CollisionComponent(bool collision = true);
 	CollisionComponent(const FRect& rect, bool collision = true);
-	CollisionComponent(float width, float hight, bool collision = true);
+	CollisionComponent(float width, float hight, float x_offset = 0.f, float y_offset = 0, bool collision = true);
 	CollisionComponent(const std::vector<FPoint>& points, bool collision = true);
 	CollisionComponent(const CollisionComponent& collision);
 	CollisionComponent(CollisionComponent&& collision) noexcept;
@@ -35,6 +35,8 @@ public:
 	FPoint getSize() const;
 	float getWidth() const;
 	float getHeight() const;
+	float getXOffset() const;
+	float getYOffset() const;
 	FPoint getCenterPoint() const;
 	std::vector<FPoint> getPolygons() const noexcept
 	{

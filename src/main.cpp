@@ -61,10 +61,11 @@ int main(int argc, char** argv)
     	const PositionComponent pos_img{ 100, 100 };
 		const CollisionComponent col_img{ 100, 100, false };
         const PositionComponent pos_sprite{ 50, 100 };
-        const CollisionComponent col_sprite{ 240, 160, false };
+        const CollisionComponent size_sprite{ 120, 80, false };
+        const CollisionComponent col_sprite{ 35, 40, 55, 0, false };
 		const auto image = RES.getSharedImage("res/textures/tank.png");
         const auto sprite = RES.getSprite("res/sprites/test/Kinght");
-        sprite->setAnimation("idle");
+        //sprite->setAnimation("idle");
         for (auto i : sprite->getAnimationsName())
             std::cout << i << std::endl;
         /* Loop until the user closes the window */
@@ -80,9 +81,9 @@ int main(int argc, char** argv)
             /* Render here */
             RENDER.clear();
             if (sprite)
-                RENDER.Render(sprite, pos_sprite, col_sprite);
+                RENDER.Render(sprite, pos_sprite, size_sprite);
             RENDER.Render(image, pos_img, col_img);
-            RENDER.Render(FRect{ pos_sprite.getPosition().mX, pos_sprite.getPosition().mY, col_sprite.getWidth(), col_sprite.getHeight()});
+            RENDER.Render(FRect{ pos_sprite.getPosition().mX + col_sprite.getXOffset(), pos_sprite.getPosition().mY + col_sprite.getYOffset(), col_sprite.getWidth(), col_sprite.getHeight()});
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
         }
