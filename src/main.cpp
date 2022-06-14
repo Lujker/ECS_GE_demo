@@ -4,6 +4,7 @@
 #include "CameraManager.h"
 #include "FileSystemManager.h"
 #include "ResourceManager.h"
+#include "Sprite.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/UpdateSystem.h"
 
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
     std::cout << "OpenGL version: " << RENDER.getVersionStr() << std::endl;
 
     glfwSetWindowSizeCallback(window, CAMERA.glfwWindowsSizeCallback);
-    RENDER.setClearColor(0, 0, 0, 1);
+    RENDER.setClearColor(1, 1, 1, 1);
     RENDER.setBlendMode(true);
     RENDER.setDepthTest(true);
     FILES.setExecutablePath(argv[0]);
@@ -57,10 +58,15 @@ int main(int argc, char** argv)
     	const PositionComponent pos_img{ 100, 100 };
 		const CollisionComponent col_img{ 100, 100, false };
         const PositionComponent pos_sprite{ 50, 100 };
-        const CollisionComponent col_sprite{ 100, 100, false };
+        const CollisionComponent col_sprite{ 120, 80, false };
 		const auto image = RES.getSharedImage("res/textures/tank.png");
-        const auto sprite = RES.getSprite("res/sprites/test/_Attack");
+        const auto sprite = RES.getSprite("res/sprites/test/Kinght");
+        sprite->setAnimation("idle");
+        for (auto i : sprite->getAnimationsName())
+            std::cout << i << std::endl;
         /* Loop until the user closes the window */
+
+        UPDATE.GlobalUpdate(true);
         while (!glfwWindowShouldClose(window))
         {
             /* Poll for and process events */

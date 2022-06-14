@@ -7,8 +7,10 @@
 std::chrono::time_point<std::chrono::steady_clock> UpdateSystem::lastTime = std::chrono::high_resolution_clock::now();
 float UpdateSystem::last_duration = 0.f;
 
-float UpdateSystem::GlobalUpdate()
+float UpdateSystem::GlobalUpdate(bool restart)
 {
+	if(restart)
+		lastTime = std::chrono::high_resolution_clock::now();
 	const auto currentTime = std::chrono::high_resolution_clock::now();
 	last_duration = std::chrono::duration<float, std::milli>(currentTime - lastTime).count();
 	lastTime = currentTime;

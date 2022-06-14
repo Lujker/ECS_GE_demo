@@ -4,13 +4,13 @@
         "height":80,
         "default_frame_width":120,
         "default_frame_height":80,
-        "default_duration":1
+        "default_duration":100
     },
     "animations": 
     [    
         {
             "name": "atack",
-            "loop":true,
+            "loop": true,
             "frames":[
                 {
                     "name":"0",

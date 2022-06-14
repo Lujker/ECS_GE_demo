@@ -69,6 +69,17 @@ namespace RenderEngine
 		return m_currentAnimation;
 	}
 
+	std::list<std::string> Sprite::getAnimationsName()
+	{
+		std::list<std::string> names;
+		for(const auto& it : m_animations)
+		{
+			for (const auto& anim : it.getAtlas()->getAnimations())
+				names.push_back(anim.first);
+		}
+		return names;
+	}
+
 	SpriteAnimation::SpriteAnimation(atlas atlas):
 		m_atlas(std::move(atlas)), currentFramDuration(0), 
 		animation_iterator(m_atlas->getAnimations().begin()),
@@ -161,8 +172,10 @@ namespace RenderEngine
 			const auto &nextIter = (++frame_iterator);
 			if (nextIter == animation_iterator->second.second.end())
 			{
-				if(animation_iterator->second.first)
+				if (animation_iterator->second.first)
 					frame_iterator = animation_iterator->second.second.begin();
+				else
+					--frame_iterator;
 			}
 			if(lastFrame != *frame_iterator)
 				lastFrame = *frame_iterator;

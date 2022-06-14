@@ -23,10 +23,22 @@ void ResourceManager::loadShader(const rapidjson::Document::MemberIterator& shad
 {
 	for (const auto& current_shader : shaders_iterator->value.GetArray())
 	{
-		std::string name = current_shader["name"].GetString();
-		std::string file_path_vertex = current_shader["vertex_path"].GetString();
-		std::string file_path_fragment = current_shader["fragment_path"].GetString();
-		RES.loadShaders(name, file_path_vertex, file_path_fragment);
+		std::string name;
+		std::string file_path_vertex;
+		std::string file_path_fragment;
+		if (current_shader.HasMember("name") && !current_shader["name"].IsNull() && current_shader["name"].IsString())
+			name = current_shader["name"].GetString();
+		if (current_shader.HasMember("vertex_path") && !current_shader["vertex_path"].IsNull() && current_shader["vertex_path"].IsString())
+			file_path_vertex = current_shader["vertex_path"].GetString();
+		if (current_shader.HasMember("fragment_path") && !current_shader["fragment_path"].IsNull() && current_shader["fragment_path"].IsString())
+			file_path_fragment = current_shader["fragment_path"].GetString();
+		if(name.empty() || file_path_fragment.empty() || file_path_vertex.empty())
+		{
+			std::cerr << "Incorrect shader obj in parsed json" << std::endl;
+			continue;
+		}
+		else
+			RES.loadShaders(name, file_path_vertex, file_path_fragment);
 	}
 }
 
@@ -34,9 +46,20 @@ void ResourceManager::loadTexture2D(const rapidjson::Document::MemberIterator& t
 {
 	for (const auto& current_texture : textur_iterator->value.GetArray())
 	{
-		std::string name = current_texture["name"].GetString();
-		std::string path = current_texture["path"].GetString();
-		RES.loadTexture(name, path);
+		std::string name;
+		std::string path;
+		if (current_texture.HasMember("name") && !current_texture["name"].IsNull() && current_texture["name"].IsString())
+			name = current_texture["name"].GetString();
+		if (current_texture.HasMember("path") && !current_texture["path"].IsNull() && current_texture["path"].IsString())
+			path = current_texture["path"].GetString();
+		else continue;
+
+		if (!name.empty())
+			RES.loadTexture(name, path);
+		else if (!path.empty())
+			RES.loadTexture(path, path);
+		else
+			std::cerr << "Incorrect texture2D obj in parsed json" << std::endl;
 	}
 }
 //! need rewrite
@@ -46,16 +69,19 @@ void ResourceManager::loadAtlas(const rapidjson::Document::MemberIterator& atlas
 	{
 		std::string name;
 		std::string path;
-		if (!current_atlas["name"].IsNull())
+		if (current_atlas.HasMember("name") && !current_atlas["name"].IsNull())
 			name = current_atlas["name"].GetString();
-		if (!current_atlas["path"].IsNull())
+		if (current_atlas.HasMember("path") && !current_atlas["path"].IsNull())
 			path = current_atlas["path"].GetString();
-		else continue;
+		else 
+			continue;
 
 		if (!name.empty())
-			RES.loatAtlas(name, path);
+			RES.loadAtlas(name, path);
+		else if (!path.empty())
+			RES.loadAtlas(path, path);
 		else
-			RES.loatAtlas(path, path);
+			std::cerr << "Incorrect atlas obj in parsed json" << std::endl;
 	}
 }
 
@@ -65,17 +91,35 @@ void ResourceManager::loadImage(const rapidjson::Document::MemberIterator& image
 	{
 		std::string name;
 		std::string path;
-		if(!current_image["name"].IsNull())
+		if(current_image.HasMember("name") && !current_image["name"].IsNull())
 			name = current_image["name"].GetString();
-		if (!current_image["path"].IsNull())
+		if (current_image.HasMember("path") && !current_image["path"].IsNull())
 			path = current_image["path"].GetString();
 		if (!name.empty() && !path.empty())
 			RES.loadImage(name, path, path);
 		else if (!path.empty())
 			RES.getSharedImage(path);
 		else
-			std::cerr << "Empty image obj in parsed json" << std::endl;
-		
+			std::cerr << "Incorrect image obj in parsed json" << std::endl;
+	}
+}
+
+void ResourceManager::loadSprite(const rapidjson::Document::MemberIterator& sprite_iter)
+{
+	for (const auto& current_sprite : sprite_iter->value.GetArray())
+	{
+		std::string name;
+		std::string path;
+		if (current_sprite.HasMember("name") && !current_sprite["name"].IsNull())
+			name = current_sprite["name"].GetString();
+		if (current_sprite.HasMember("path") && !current_sprite["path"].IsNull())
+			path = current_sprite["path"].GetString();
+		if (!name.empty() && !path.empty())
+			RES.loadSprite(name, path);
+		else if (!path.empty())
+			RES.loadSprite(path, path);
+		else
+			std::cerr << "Incorrect sprite obj in parsed json" << std::endl;
 	}
 }
 
@@ -253,12 +297,12 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::stri
 	const auto& it = m_sprites.find(path);
 	if (it == m_sprites.end())
 	{
-		return loatSprite(path);
+		return loadSprite(path, path);
 	}
 	return it->second;
 }
 
-std::shared_ptr<RenderEngine::Sprite> ResourceManager::loatSprite(const std::string& path)
+std::shared_ptr<RenderEngine::Sprite> ResourceManager::loadSprite(const std::string& name, const std::string& path)
 {
 	const auto& json_doc = getFileString(path + ".sprite");
 	if (json_doc.empty())
@@ -281,17 +325,17 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::loatSprite(const std::str
 		for (const auto& current_atlas : atlas_iterator->value.GetArray())
 		{
 			std::string atlas_path;
-			if (!current_atlas["path"].IsNull() && current_atlas["path"].IsString())
+			if (current_atlas.HasMember("path") && !current_atlas["path"].IsNull() && current_atlas["path"].IsString())
 				atlas_path = current_atlas["path"].GetString();
 			auto atlas = getAtlas(atlas_path);
 			if (!atlas)
-				atlas = loatAtlas(atlas_path, atlas_path);
+				atlas = loadAtlas(atlas_path, atlas_path);
 			if (atlas)
 				animList.emplace_back(RenderEngine::SpriteAnimation{ atlas });
 		}
 		if(!animList.empty())
 		{
-			auto elem = m_sprites.emplace(path, std::make_shared<RenderEngine::Sprite>( animList ));
+			auto elem = m_sprites.emplace(name, std::make_shared<RenderEngine::Sprite>( animList ));
 			if (elem.second)
 				return elem.first->second;
 			else return nullptr;
@@ -300,7 +344,7 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::loatSprite(const std::str
 	return nullptr;
 }
 
-std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std::string& name, const std::string& path)
+std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loadAtlas(const std::string& name, const std::string& path)
 {
 	///Загрузка пикселей в массив байт из файла текстуры
 	const auto& pixels = FILES.getPixelFile(path + ".png");
@@ -327,23 +371,23 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std
 	std::shared_ptr<RenderEngine::TextureAtlas> newAtlas = std::make_shared<RenderEngine::TextureAtlas>
 		(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE);
 
-	unsigned atlas_width = newAtlas->getWidth(), atlas_height = newAtlas->getHeight(), default_frame_width = 0, default_frame_height = 0, default_duration = 1;
+	unsigned atlas_width = newAtlas->getWidth(), atlas_height = newAtlas->getHeight(), default_frame_width = 0, default_frame_height = 0, default_duration = 1000;
 	const auto& size_iterator = document.FindMember("info");
 	if (size_iterator != document.MemberEnd() && document["info"].IsObject())
 	{
-		if (!document["info"]["width"].IsNull())
+		if (document["info"].HasMember("width") && !document["info"]["width"].IsNull())
 			atlas_width = document["info"]["width"].GetUint();
-		if (!document["info"]["height"].IsNull())
+		if (document["info"].HasMember("height") && !document["info"]["height"].IsNull())
 			atlas_height = document["info"]["height"].GetUint();
-		if (!document["info"]["default_frame_width"].IsNull())
+		if (document["info"].HasMember("default_frame_width") && !document["info"]["default_frame_width"].IsNull())
 			default_frame_width = document["info"]["default_frame_width"].GetUint();
-		if (!document["info"]["default_frame_height"].IsNull())
+		if (document["info"].HasMember("default_frame_height") && !document["info"]["default_frame_height"].IsNull())
 			default_frame_height = document["info"]["default_frame_height"].GetUint();
-		if (!document["info"]["default_duration"].IsNull())
+		if (document["info"].HasMember("default_duration") && !document["info"]["default_duration"].IsNull())
 			default_duration = document["info"]["default_duration"].GetUint();
 	}
 	//! TODO parse animations to anim list
-	unsigned x_offset = 0, y_offset = 0;
+	unsigned x_offset = 0, y_offset = atlas_height - default_frame_height;
 	const auto& animations = document.FindMember("animations");
 	if (animations != document.MemberEnd() && animations->value.IsArray())
 	{
@@ -351,9 +395,9 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std
 		{
 			std::string name = std::to_string(x_offset) + "x" + std::to_string(y_offset);
 			bool isLoop = false;
-			if (!anim_iter["name"].IsNull())
+			if (anim_iter.HasMember("name") && !anim_iter["name"].IsNull())
 				name = anim_iter["name"].GetString();
-			if (!anim_iter["loop"].IsNull())
+			if (anim_iter.HasMember("loop") && !anim_iter["loop"].IsNull())
 				isLoop = anim_iter["loop"].GetBool();
 
 			const auto& frames_iterator = anim_iter.FindMember("frames");
@@ -362,13 +406,13 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std
 			{
 				for (const auto& current_frame : frames_iterator->value.GetArray())
 				{
-					if (!current_frame["offset_x"].IsNull())
+					if (current_frame.HasMember("offset_x") && !current_frame["offset_x"].IsNull())
 						x_offset = current_frame["offset_x"].GetUint();
-					if (!current_frame["offset_y"].IsNull())
+					if (current_frame.HasMember("offset_y") && !current_frame["offset_y"].IsNull())
 						y_offset = current_frame["offset_y"].GetUint();
 
 					unsigned width = 0, height = 0, duration = 0;
-					if (!current_frame["width"].IsNull())
+					if (current_frame.HasMember("width") && !current_frame["width"].IsNull())
 						width = current_frame["width"].GetUint();
 					else if (default_frame_width > 0)
 						width = default_frame_width;
@@ -377,7 +421,7 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std
 						std::cerr << "Default_frame_width is null and width is null!" << std::endl;
 						return nullptr;
 					}
-					if (!current_frame["height"].IsNull())
+					if (current_frame.HasMember("height") && !current_frame["height"].IsNull())
 						height = current_frame["height"].GetUint();
 					else if (default_frame_height > 0)
 						height = default_frame_height;
@@ -386,7 +430,7 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std
 						std::cerr << "Default_frame_height is null and height is null!" << std::endl;
 						return nullptr;
 					}
-					if (!current_frame["duration"].IsNull())
+					if (current_frame.HasMember("duration") && !current_frame["duration"].IsNull())
 						duration = current_frame["duration"].GetUint();
 					else if (default_duration > 0)
 						duration = default_duration;
@@ -406,7 +450,11 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std
 					//...
 
 					x_offset += width;
-					y_offset += height;
+					if (x_offset == atlas_width)
+					{
+						x_offset = 0;
+						y_offset -= height;
+					}
 				}
 				animations_frame.first = isLoop;
 				newAtlas->addAnimation(name, animations_frame);
@@ -455,6 +503,10 @@ bool ResourceManager::loadResJSON(const std::string& path)
 	const auto& atlas_iterator = document.FindMember("atlases");
 	if (atlas_iterator != document.MemberEnd())
 		loadAtlas(atlas_iterator);
+
+	const auto& sprites_iterator = document.FindMember("sprites");
+	if (sprites_iterator != document.MemberEnd())
+		loadSprite(sprites_iterator);
 
 	auto levelsIt = document.FindMember("levels");
 	if (levelsIt != document.MemberEnd())

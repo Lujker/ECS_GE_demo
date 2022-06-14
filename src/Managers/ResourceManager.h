@@ -39,12 +39,11 @@ public:
 	static std::shared_ptr<RenderEngine::Image2D> getImage(const std::string& imageName);
 	static std::shared_ptr<RenderEngine::Image2D> getSharedImage(const std::string& path);
 	static bool removeSharedImage(const std::string& path);
-	//!TODO Atlas and sprite load
 
-	static std::shared_ptr<RenderEngine::TextureAtlas> loatAtlas(const std::string& name, const std::string& path);
+	static std::shared_ptr<RenderEngine::TextureAtlas> loadAtlas(const std::string& name, const std::string& path);
 	static std::shared_ptr<RenderEngine::TextureAtlas> getAtlas(const std::string& path);
 	static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& path);
-	static std::shared_ptr<RenderEngine::Sprite> loatSprite(const std::string& path);
+	static std::shared_ptr<RenderEngine::Sprite> loadSprite(const std::string& name, const std::string& path);
 
 	static bool loadResJSON(const std::string& path);
 	static const std::vector<std::vector<std::string>>& getLevels();
@@ -62,6 +61,7 @@ private:
 	static void loadTexture2D(const rapidjson::Document::MemberIterator&);
 	static void loadAtlas(const rapidjson::Document::MemberIterator&);
 	static void loadImage(const rapidjson::Document::MemberIterator&);
+	static void loadSprite(const rapidjson::Document::MemberIterator&);
 	static void loadLevel(const rapidjson::Document::MemberIterator&);
 	static void parseAtalsJSON(const std::string& path);
 

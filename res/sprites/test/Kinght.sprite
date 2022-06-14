@@ -3,6 +3,9 @@
     [
         {
             "path" : "res/sprites/test/_Attack"
+        },
+        {
+            "path" : "res/sprites/test/_idle"
         }
     ]
 }

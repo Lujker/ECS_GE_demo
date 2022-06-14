@@ -22,7 +22,7 @@ class UpdateSystem : public ISystem
 {
 public:
 	static UpdateSystem& Instanse();
-	static float GlobalUpdate();
+	static float GlobalUpdate(bool restart = false);
 	static void Update(std::shared_ptr<RenderEngine::Sprite> sprite);
 	static void Update(Animation::AnimationsList& anim_list);
 	static void Update(Timer& timer);

@@ -43,6 +43,7 @@ namespace RenderEngine
 		void addSpriteAnimation(const SpriteAnimation& animation);
 		SpriteAnimation getSpriteAnimation(const std::string& name);
 		std::shared_ptr<SpriteAnimation> getCurrentAnimation();
+		std::list<std::string> getAnimationsName();
 
 	private:
 		std::shared_ptr<SpriteAnimation> m_currentAnimation;
