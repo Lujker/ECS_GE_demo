@@ -1,4 +1,6 @@
 #pragma once
+#include <glm/ext/matrix_float4x4.hpp>
+
 #include "Position.h"
 #include "Components/Image.h"
 #include "Components/Collision.h"
@@ -6,11 +8,19 @@
 #include "ISystem.h"
 
 #define RENDER RenderSystem::Instanse()
+
+namespace RenderEngine
+{
+	class Sprite;
+	class ShaderProgram;
+}
+
 class RenderSystem : public ISystem
 {
 public:
 	static RenderSystem& Instanse();
-	static void Render(const RenderEngine::Image2D& image, const PositionComponent& position, const CollisionComponent& collision = {false});
+	static void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
+	static void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = {false});
 	static void Render(const FRect& rect);
 	static void setClearColor(float r, float g, float b, float alpha);
 	static void setBlendMode(bool on);

@@ -1,8 +1,14 @@
 #pragma once
 #include <chrono>
+#include <memory>
 
 #include "ISystem.h"
 
+
+namespace RenderEngine
+{
+	class Sprite;
+}
 
 class Timer;
 
@@ -17,6 +23,7 @@ class UpdateSystem : public ISystem
 public:
 	static UpdateSystem& Instanse();
 	static float GlobalUpdate();
+	static void Update(std::shared_ptr<RenderEngine::Sprite> sprite);
 	static void Update(Animation::AnimationsList& anim_list);
 	static void Update(Timer& timer);
 private:

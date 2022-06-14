@@ -1,4 +1,6 @@
 #pragma once
+#include <list>
+
 #include "IComponent.h"
 #include "texture2D.h"
 
@@ -19,10 +21,10 @@ namespace RenderEngine
 		{}
 
 
-		SubTexture2D() :
+		SubTexture2D():
 			leftBottomUV(0.f), rightTopUV(1.f), duration(0)
 		{}
-
+		~SubTexture2D() = default;
 		bool operator==(SubTexture2D right) { return this->rightTopUV == right.rightTopUV && this->leftBottomUV == right.leftBottomUV; }
 		bool operator!=(SubTexture2D right) { return !((*this) == right); }
 	};
@@ -30,6 +32,10 @@ namespace RenderEngine
 	class TextureAtlas : public Texture2D
 	{
 	public:
+
+		using animations_frame = std::pair<bool, std::list<SubTexture2D>>;
+		using frames_iterator = std::list<SubTexture2D>::const_iterator;
+		using animations_iterator = std::map<std::string, animations_frame>::const_iterator;
 		TextureAtlas(const GLuint width, GLuint heigh,
 			const unsigned char* data,
 			const unsigned int channels,
@@ -37,12 +43,10 @@ namespace RenderEngine
 			const GLenum wrapMode = GL_CLAMP_TO_EDGE,
 			const unsigned int textureSlot = GL_TEXTURE0);
 		~TextureAtlas() override = default;
-		virtual const SubTexture2D& addSubTexture(std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV);
-		virtual void addSubTexture(std::string name, const SubTexture2D&);
-		virtual const SubTexture2D& getSubTexture(std::string name);
-		virtual const std::map<std::string, SubTexture2D>& getSubTextures() { return m_subTextures; }
+		virtual void addAnimation(std::string name, const animations_frame& anim);
+		virtual const animations_frame& getAnimation(std::string name);
+		virtual std::map<std::string, RenderEngine::TextureAtlas::animations_frame>& getAnimations() { return m_Animations; }
 	protected:
-		std::map<std::string, SubTexture2D> m_subTextures;
-		bool isLoop = false;
+		std::map<std::string, animations_frame> m_Animations;
 	};
 }

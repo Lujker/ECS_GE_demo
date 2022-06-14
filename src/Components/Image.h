@@ -1,23 +1,23 @@
+#pragma once
 #include <memory>
+#include <string>
 
 #include "Atlas2D.h"
 #include "IndexBuffer.h"
-#include "ShaderProgram.h"
-#include "texture2D.h"
+#include "Point.h"
 #include "VertexArray.h"
-#include "VertexBuffer.h"
-#include "Rect.h"
+
 
 namespace RenderEngine
 {
+	class Texture2D;
+	class TextureAtlas;
+	
 	class Image2D
 	{
 	public:
 		Image2D() = default;
 		Image2D(const std::shared_ptr<Texture2D>& pTexture);
-
-		Image2D(const std::shared_ptr<TextureAtlas>& pAtlas,
-			const std::string& initialSubTextureName = "");
 
 		Image2D(const std::shared_ptr<TextureAtlas>& pAtlas,
 			const SubTexture2D& sub_texture);

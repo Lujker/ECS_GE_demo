@@ -1,6 +1,8 @@
 #include "RenderSystem.h"
 #include "CameraManager.h"
 #include "ResourceManager.h"
+#include "ShaderProgram.h"
+#include "Sprite.h"
 
 RenderSystem& RenderSystem::Instanse()
 {
@@ -8,14 +10,41 @@ RenderSystem& RenderSystem::Instanse()
 	return render_system;
 }
 
-void RenderSystem::Render(const RenderEngine::Image2D& image, const PositionComponent& position, const CollisionComponent& collision)
+void RenderSystem::Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position,
+	const CollisionComponent& collision)
 {
-	const auto shader = RES.getShader("image_shader");
-    if(!shader || !image.isValid())
+    if (!sprite)
+        return;
+    const auto shader = RES.getShader("image_shader");
+    if (!shader || !sprite->isValid())
     {
         return;
     }
-    auto size = image.getTextureSize();
+    auto size = sprite->getTextureSize();
+    if (collision.isValid())
+    {
+        size = collision.getSize();
+    }
+
+    shader->use();
+    shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX, size.mY, position.getRotation()));
+    shader->setFloat("layer", position.getLayer());
+    shader->setInt("tex", sprite->getTexture2D()->getSlot());
+    sprite->getTexture2D()->bind();
+
+    draw(sprite->getVertexArray(), sprite->getIndexCoordsBuffer(), *shader);
+}
+
+void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision)
+{
+    if(!image)
+        return;
+	const auto shader = RES.getShader("image_shader");
+    if(!shader || !image->isValid())
+    {
+        return;
+    }
+    auto size = image->getTextureSize();
     if (collision.isValid())
     {
         size = collision.getSize();
@@ -24,10 +53,10 @@ void RenderSystem::Render(const RenderEngine::Image2D& image, const PositionComp
     shader->use();
 	shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX, size.mY, position.getRotation()));
 	shader->setFloat("layer", position.getLayer());
-    shader->setInt("tex", image.getTexture2D()->getSlot());
-    image.getTexture2D()->bind();
+    shader->setInt("tex", image->getTexture2D()->getSlot());
+    image->getTexture2D()->bind();
 
-	draw(image.getVertexArray(), image.getIndexCoordsBuffer(), *shader);
+	draw(image->getVertexArray(), image->getIndexCoordsBuffer(), *shader);
 }
 
 void RenderSystem::Render(const FRect& rect)

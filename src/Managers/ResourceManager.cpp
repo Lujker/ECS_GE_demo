@@ -103,6 +103,10 @@ void ResourceManager::loadLevel(const rapidjson::Document::MemberIterator& level
 	}
 }
 
+void ResourceManager::parseAtalsJSON(const std::string& path)
+{
+}
+
 ResourceManager::ResourceManager(const std::string& execPath)
 {
 	size_t found = execPath.find_last_of("/\\");
@@ -246,12 +250,54 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::getAtlas(const std:
 
 std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::string& path)
 {
-	return std::shared_ptr<RenderEngine::Sprite>();
+	const auto& it = m_sprites.find(path);
+	if (it == m_sprites.end())
+	{
+		return loatSprite(path);
+	}
+	return it->second;
 }
 
 std::shared_ptr<RenderEngine::Sprite> ResourceManager::loatSprite(const std::string& path)
 {
-	return std::shared_ptr<RenderEngine::Sprite>();
+	const auto& json_doc = getFileString(path + ".sprite");
+	if (json_doc.empty())
+	{
+		std::cerr << "Failed to parse json: " << path << std::endl;
+		return nullptr;
+	}
+	rapidjson::Document document;
+	rapidjson::ParseResult parse_result = document.Parse(json_doc.c_str());
+	if (!parse_result)
+	{
+		std::cerr << "Json parse error: " << rapidjson::GetParseError_En(parse_result.Code()) << " ("
+			<< parse_result.Offset() << ") in file: " << path << std::endl;
+		return nullptr;
+	}
+	const auto& atlas_iterator = document.FindMember("atlases");
+	if (atlas_iterator != document.MemberEnd() && document["atlases"].IsArray())
+	{
+		std::list<RenderEngine::SpriteAnimation> animList;
+		for (const auto& current_atlas : atlas_iterator->value.GetArray())
+		{
+			std::string atlas_path;
+			if (!current_atlas["path"].IsNull() && current_atlas["path"].IsString())
+				atlas_path = current_atlas["path"].GetString();
+			auto atlas = getAtlas(atlas_path);
+			if (!atlas)
+				atlas = loatAtlas(atlas_path, atlas_path);
+			if (atlas)
+				animList.emplace_back(RenderEngine::SpriteAnimation{ atlas });
+		}
+		if(!animList.empty())
+		{
+			auto elem = m_sprites.emplace(path, std::make_shared<RenderEngine::Sprite>( animList ));
+			if (elem.second)
+				return elem.first->second;
+			else return nullptr;
+		}
+	}
+	return nullptr;
 }
 
 std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std::string& name, const std::string& path)
@@ -282,7 +328,6 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std
 		(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE);
 
 	unsigned atlas_width = newAtlas->getWidth(), atlas_height = newAtlas->getHeight(), default_frame_width = 0, default_frame_height = 0, default_duration = 1;
-	bool isLoop = false;
 	const auto& size_iterator = document.FindMember("info");
 	if (size_iterator != document.MemberEnd() && document["info"].IsObject())
 	{
@@ -294,60 +339,83 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loatAtlas(const std
 			default_frame_width = document["info"]["default_frame_width"].GetUint();
 		if (!document["info"]["default_frame_height"].IsNull())
 			default_frame_height = document["info"]["default_frame_height"].GetUint();
-		if (!document["info"]["loop"].IsNull())
-			isLoop = document["info"]["loop"].GetBool();
 		if (!document["info"]["default_duration"].IsNull())
 			default_duration = document["info"]["default_duration"].GetUint();
 	}
+	//! TODO parse animations to anim list
 	unsigned x_offset = 0, y_offset = 0;
-	const auto& frames_iterator = document.FindMember("frames");
-	if (frames_iterator != document.MemberEnd())
-		for (const auto& current_frame : frames_iterator->value.GetArray())
+	const auto& animations = document.FindMember("animations");
+	if (animations != document.MemberEnd() && animations->value.IsArray())
+	{
+		for (const auto& anim_iter : animations->value.GetArray())
 		{
 			std::string name = std::to_string(x_offset) + "x" + std::to_string(y_offset);
-			if (!current_frame["name"].IsNull())
-				name = current_frame["name"].GetString();
-			if (!current_frame["offset_x"].IsNull())
-				x_offset = current_frame["offset_x"].GetUint();
-			if (!current_frame["offset_y"].IsNull())
-				y_offset = current_frame["offset_y"].GetUint();
+			bool isLoop = false;
+			if (!anim_iter["name"].IsNull())
+				name = anim_iter["name"].GetString();
+			if (!anim_iter["loop"].IsNull())
+				isLoop = anim_iter["loop"].GetBool();
 
-			unsigned width = 0, height = 0, duration = 0;
-			if (!current_frame["width"].IsNull())
-				width = current_frame["width"].GetUint();
-			else if (default_frame_width > 0)
-				width = default_frame_width;
-			else
+			const auto& frames_iterator = anim_iter.FindMember("frames");
+			if (RenderEngine::TextureAtlas::animations_frame animations_frame; 
+				frames_iterator != document.MemberEnd())
 			{
-				std::cerr << "Default_frame_width is null and width is null!" << std::endl;
-				return nullptr;
-			}
-			if (!current_frame["height"].IsNull())
-				height = current_frame["height"].GetUint();
-			else if (default_frame_height > 0)
-				height = default_frame_height;
-			else
-			{
-				std::cerr << "Default_frame_height is null and height is null!" << std::endl;
-				return nullptr;
-			}
-			if (!current_frame["duration"].IsNull())
-				duration = current_frame["duration"].GetUint();
-			else if (default_duration > 0)
-				duration = default_duration;
-			else
-			{
-				std::cerr << "Default_frame_width is null and width is null!" << std::endl;
-				return nullptr;
-			}
+				for (const auto& current_frame : frames_iterator->value.GetArray())
+				{
+					if (!current_frame["offset_x"].IsNull())
+						x_offset = current_frame["offset_x"].GetUint();
+					if (!current_frame["offset_y"].IsNull())
+						y_offset = current_frame["offset_y"].GetUint();
 
-			RenderEngine::SubTexture2D sub_texture({ x_offset / atlas_width, y_offset / atlas_height }, { x_offset + width / atlas_width, y_offset + height / atlas_height }, duration);
-			newAtlas->addSubTexture(name, sub_texture);
-			//...
+					unsigned width = 0, height = 0, duration = 0;
+					if (!current_frame["width"].IsNull())
+						width = current_frame["width"].GetUint();
+					else if (default_frame_width > 0)
+						width = default_frame_width;
+					else
+					{
+						std::cerr << "Default_frame_width is null and width is null!" << std::endl;
+						return nullptr;
+					}
+					if (!current_frame["height"].IsNull())
+						height = current_frame["height"].GetUint();
+					else if (default_frame_height > 0)
+						height = default_frame_height;
+					else
+					{
+						std::cerr << "Default_frame_height is null and height is null!" << std::endl;
+						return nullptr;
+					}
+					if (!current_frame["duration"].IsNull())
+						duration = current_frame["duration"].GetUint();
+					else if (default_duration > 0)
+						duration = default_duration;
+					else
+					{
+						std::cerr << "Default_frame_width is null and width is null!" << std::endl;
+						return nullptr;
+					}
 
-			x_offset += width;
-			y_offset += height;
+					RenderEngine::SubTexture2D sub_texture(
+						{static_cast<float>(x_offset) / static_cast<float>(atlas_width),
+							static_cast<float>(y_offset) / static_cast<float>(atlas_height) },
+						{ static_cast<float>((x_offset + width)) / static_cast<float>(atlas_width),
+							static_cast<float>((y_offset + height)) / static_cast<float>(atlas_height) },
+						duration);
+					animations_frame.second.push_back(sub_texture);
+					//...
+
+					x_offset += width;
+					y_offset += height;
+				}
+				animations_frame.first = isLoop;
+				newAtlas->addAnimation(name, animations_frame);
+			}
+			else
+				continue;
 		}
+	}
+
 	auto emp = m_atlases.emplace(
 		name, newAtlas);
 	if (emp.second)

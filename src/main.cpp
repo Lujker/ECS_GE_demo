@@ -54,18 +54,25 @@ int main(int argc, char** argv)
     CAMERA.SetShader(RES.getShader("image_shader"));
     CAMERA.Update();
     {
-    	const PositionComponent pos{ 100, 100 };
-		const CollisionComponent col{ 100, 100, false };
+    	const PositionComponent pos_img{ 100, 100 };
+		const CollisionComponent col_img{ 100, 100, false };
+        const PositionComponent pos_sprite{ 50, 100 };
+        const CollisionComponent col_sprite{ 100, 100, false };
 		const auto image = RES.getSharedImage("res/textures/tank.png");
+        const auto sprite = RES.getSprite("res/sprites/test/_Attack");
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
             /* Poll for and process events */
             glfwPollEvents();
             UPDATE.GlobalUpdate();
+            if(sprite)
+				UPDATE.Update(sprite);
             /* Render here */
             RENDER.clear();
-            RENDER.Render(*image, pos, col);
+            if (sprite)
+                RENDER.Render(sprite, pos_sprite, col_sprite);
+            RENDER.Render(image, pos_img, col_img);
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
         }

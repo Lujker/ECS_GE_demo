@@ -1,6 +1,7 @@
 #include "UpdateSystem.h"
 
 #include "Animator.h"
+#include "Sprite.h"
 #include "Timer.h"
 
 std::chrono::time_point<std::chrono::steady_clock> UpdateSystem::lastTime = std::chrono::high_resolution_clock::now();
@@ -12,6 +13,14 @@ float UpdateSystem::GlobalUpdate()
 	last_duration = std::chrono::duration<float, std::milli>(currentTime - lastTime).count();
 	lastTime = currentTime;
 	return last_duration;
+}
+
+void UpdateSystem::Update(std::shared_ptr<RenderEngine::Sprite> sprite)
+{
+	if(!sprite->getCurrentAnimation())
+		return;
+	sprite->getCurrentAnimation()->Update(last_duration);
+	sprite->SetSubTexture(sprite->getCurrentAnimation()->getLastFrame());
 }
 
 void UpdateSystem::Update(Animation::AnimationsList& anim_list)

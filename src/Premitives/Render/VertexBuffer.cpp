@@ -37,6 +37,13 @@ namespace RenderEngine
 		glBufferData(GL_ARRAY_BUFFER, data_size, data, GL_STATIC_DRAW);
 	}
 
+	void VertexBuffer::destroy()
+	{
+		if (m_id)
+			glDeleteBuffers(1, &m_id);
+		m_id = 0;
+	}
+	
 	void VertexBuffer::update(const void* data, const unsigned int data_size) const
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_id);

@@ -63,6 +63,7 @@ private:
 	static void loadAtlas(const rapidjson::Document::MemberIterator&);
 	static void loadImage(const rapidjson::Document::MemberIterator&);
 	static void loadLevel(const rapidjson::Document::MemberIterator&);
+	static void parseAtalsJSON(const std::string& path);
 
 	ResourceManager() = default;
 	ResourceManager(const std::string& execPath);

@@ -3,6 +3,8 @@
 #include "Rect.h"
 #include "ResourceManager.h"
 #include "texture2D.h"
+#include "IndexBuffer.h"
+#include "VertexArray.h"
 
 namespace RenderEngine
 {
@@ -10,13 +12,6 @@ namespace RenderEngine
 		m_pTexture(pTexture)
 	{
 		m_subTexture = SubTexture2D();
-		init();
-	}
-
-	Image2D::Image2D(const std::shared_ptr<TextureAtlas>& pAtlas, const std::string& initialSubTextureName):
-		m_pTexture(pAtlas)
-	{
-		m_subTexture = pAtlas->getSubTexture(initialSubTextureName);
 		init();
 	}
 
@@ -80,6 +75,8 @@ namespace RenderEngine
 	
 	void Image2D::SetSubTexture(const SubTexture2D& sub_texture)
 	{
+		if (m_subTexture== sub_texture)
+			return;
 		m_subTexture = sub_texture;
 		const GLfloat texture_coords[] =
 		{
@@ -89,10 +86,7 @@ namespace RenderEngine
 			m_subTexture.rightTopUV.x, m_subTexture.rightTopUV.y,
 			m_subTexture.rightTopUV.x, m_subTexture.leftBottomUV.y,
 		};
-		m_textureCoordsBuffer.init(&texture_coords, sizeof(texture_coords));
-		VertexBufferLayout vertexTextureCoordsLayout;
-		vertexTextureCoordsLayout.addElementLayoutFloat(2, false);
-		m_vertexArray.addBuffer(m_textureCoordsBuffer, vertexTextureCoordsLayout);
+		m_textureCoordsBuffer.update(&texture_coords, sizeof(texture_coords));
 	}
 
 	bool Image2D::isValid() const

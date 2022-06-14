@@ -12,6 +12,7 @@ namespace RenderEngine
 		VertexBuffer& operator=(VertexBuffer&&) noexcept;
 
 		void init(const void* data, const unsigned int data_size);
+		void destroy();
 		void update(const void* data, const unsigned int data_size) const;
 		void bind() const;
 		void unbind() const;
