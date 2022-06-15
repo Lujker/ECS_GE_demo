@@ -7,6 +7,8 @@
 #include "Sprite.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/UpdateSystem.h"
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 
 int main(int argc, char** argv)
@@ -38,6 +40,10 @@ int main(int argc, char** argv)
     }
     std::cout << "Render: " << RENDER.getRendererStr() << std::endl;
     std::cout << "OpenGL version: " << RENDER.getVersionStr() << std::endl;
+
+    FT_Library ft;
+    if (FT_Init_FreeType(&ft))
+        std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
 
     glfwSetWindowSizeCallback(window, CAMERA.glfwWindowsSizeCallback);
     RENDER.setClearColor(1, 1, 1, 1);

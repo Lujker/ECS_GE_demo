@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19.3 FATAL_ERROR)
 
 set (PROJ_NAME ECS_GE_demo)
-project(${PROJ_NAME} )
+project(${PROJ_NAME})
 
 add_executable(${PROJ_NAME} 
 	src/main.cpp
@@ -74,6 +74,8 @@ include_directories(
 	src/Premitives
 	src/Premitives/Render
 	src/Components
+	external/sabmodules/rapidjson/include
+	external/freetype/include
 )
 
 target_compile_features(${PROJ_NAME} PUBLIC cxx_std_17)
@@ -92,10 +94,22 @@ target_link_libraries(${PROJ_NAME} glad)
 add_subdirectory(external/sabmodules/glm)
 target_link_libraries(${PROJ_NAME} glm)
 
-include_directories(external/sabmodules/rapidjson/include)
+set( ENGINE_DLL
+	${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/freetype.dll
+)
+
+if(WIN32)
+  target_link_libraries(${PROJ_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/freetype.lib)
+endif()
 
 set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
-
 add_custom_command(TARGET ${PROJ_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_directory
 					${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJ_NAME}>/res) 
+	
+foreach(file_i ${ENGINE_DLL})
+	add_custom_command(TARGET ${PROJ_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy ${file_i} $<TARGET_FILE_DIR:${PROJ_NAME}>) 	
+endforeach()
+
