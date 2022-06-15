@@ -77,7 +77,7 @@ include_directories(
 	src/Premitives/Render
 	src/Components
 	external/sabmodules/rapidjson/include
-	external/freetype/include
+	external/sabmodules/freetype/include
 )
 
 target_compile_features(${PROJ_NAME} PUBLIC cxx_std_17)
@@ -95,8 +95,6 @@ target_link_libraries(${PROJ_NAME} glad)
 
 add_subdirectory(external/sabmodules/glm)
 target_link_libraries(${PROJ_NAME} glm)
-
-
 
 if(WIN32)
 	set( ENGINE_DLL
