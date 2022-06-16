@@ -7,12 +7,12 @@
 
 namespace RenderEngine
 {
-	class TextureAtlas;
+	class SpriteAtlas;
 
 	class SpriteAnimation
 	{
 	public:
-		using atlas = std::shared_ptr<RenderEngine::TextureAtlas>;
+		using atlas = std::shared_ptr<RenderEngine::SpriteAtlas>;
 
 		SpriteAnimation() = default;
 		SpriteAnimation(atlas atlas);
@@ -21,7 +21,7 @@ namespace RenderEngine
 		atlas getAtlas() const;
 		bool hasAnimNames(const std::string& name) const;
 		void setAnnimation(const std::string& name);
-		void setAnnimation(const RenderEngine::TextureAtlas::animations_iterator&);
+		void setAnnimation(const RenderEngine::SpriteAtlas::animations_iterator&);
 		const std::pair<bool, std::list<SubTexture2D>>& getCurrentAnimation() const;
 		const std::string& getCurrentAnimationName() const;
 		const std::list<std::string> getAnimNames();
@@ -30,8 +30,8 @@ namespace RenderEngine
 	private:
 		atlas m_atlas;
 		float currentFramDuration = 0;
-		RenderEngine::TextureAtlas::animations_iterator animation_iterator;
-		RenderEngine::TextureAtlas::frames_iterator frame_iterator;
+		RenderEngine::SpriteAtlas::animations_iterator animation_iterator;
+		RenderEngine::SpriteAtlas::frames_iterator frame_iterator;
 		SubTexture2D lastFrame;
 	};
 

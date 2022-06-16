@@ -2,13 +2,14 @@
 #include <chrono>
 
 #include "CameraManager.h"
+#include "DisplayString.h"
 #include "FileSystemManager.h"
+#include "FontManager.h"
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/UpdateSystem.h"
-#include <ft2build.h>
-#include FT_FREETYPE_H
+#include "gl_Include.h"
 
 
 int main(int argc, char** argv)
@@ -40,11 +41,8 @@ int main(int argc, char** argv)
     }
     std::cout << "Render: " << RENDER.getRendererStr() << std::endl;
     std::cout << "OpenGL version: " << RENDER.getVersionStr() << std::endl;
-
-    FT_Library ft;
-    if (FT_Init_FreeType(&ft))
-        std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-
+    FONT.init();
+    FONT.setFont("arial");
     glfwSetWindowSizeCallback(window, CAMERA.glfwWindowsSizeCallback);
     RENDER.setClearColor(1, 1, 1, 1);
     RENDER.setBlendMode(true);
@@ -60,18 +58,22 @@ int main(int argc, char** argv)
     CAMERA.Init({ 0., 0., CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight });
     CAMERA.SetShader(RES.getShader("image_shader"));
     CAMERA.Update();
-
     CAMERA.SetShader(RES.getShader("default"));
     CAMERA.Update();
+    CAMERA.SetShader(RES.getShader("freetype"));
+    CAMERA.Update();
+    
     {
     	const PositionComponent pos_img{ 100, 100 };
 		const CollisionComponent col_img{ 100, 100, false };
         const PositionComponent pos_sprite{ 50, 100 };
         const CollisionComponent size_sprite{ 120, 80, false };
-        const CollisionComponent col_sprite{ 35, 40, 55, 0, false };
-		const auto image = RES.getSharedImage("res/textures/tank.png");
+        const CollisionComponent col_sprite{ 40, 40, 40, 0, false };
+        const PositionComponent string_pos{ 300,300, 2 };
+		const auto image = RES.getSharedImage("res/images/tank.png");
         const auto sprite = RES.getSprite("res/sprites/test/Kinght");
-        //sprite->setAnimation("idle");
+        const auto string = std::make_shared<DisplayString>("Cant");
+        sprite->setAnimation("idle");
         for (auto i : sprite->getAnimationsName())
             std::cout << i << std::endl;
         /* Loop until the user closes the window */
@@ -90,12 +92,15 @@ int main(int argc, char** argv)
                 RENDER.Render(sprite, pos_sprite, size_sprite);
             RENDER.Render(image, pos_img, col_img);
             RENDER.Render(FRect{ pos_sprite.getPosition().mX + col_sprite.getXOffset(), pos_sprite.getPosition().mY + col_sprite.getYOffset(), col_sprite.getWidth(), col_sprite.getHeight()});
+            RENDER.Render(string, string_pos,1);
+            //RENDER.RenderText("hello", 300.f, 300.f, 2.f, glm::vec3(0.3, 0.7f, 0.9f));
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
         }
         RES.unloadAllResources();
         FILES.unloadAllFiles();
         CAMERA.ReleaseShader();
+        FONT.freeFontRes();
     }
     glfwTerminate();
     return 0;

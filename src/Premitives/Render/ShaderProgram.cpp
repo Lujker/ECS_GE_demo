@@ -88,6 +88,11 @@ void RenderEngine::ShaderProgram::setMatrix4(const std::string& name, const glm:
 	glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
+void RenderEngine::ShaderProgram::setVec3(const std::string& name, const glm::vec3 vec)
+{
+	glUniform3f(glGetUniformLocation(m_ID, name.c_str()), vec.x, vec.y, vec.z);
+}
+
 bool RenderEngine::ShaderProgram::createShader(const std::string& source, const GLenum shaderType, GLuint& shaderID)
 {
 	shaderID = glCreateShader(shaderType);

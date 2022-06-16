@@ -7,6 +7,7 @@ set(SRC
 	src/Managers/FileSystemManager.cpp
 	src/Managers/ResourceManager.cpp
 	src/Managers/CameraManager.cpp
+	src/Managers/FontManager.cpp
 	src/Premitives/Animator.cpp
 	src/Premitives/Shape.cpp  
 	src/Premitives/Timer.cpp
@@ -22,12 +23,16 @@ set(SRC
 	src/Components/Image.cpp
 	src/Components/Move.cpp
 	src/Components/Position.cpp
+	src/Components/Collor.cpp
 	src/Components/Sprite.cpp
+	src/Components/DisplayString.cpp
 	src/Systems/RenderSystem.cpp
 	src/Systems/UpdateSystem.cpp
 	src/Systems/CollisionSystem.cpp
 	src/Systems/MoveSystem.cpp
 	src/Widgets/Widget.cpp
+	src/Widgets/GlobalWidget.cpp
+	src/Widgets/WidgetContainer.cpp
 )
 
 set(INCLUDE
@@ -35,6 +40,7 @@ set(INCLUDE
 	src/Managers/FileSystemManager.h
 	src/Managers/ResourceManager.h
 	src/Managers/CameraManager.h
+	src/Managers/FontManager.h
 	src/Managers/stb_image.h
 	src/Premitives/Animator.h
 	src/Premitives/Point.h
@@ -42,6 +48,7 @@ set(INCLUDE
 	src/Premitives/Rect.h  
 	src/Premitives/Shape.h
 	src/Premitives/Timer.h
+	src/Components/DisplayString.h
 	src/Premitives/Render/IndexBuffer.h  
 	src/Premitives/Render/VertexArray.h  
 	src/Premitives/Render/VertexBufferLayout.h 
@@ -55,13 +62,17 @@ set(INCLUDE
 	src/Components/Image.h 
 	src/Components/Move.h
 	src/Components/Position.h 
+	src/Components/Collor.h 
 	src/Components/Sprite.h
+	src/Components/DisplayString.h
 	src/Systems/ISystem.h
 	src/Systems/RenderSystem.h
 	src/Systems/UpdateSystem.h
 	src/Systems/CollisionSystem.h
 	src/Systems/MoveSystem.h
 	src/Widgets/Widget.h
+	src/Widgets/GlobalWidget.h
+	src/Widgets/WidgetContainer.h
 )
 
 add_executable(${PROJ_NAME} 
@@ -112,6 +123,3 @@ set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_B
 add_custom_command(TARGET ${PROJ_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_directory
 					${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJ_NAME}>/res) 
-	
-
-

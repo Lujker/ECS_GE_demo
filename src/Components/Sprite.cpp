@@ -126,7 +126,7 @@ namespace RenderEngine
 		std::cerr << "SpriteAnimation::setAnnimation invalide name set" << std::endl;
 	}
 
-	void SpriteAnimation::setAnnimation(const RenderEngine::TextureAtlas::animations_iterator& iter)
+	void SpriteAnimation::setAnnimation(const RenderEngine::SpriteAtlas::animations_iterator& iter)
 	{
 		if (iter != m_atlas->getAnimations().end())
 		{

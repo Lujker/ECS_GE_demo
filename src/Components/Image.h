@@ -11,7 +11,7 @@
 namespace RenderEngine
 {
 	class Texture2D;
-	class TextureAtlas;
+	class SpriteAtlas;
 	
 	class Image2D
 	{
@@ -19,7 +19,7 @@ namespace RenderEngine
 		Image2D() = default;
 		Image2D(const std::shared_ptr<Texture2D>& pTexture);
 
-		Image2D(const std::shared_ptr<TextureAtlas>& pAtlas,
+		Image2D(const std::shared_ptr<SpriteAtlas>& pAtlas,
 			const SubTexture2D& sub_texture);
 
 		virtual ~Image2D() = default;

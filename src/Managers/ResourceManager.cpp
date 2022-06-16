@@ -283,7 +283,7 @@ bool ResourceManager::removeSharedImage(const std::string& path)
 	return false;
 }
 
-std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::getAtlas(const std::string& textureName)
+std::shared_ptr<RenderEngine::SpriteAtlas> ResourceManager::getAtlas(const std::string& textureName)
 {
 	auto it = m_atlases.find(textureName);
 	if (it != m_atlases.end())
@@ -344,7 +344,7 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::loadSprite(const std::str
 	return nullptr;
 }
 
-std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loadAtlas(const std::string& name, const std::string& path)
+std::shared_ptr<RenderEngine::SpriteAtlas> ResourceManager::loadAtlas(const std::string& name, const std::string& path)
 {
 	///Загрузка пикселей в массив байт из файла текстуры
 	const auto& pixels = FILES.getPixelFile(path + ".png");
@@ -368,7 +368,7 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loadAtlas(const std
 			<< parse_result.Offset() << ") in file: " << path << std::endl;
 		return nullptr;
 	}
-	std::shared_ptr<RenderEngine::TextureAtlas> newAtlas = std::make_shared<RenderEngine::TextureAtlas>
+	std::shared_ptr<RenderEngine::SpriteAtlas> newAtlas = std::make_shared<RenderEngine::SpriteAtlas>
 		(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE);
 
 	unsigned atlas_width = newAtlas->getWidth(), atlas_height = newAtlas->getHeight(), default_frame_width = 0, default_frame_height = 0, default_duration = 1000;
@@ -401,7 +401,7 @@ std::shared_ptr<RenderEngine::TextureAtlas> ResourceManager::loadAtlas(const std
 				isLoop = anim_iter["loop"].GetBool();
 
 			const auto& frames_iterator = anim_iter.FindMember("frames");
-			if (RenderEngine::TextureAtlas::animations_frame animations_frame; 
+			if (RenderEngine::SpriteAtlas::animations_frame animations_frame; 
 				frames_iterator != document.MemberEnd())
 			{
 				for (const auto& current_frame : frames_iterator->value.GetArray())

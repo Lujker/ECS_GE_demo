@@ -1,5 +1,8 @@
 #include "RenderSystem.h"
+
 #include "CameraManager.h"
+#include "DisplayString.h"
+#include "FontManager.h"
 #include "ResourceManager.h"
 #include "ShaderProgram.h"
 #include "Sprite.h"
@@ -57,6 +60,28 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
     image->getTexture2D()->bind();
 
 	draw(image->getVertexArray(), image->getIndexCoordsBuffer(), *shader);
+}
+
+void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale, const CollorComponent& collor)
+{
+    // Activate corresponding render state
+    auto shader = RES.getShader("freetype");
+	shader->use();
+    shader->setVec3("tex", { collor.getR(), collor.getG(), collor.getB() });
+    shader->setFloat("layer", position.getLayer());
+
+    auto charList = string->getDisplayChars();
+    unsigned x = position.getPosition().mX, y = position.getPosition().mY;
+    
+    for(const auto& ch : charList)
+    {
+        auto model = getTransformMatrix(x + ch.Bearing.x * scale, y + ch.Bearing.y * scale, ch.texture->getWidth() , ch.texture->getHeight() * scale,  position.getRotation());
+        shader->setMatrix4("modelMatrix", model);
+        ch.texture->bind();
+
+        draw(string->getVertexArray(), string->getIndexCoordsBuffer(), *shader);
+        x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+    }
 }
 
 void RenderSystem::Render(const FRect& rect)

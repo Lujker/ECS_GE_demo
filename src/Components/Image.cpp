@@ -15,7 +15,7 @@ namespace RenderEngine
 		init();
 	}
 
-	Image2D::Image2D(const std::shared_ptr<TextureAtlas>& pAtlas, const SubTexture2D& sub_texture) :
+	Image2D::Image2D(const std::shared_ptr<SpriteAtlas>& pAtlas, const SubTexture2D& sub_texture) :
 		m_pTexture(pAtlas), m_subTexture(sub_texture)
 	{
 		init();

@@ -20,7 +20,7 @@ namespace RenderEngine
 	class Texture2D;
 	class Image2D;
 	class Sprite;
-	class TextureAtlas;
+	class SpriteAtlas;
 }
 
 
@@ -40,8 +40,8 @@ public:
 	static std::shared_ptr<RenderEngine::Image2D> getSharedImage(const std::string& path);
 	static bool removeSharedImage(const std::string& path);
 
-	static std::shared_ptr<RenderEngine::TextureAtlas> loadAtlas(const std::string& name, const std::string& path);
-	static std::shared_ptr<RenderEngine::TextureAtlas> getAtlas(const std::string& path);
+	static std::shared_ptr<RenderEngine::SpriteAtlas> loadAtlas(const std::string& name, const std::string& path);
+	static std::shared_ptr<RenderEngine::SpriteAtlas> getAtlas(const std::string& path);
 	static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& path);
 	static std::shared_ptr<RenderEngine::Sprite> loadSprite(const std::string& name, const std::string& path);
 
@@ -51,7 +51,7 @@ public:
 
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::ShaderProgram>> shaderProgramMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> texturesMap;
-	typedef std::map<const std::string, std::shared_ptr<RenderEngine::TextureAtlas>> atlasMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteAtlas>> atlasMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Image2D>> imageMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> spriteMap;
 	typedef std::vector<std::vector<std::string>> levels;
