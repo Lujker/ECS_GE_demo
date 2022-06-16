@@ -33,8 +33,9 @@ namespace RenderEngine
 		const VertexBuffer& getVertexCoordsBuffer() const { return m_vertexCoordsBuffer; }
 		const VertexBuffer& getTextureCoordsBuffer() const { return m_textureCoordsBuffer; }
 		const IndexBuffer& getIndexCoordsBuffer() const { return m_indexBuffer; }
-		void SetSubTexture(const SubTexture2D& sub_texture);
-		bool isValid() const;
+		virtual void SetSubTexture(const SubTexture2D& sub_texture);
+		virtual bool isValid() const;
+		virtual void mirror(bool vertical, bool horizontal);
 
 	protected:
 		virtual void init();

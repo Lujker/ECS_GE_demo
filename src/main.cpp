@@ -60,13 +60,15 @@ int main(int argc, char** argv)
     {
     	const PositionComponent pos_img{ 100, 100 };
 		const CollisionComponent col_img{ 100, 100, false };
-        const PositionComponent pos_sprite{ 50, 100 };
+        const PositionComponent pos_sprite{ 350, 100 };
         const CollisionComponent size_sprite{ 120, 80, false };
         const CollisionComponent col_sprite{ 40, 40, 40, 0, false };
         const PositionComponent string_pos{ 300,300, 2 };
 		const auto image = RES.getSharedImage("res/images/tank.png");
         const auto sprite = RES.getSprite("res/sprites/test/Kinght");
+        sprite->mirror(false, false);
         const auto string = std::make_shared<DisplayString>("Cant");
+        string->mirror(false, false);
         sprite->setAnimation("idle");
         for (auto i : sprite->getAnimationsName())
             std::cout << i << std::endl;

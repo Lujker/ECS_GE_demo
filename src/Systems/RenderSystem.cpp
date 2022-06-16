@@ -77,7 +77,7 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     
     for(const auto& ch : charList)
     {
-        auto model = getTransformMatrix(x + (ch.Bearing.x * scale), y + (ch.Bearing.y * scale), ch.texture->getWidth() * scale, ch.texture->getHeight() * scale,  position.getRotation());
+        auto model = getTransformMatrix(x + (ch.Bearing.x * scale), y , ch.texture->getWidth() * scale, ch.texture->getHeight() * scale,  position.getRotation());
         shader->setMatrix4("modelMatrix", model);
         ch.texture->bind();
 
@@ -170,7 +170,7 @@ void RenderSystem::drawRect(const int x, const int y, const int width, const int
         1.f, 0.f, 0.f
     };
 
-    shader_program->use();
+    CAMERA.UseShader(shader_program);
     static RenderEngine::VertexArray vertexArray;
     static RenderEngine::VertexBuffer vertexBuffer;
     static RenderEngine::VertexBuffer colorsBuffer;

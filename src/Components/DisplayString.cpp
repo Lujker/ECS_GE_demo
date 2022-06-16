@@ -65,6 +65,19 @@ std::list<Character> DisplayString::getDisplayChars()
 	return list;
 }
 
+void DisplayString::mirror(bool vertical, bool horizontal)
+{
+	const GLfloat vertex_coords[] =
+	{
+		//! X and Y
+		horizontal ? 1.f : 0.f, vertical ? 0.f : 1.f,
+		horizontal ? 1.f : 0.f, vertical ? 1.f : 0.f,
+		horizontal ? 0.f : 1.f, vertical ? 1.f : 0.f,
+		horizontal ? 0.f : 1.f, vertical ? 0.f : 1.f,
+	};
+	m_vertexCoordsBuffer.update(vertex_coords, sizeof(vertex_coords));
+}
+
 void DisplayString::initChars()
 {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
@@ -98,10 +111,10 @@ void DisplayString::initBuffers()
 		//0 - 3
 
 		//! X and Y
+		0.f, 1.f,
 		0.f, 0.f,
-		0.f, -1.f,
-		1.f, -1.f,
 		1.f, 0.f,
+		1.f, 1.f,
 	};
 	const GLfloat texture_coords[] =
 	{

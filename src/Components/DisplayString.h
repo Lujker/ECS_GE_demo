@@ -29,6 +29,7 @@ public:
 	const RenderEngine::IndexBuffer& getIndexCoordsBuffer() const { return m_indexBuffer; }
 	const unsigned getWidth() const { return width; }
 	const unsigned getHeight() const { return height; }
+	virtual void mirror(bool vertical, bool horizontal);
 private:
 	void initChars();
 	void initBuffers();
