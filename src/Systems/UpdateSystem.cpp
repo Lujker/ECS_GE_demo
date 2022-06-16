@@ -19,7 +19,7 @@ float UpdateSystem::GlobalUpdate(bool restart)
 
 void UpdateSystem::Update(std::shared_ptr<RenderEngine::Sprite> sprite)
 {
-	if(!sprite->getCurrentAnimation())
+	if(!sprite || !sprite->getCurrentAnimation())
 		return;
 	sprite->getCurrentAnimation()->Update(last_duration);
 	sprite->SetSubTexture(sprite->getCurrentAnimation()->getLastFrame());

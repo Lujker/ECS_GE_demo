@@ -51,18 +51,12 @@ int main(int argc, char** argv)
     RES.setExecutablePath(argv[0]);
 	if (!RES.loadResJSON("res\\res.json"))
 	{
+        std::cerr << "Can't load main res file. Terminate!" << std::endl;
         glfwTerminate();
         return 0;
 	}
     CAMERA.glfwWindowsResize(window, 1024, 640);
     CAMERA.Init({ 0., 0., CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight });
-    CAMERA.SetShader(RES.getShader("image_shader"));
-    CAMERA.Update();
-    CAMERA.SetShader(RES.getShader("default"));
-    CAMERA.Update();
-    CAMERA.SetShader(RES.getShader("freetype"));
-    CAMERA.Update();
-    
     {
     	const PositionComponent pos_img{ 100, 100 };
 		const CollisionComponent col_img{ 100, 100, false };
@@ -84,16 +78,13 @@ int main(int argc, char** argv)
             /* Poll for and process events */
             glfwPollEvents();
             UPDATE.GlobalUpdate();
-            if(sprite)
-				UPDATE.Update(sprite);
+        	UPDATE.Update(sprite);
             /* Render here */
             RENDER.clear();
-            if (sprite)
-                RENDER.Render(sprite, pos_sprite, size_sprite);
+        	RENDER.Render(sprite, pos_sprite, size_sprite);
             RENDER.Render(image, pos_img, col_img);
             RENDER.Render(FRect{ pos_sprite.getPosition().mX + col_sprite.getXOffset(), pos_sprite.getPosition().mY + col_sprite.getYOffset(), col_sprite.getWidth(), col_sprite.getHeight()});
-            RENDER.Render(string, string_pos,1);
-            //RENDER.RenderText("hello", 300.f, 300.f, 2.f, glm::vec3(0.3, 0.7f, 0.9f));
+            RENDER.Render(string, string_pos,1.f, {0.3f,1.f,0.5f, 0.6f});
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
         }

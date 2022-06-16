@@ -47,7 +47,7 @@ void DisplayString::resize(unsigned int width, unsigned int height)
 
 bool DisplayString::isEmpty() const
 {
-	return !bufferInitioal && !initial && m_characters.empty();
+	return !bufferInitioal && !initial && !m_characters.empty();
 }
 
 std::list<Character> DisplayString::getDisplayChars()

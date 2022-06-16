@@ -29,7 +29,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Sprite> sprite, const Po
         size = collision.getSize();
     }
 
-    shader->use();
+    CAMERA.UseShader(shader);
     shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX, size.mY, position.getRotation()));
     shader->setFloat("layer", position.getLayer());
     shader->setInt("tex", sprite->getTexture2D()->getSlot());
@@ -53,7 +53,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
         size = collision.getSize();
     }
 
-    shader->use();
+    CAMERA.UseShader(shader);
 	shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX, size.mY, position.getRotation()));
 	shader->setFloat("layer", position.getLayer());
     shader->setInt("tex", image->getTexture2D()->getSlot());
@@ -64,18 +64,20 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
 
 void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale, const CollorComponent& collor)
 {
-    // Activate corresponding render state
-    auto shader = RES.getShader("freetype");
-	shader->use();
-    shader->setVec3("tex", { collor.getR(), collor.getG(), collor.getB() });
+    if (!string || string->isEmpty())
+        return;
+    const auto shader = RES.getShader("freetype");
+    CAMERA.UseShader(shader);
+    shader->setVec3("textColor", { collor.getR(), collor.getG(), collor.getB() });
     shader->setFloat("layer", position.getLayer());
+    shader->setFloat("alpha", collor.getAlpha());
 
     auto charList = string->getDisplayChars();
     unsigned x = position.getPosition().mX, y = position.getPosition().mY;
     
     for(const auto& ch : charList)
     {
-        auto model = getTransformMatrix(x + ch.Bearing.x * scale, y + ch.Bearing.y * scale, ch.texture->getWidth() , ch.texture->getHeight() * scale,  position.getRotation());
+        auto model = getTransformMatrix(x + (ch.Bearing.x * scale), y + (ch.Bearing.y * scale), ch.texture->getWidth() * scale, ch.texture->getHeight() * scale,  position.getRotation());
         shader->setMatrix4("modelMatrix", model);
         ch.texture->bind();
 

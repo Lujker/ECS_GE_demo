@@ -24,7 +24,7 @@ public:
 	static RenderSystem& Instanse();
 	static void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
 	static void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
-	static void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale, const CollorComponent& collor = CollorComponent{1.f,1.f,1.f});
+	static void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const CollorComponent& collor = CollorComponent{1.f,1.f,1.f});
 	static void Render(const FRect& rect);
 	static void setClearColor(float r, float g, float b, float alpha);
 	static void setBlendMode(bool on);
