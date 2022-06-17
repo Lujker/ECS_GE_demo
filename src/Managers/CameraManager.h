@@ -24,16 +24,19 @@ public:
 	static FRect getProjRect();
 	static const glm::mat4 getOrthMatrix();
 	static FRect getActiveWindowRect();
+	static bool windowOnFocus();
 	static void setActiveWindowSize(int width, int height);
 	static void glfwWindowsSizeCallback(GLFWwindow* pWindow, int width, int height);
 	static void glfwWindowsResize(GLFWwindow* pWindow, int width, int height);
+	static void glfwWindowFocusCallback(GLFWwindow* window, int focused);
 private:
 	std::shared_ptr<RenderEngine::ShaderProgram> m_shader;
 	static FRect projMatrix;
 	static FRect activeWindowSize;
-	static double near;
-	static double far;
+	static double m_near;
+	static double m_far;
 	static Point mainWindowSize;
+	static bool fockused;
 	CameraManager() = default;
 	~CameraManager() = default;
 	CameraManager(const CameraManager&) = delete;

@@ -23,7 +23,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Sprite> sprite, const Po
     {
         return;
     }
-    auto size = sprite->getTextureSize();
+    auto size = sprite->getCurrentAnimSize();
     if (collision.isValid())
     {
         size = collision.getSize();

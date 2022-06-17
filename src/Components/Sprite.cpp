@@ -29,6 +29,7 @@ namespace RenderEngine
 		if (it != m_animations.end() && !it->isEmpty())
 		{
 			it->restart();
+			m_currentAnimName = name;
 			m_currentAnimation = std::make_shared<SpriteAnimation>(*it);
 			m_currentAnimation->setAnnimation(name);
 			m_pTexture = it->getAtlas();
@@ -69,6 +70,13 @@ namespace RenderEngine
 		return m_currentAnimation;
 	}
 
+	FPoint Sprite::getCurrentAnimSize()
+	{
+		if (m_currentAnimation && !m_currentAnimName.empty())
+			return m_currentAnimation->getSize(m_currentAnimName);
+		return FPoint{};
+	}
+
 	std::list<std::string> Sprite::getAnimationsName()
 	{
 		std::list<std::string> names;
@@ -78,6 +86,11 @@ namespace RenderEngine
 				names.push_back(anim.first);
 		}
 		return names;
+	}
+
+	std::string Sprite::getCurrentAnimName() const
+	{
+		return m_currentAnimName;
 	}
 
 	SpriteAnimation::SpriteAnimation(atlas atlas):
@@ -157,6 +170,14 @@ namespace RenderEngine
 			names.push_back(it.first);
 		}
 		return names;
+	}
+
+	FPoint SpriteAnimation::getSize(const std::string& name)
+	{
+		const auto sub_text = m_atlas->getAnimation(name).second.begin();
+		const auto width = sub_text->rightTopUV.x * m_atlas->getWidth() - sub_text->leftBottomUV.x * m_atlas->getWidth();
+		const auto height = sub_text->rightTopUV.y * m_atlas->getHeight() - sub_text->leftBottomUV.y * m_atlas->getHeight();
+		return { width, height };
 	}
 
 	SubTexture2D SpriteAnimation::getLastFrame() const

@@ -125,7 +125,6 @@ if(WIN32)
 			ARGS -E copy ${file_i} $<TARGET_FILE_DIR:${PROJ_NAME}>) 	
 	endforeach()
 endif()
-
 set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 add_custom_command(TARGET ${PROJ_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_directory

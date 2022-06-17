@@ -1,18 +1,23 @@
 #include "UpdateSystem.h"
 
 #include "Animator.h"
+#include "CameraManager.h"
 #include "Sprite.h"
 #include "Timer.h"
 
 std::chrono::time_point<std::chrono::steady_clock> UpdateSystem::lastTime = std::chrono::high_resolution_clock::now();
 float UpdateSystem::last_duration = 0.f;
+bool UpdateSystem::pause = false;
 
 float UpdateSystem::GlobalUpdate(bool restart)
 {
 	if(restart)
 		lastTime = std::chrono::high_resolution_clock::now();
 	const auto currentTime = std::chrono::high_resolution_clock::now();
-	last_duration = std::chrono::duration<float, std::milli>(currentTime - lastTime).count();
+	if (!pause && CAMERA.windowOnFocus())
+		last_duration = std::chrono::duration<float, std::milli>(currentTime - lastTime).count();
+	else
+		last_duration = 0;
 	lastTime = currentTime;
 	return last_duration;
 }
@@ -33,6 +38,16 @@ void UpdateSystem::Update(Animation::AnimationsList& anim_list)
 void UpdateSystem::Update(Timer& timer)
 {
 	timer.update(last_duration);
+}
+
+void UpdateSystem::Pause()
+{
+	pause = true;
+}
+
+void UpdateSystem::Resume()
+{
+	pause = false;
 }
 
 UpdateSystem& UpdateSystem::Instanse()

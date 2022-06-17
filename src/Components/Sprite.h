@@ -25,6 +25,7 @@ namespace RenderEngine
 		const std::pair<bool, std::list<SubTexture2D>>& getCurrentAnimation() const;
 		const std::string& getCurrentAnimationName() const;
 		const std::list<std::string> getAnimNames();
+		FPoint getSize(const std::string& name);
 		SubTexture2D getLastFrame() const;
 		void Update(float delta_time);
 	private:
@@ -39,14 +40,16 @@ namespace RenderEngine
 	{
 	public:
 		Sprite(std::list<SpriteAnimation> anim_list);
+		FPoint getCurrentAnimSize();
 		bool setAnimation(const std::string& name);
 		void addSpriteAnimation(const SpriteAnimation& animation);
 		SpriteAnimation getSpriteAnimation(const std::string& name);
 		std::shared_ptr<SpriteAnimation> getCurrentAnimation();
 		std::list<std::string> getAnimationsName();
-
+		std::string getCurrentAnimName() const;
 	private:
 		std::shared_ptr<SpriteAnimation> m_currentAnimation;
 		std::list<SpriteAnimation> m_animations;
+		std::string m_currentAnimName;
 	};
 }

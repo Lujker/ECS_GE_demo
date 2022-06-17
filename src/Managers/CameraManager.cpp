@@ -1,10 +1,13 @@
 #include "CameraManager.h"
 #include "ShaderProgram.h"
+#include "UpdateSystem.h"
 
+using namespace std;
 FRect CameraManager::projMatrix;
 FRect CameraManager::activeWindowSize;
-double CameraManager::near;
-double CameraManager::far;
+double CameraManager::m_near = 0.;
+double CameraManager::m_far = 0.;
+bool CameraManager::fockused = true;
 
 CameraManager& CameraManager::Instanse()
 {
@@ -24,11 +27,16 @@ void CameraManager::glfwWindowsResize(GLFWwindow* pWindow, int width, int height
 	glfwSetWindowSize(pWindow, getActiveWindowRect().mWidth, getActiveWindowRect().mHeight);
 }
 
-void CameraManager::Init(const FRect& rect, double near, double far)
+void CameraManager::glfwWindowFocusCallback(GLFWwindow* window, int focused)
+{
+	CameraManager::fockused = focused;
+}
+
+void CameraManager::Init(const FRect& rect, double d_near, double d_far)
 {
 	CameraManager::projMatrix = rect;
-	CameraManager::near = near;
-	CameraManager::far = far;
+	CameraManager::m_near = d_near;
+	CameraManager::m_far = d_far;
 }
 
 void CameraManager::ReleaseShader()
@@ -47,7 +55,7 @@ void CameraManager::Update()
 {
 	if (!m_shader)
 		return;
-	const glm::mat4 projectionMatrix = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, near, far);
+	const glm::mat4 projectionMatrix = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, m_near, m_far);
 	m_shader->use();
 	m_shader->setMatrix4("projectionMatrix", projectionMatrix);
 }
@@ -56,7 +64,7 @@ void CameraManager::UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>
 {
 	if(!shader)
 		return;
-	const glm::mat4 projectionMatrix = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, near, far);
+	const glm::mat4 projectionMatrix = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, m_near, m_far);
 	shader->use();
 	shader->setMatrix4("projectionMatrix", projectionMatrix);
 }
@@ -80,12 +88,17 @@ FRect CameraManager::getProjRect()
 
 const glm::mat4 CameraManager::getOrthMatrix()
 {
-	return glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, near, far);
+	return glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, m_near, m_far);
 }
 
 FRect CameraManager::getActiveWindowRect()
 {
 	return activeWindowSize;
+}
+
+bool CameraManager::windowOnFocus()
+{
+	return fockused;
 }
 
 void CameraManager::setActiveWindowSize(int width, int height)

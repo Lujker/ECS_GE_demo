@@ -1,6 +1,7 @@
 #include "Client.h"
-
 #include <iostream>
+#include "Windows.h"
+
 #include "CameraManager.h"
 #include "FileSystemManager.h"
 #include "FontManager.h"
@@ -10,6 +11,13 @@
 
 #include "RenderSystem.h"
 #include "UpdateSystem.h"
+void APIENTRY glDebugOutput(GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    GLsizei length,
+    const GLchar* message,
+    const void* userParam);
 
 Client::Client():
     m_window(nullptr)
@@ -24,15 +32,19 @@ bool Client::Init(const std::string& init_path)
 {
     if (!glfwInit())
     {
-        std::cout << "Failed to initialize GLFW" << std::endl;
+        glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+            GL_DEBUG_SEVERITY_MEDIUM, -1, "Failed to initialize GLFW");
         return false;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+#ifdef _DEBUG
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
+   
     /* Create a windowed mode window and its OpenGL context */
-    CAMERA.setActiveWindowSize(640, 420);
+    CAMERA.setActiveWindowSize(1310, 768);
     m_window = glfwCreateWindow(CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight, "ECS_GE_demo", nullptr, nullptr);
     if (!m_window)
     {
@@ -40,14 +52,28 @@ bool Client::Init(const std::string& init_path)
         return false;
     }
     /* Make the window's context current */
-    glfwMakeContextCurrent(m_window);
+    glfwMakeContextCurrent(m_window);    
+
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Failed to initialize OpenGL context" << std::endl;
+        glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+            GL_DEBUG_SEVERITY_MEDIUM, -1, "Failed to initialize OpenGL context");
         return false;
     }
     std::cout << "Render: " << RENDER.getRendererStr() << std::endl;
     std::cout << "OpenGL version: " << RENDER.getVersionStr() << std::endl;
+
+    GLint ContextFlags;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &ContextFlags);
+    if (ContextFlags & GL_CONTEXT_FLAG_DEBUG_BIT)
+    {
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(glDebugOutput, nullptr);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+    }
+
+
     FONT.init();
     FONT.setFont("arial");
     RENDER.setClearColor(1, 1, 1, 1);
@@ -55,15 +81,18 @@ bool Client::Init(const std::string& init_path)
     RENDER.setDepthTest(true);
     FILES.setExecutablePath(init_path);
     RES.setExecutablePath(init_path);
-    if (!RES.loadResJSON("res\\res.json"))
+    if (!RES.loadResJSON("res/res.json"))
     {
-        std::cerr << "Can't load main res file. Terminate!" << std::endl;
+        glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+            GL_DEBUG_SEVERITY_MEDIUM, -1, "Can't load main res file. Terminate!");
         glfwTerminate();
         return false;
     }
-    CAMERA.glfwWindowsResize(m_window, 1310, 768);
+    //CAMERA.glfwWindowsResize(m_window, 1310, 768);
     CAMERA.Init({ 0., 0., CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight });
-
+    glfwSetWindowFocusCallback(m_window, CAMERA.glfwWindowFocusCallback);
+    glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+        GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Init clint is ok");
 	return true;
 }
 
@@ -110,4 +139,50 @@ void Client::DeltaLoop()
         /* Swap front and back buffers */
         glfwSwapBuffers(m_window);
     }
+}
+//!TODO need Loger
+void APIENTRY glDebugOutput(GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    GLsizei length,
+    const GLchar* message,
+    const void* userParam)
+{
+    // ignore non-significant error/warning codes
+    if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+    static std::map<GLenum, const GLchar*> Sources =
+    {
+        {GL_DEBUG_SOURCE_API, "API"},
+        {GL_DEBUG_SOURCE_WINDOW_SYSTEM, "WINDOW_SYSTEM"},
+        {GL_DEBUG_SOURCE_SHADER_COMPILER, "SHADER_COMPILER"},
+        {GL_DEBUG_SOURCE_THIRD_PARTY, "THIRD_PARTY"},
+        {GL_DEBUG_SOURCE_APPLICATION, "APPLICATION"},
+        {GL_DEBUG_SOURCE_OTHER, "OTHER"}
+    };
+
+    static std::map<GLenum, const GLchar*> Severities =
+    {
+        {GL_DEBUG_SEVERITY_HIGH, "HIGH"},
+        {GL_DEBUG_SEVERITY_MEDIUM, "MEDIUM"},
+        {GL_DEBUG_SEVERITY_LOW, "LOW"},
+        {GL_DEBUG_SEVERITY_NOTIFICATION, "NOTIFICATION"}
+    };
+
+    static std::map<GLenum, const GLchar*> Types =
+    {
+        {GL_DEBUG_TYPE_ERROR, "ERROR"},
+        {GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "DEPRECATED_BEHAVIOR"},
+        {GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "UNDEFINED_BEHAVIOR"},
+        {GL_DEBUG_TYPE_PORTABILITY, "PORTABILITY"},
+        {GL_DEBUG_TYPE_PERFORMANCE, "PERFORMANCE"},
+        {GL_DEBUG_TYPE_MARKER, "MARKER"},
+        {GL_DEBUG_TYPE_PUSH_GROUP, "PUSH_GROUP"},
+        {GL_DEBUG_TYPE_POP_GROUP, "POP_GROUP"},
+        {GL_DEBUG_TYPE_OTHER, "OTHER"}
+    };
+    char ErrorString[512];
+	sprintf_s(ErrorString, "[OpenGL %s] - SEVERITY: %s, SOURCE: %s, ID: %d: %s\n", Types[type], Severities[severity], Sources[source], id, message);
+    //printf("[OpenGL %s] - SEVERITY: %s, SOURCE: %s, ID: %d: %s\n", Types[type], Severities[severity], Sources[source], id, message);
+    OutputDebugStringA(ErrorString);
 }
