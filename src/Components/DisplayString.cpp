@@ -80,24 +80,12 @@ void DisplayString::mirror(bool vertical, bool horizontal)
 
 void DisplayString::initChars()
 {
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
     m_characters.clear();
     for (const auto& c : m_initString)
     {
-        // Load character glyph
-        if (FT_Load_Char(FONT.getFace(), c, FT_LOAD_RENDER))
-        {
-            std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-            continue;
-        }
-        // Now store character for later use
-		const auto gluph = FONT.getFace()->glyph;
-        Character character = {
-            std::make_shared<RenderEngine::Texture2D>(gluph->bitmap.width, gluph->bitmap.rows, gluph->bitmap.buffer, 1),
-            glm::ivec2(gluph->bitmap_left, gluph->bitmap_top),
-			gluph->advance.x
-        };
-        m_characters.insert(std::pair(c, character));
+		auto curr_char = FONT.getCharacter(c);
+		if(curr_char.has_value())
+			m_characters.insert(std::pair(c, *curr_char));
     }
 }
 

@@ -4,10 +4,12 @@ set (PROJ_NAME ECS_GE_demo)
 project(${PROJ_NAME})
 
 set(SRC
+	src/Client/Client.cpp
 	src/Managers/FileSystemManager.cpp
 	src/Managers/ResourceManager.cpp
 	src/Managers/CameraManager.cpp
 	src/Managers/FontManager.cpp
+	src/Managers/InputManager.cpp
 	src/Premitives/Animator.cpp
 	src/Premitives/Shape.cpp  
 	src/Premitives/Timer.cpp
@@ -37,10 +39,12 @@ set(SRC
 
 set(INCLUDE
 	src/gl_include.h
+	src/Client/Client.h
 	src/Managers/FileSystemManager.h
 	src/Managers/ResourceManager.h
 	src/Managers/CameraManager.h
 	src/Managers/FontManager.h
+	src/Managers/InputManager.h
 	src/Managers/stb_image.h
 	src/Premitives/Animator.h
 	src/Premitives/Point.h
@@ -83,10 +87,13 @@ add_executable(${PROJ_NAME}
 
 include_directories(
 	src 
+	src/Client
 	src/Managers
+	src/Components
 	src/Premitives
 	src/Premitives/Render
-	src/Components
+	src/Systems
+	src/Widgets
 	external/sabmodules/rapidjson/include
 	external/sabmodules/freetype/include
 )

@@ -6,9 +6,11 @@
 
 #include "gl_Include.h"
 #include <glm/detail/type_vec3.hpp>
+#include <optional>
 #include FT_FREETYPE_H
 
 
+struct Character;
 namespace RenderEngine
 {
 	class Texture2D;
@@ -25,10 +27,13 @@ public:
 	bool init();
 	bool isInit() const;
 	const FT_Face& getFace();
+	std::optional<Character> getCharacter(FT_ULong code_char);
+	std::optional<Character> loadCharacter(FT_ULong code_char);
 private:
 	FT_Face m_face;
 	FT_Library m_libRef;
 	bool initial = false;
+	std::map<GLchar, Character> char_map;
 	FontManager() = default;
 	~FontManager();
 	FontManager(const FontManager&) = delete;

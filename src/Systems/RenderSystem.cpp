@@ -77,7 +77,13 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     
     for(const auto& ch : charList)
     {
-        auto model = getTransformMatrix(x + (ch.Bearing.x * scale), y , ch.texture->getWidth() * scale, ch.texture->getHeight() * scale,  position.getRotation());
+        const auto y_offset = (ch.Bearing.y - ch.texture->getHeight()) * scale;
+        const auto x_offset = ch.Bearing.x * scale;
+        const auto model = getTransformMatrix(
+            x + x_offset, y + y_offset,
+            ch.texture->getWidth() * scale,
+            ch.texture->getHeight() * scale,
+            position.getRotation());
         shader->setMatrix4("modelMatrix", model);
         ch.texture->bind();
 

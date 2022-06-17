@@ -27,7 +27,6 @@ public:
 	static void setActiveWindowSize(int width, int height);
 	static void glfwWindowsSizeCallback(GLFWwindow* pWindow, int width, int height);
 	static void glfwWindowsResize(GLFWwindow* pWindow, int width, int height);
-
 private:
 	std::shared_ptr<RenderEngine::ShaderProgram> m_shader;
 	static FRect projMatrix;

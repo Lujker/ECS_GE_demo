@@ -38,6 +38,8 @@ void CameraManager::ReleaseShader()
 
 void CameraManager::SetShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader)
 {
+	if (!shader || m_shader == shader)
+		return;
 	m_shader = shader;
 }
 
@@ -61,19 +63,19 @@ void CameraManager::UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>
 
 void CameraManager::Move(int x, int y)
 {
-	CameraManager::projMatrix.mX += x;
-	CameraManager::projMatrix.mY += y;
+	projMatrix.mX += x;
+	projMatrix.mY += y;
 }
 
 void CameraManager::Resize(int width, int height)
 {
-	CameraManager::projMatrix.mWidth = width;
-	CameraManager::projMatrix.mHeight += height;
+	projMatrix.mWidth = width;
+	projMatrix.mHeight += height;
 }
 
 FRect CameraManager::getProjRect()
 {
-	return CameraManager::projMatrix;
+	return projMatrix;
 }
 
 const glm::mat4 CameraManager::getOrthMatrix()
