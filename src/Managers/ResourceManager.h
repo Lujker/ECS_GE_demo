@@ -16,6 +16,8 @@
 /// 
 namespace RenderEngine
 {
+	enum class eAtlasType;
+	class FrameAtlas;
 	class ShaderProgram;
 	class Texture2D;
 	class Image2D;
@@ -40,8 +42,10 @@ public:
 	static std::shared_ptr<RenderEngine::Image2D> getSharedImage(const std::string& path);
 	static bool removeSharedImage(const std::string& path);
 
-	static std::shared_ptr<RenderEngine::SpriteAtlas> loadAtlas(const std::string& name, const std::string& path);
-	static std::shared_ptr<RenderEngine::SpriteAtlas> getAtlas(const std::string& path);
+	static std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> loadAtlas(const std::string& name, const std::string& path);
+	static std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> getAtlas(const std::string& path);
+	static std::shared_ptr<RenderEngine::FrameAtlas> getFrameAtlas(const std::string& path);
+	static std::shared_ptr<RenderEngine::SpriteAtlas> getSpriteAtlas(const std::string& path);
 	static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& path);
 	static std::shared_ptr<RenderEngine::Sprite> loadSprite(const std::string& name, const std::string& path);
 
@@ -51,12 +55,15 @@ public:
 
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::ShaderProgram>> shaderProgramMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> texturesMap;
-	typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteAtlas>> atlasMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::FrameAtlas>> frameAtlasMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteAtlas>> spriteAtlasMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Image2D>> imageMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> spriteMap;
 	typedef std::vector<std::vector<std::string>> levels;
 
 private:
+	static std::shared_ptr<RenderEngine::SpriteAtlas> loadSpriteAtlas(std::shared_ptr<RenderEngine::SpriteAtlas> atlas, const rapidjson::Document& document);
+	static std::shared_ptr<RenderEngine::FrameAtlas> loadFrameAtlas(std::shared_ptr<RenderEngine::FrameAtlas> atlas, const rapidjson::Document& document);
 	static void loadShader(const rapidjson::Document::MemberIterator&);
 	static void loadTexture2D(const rapidjson::Document::MemberIterator&);
 	static void loadAtlas(const rapidjson::Document::MemberIterator&);
@@ -76,7 +83,8 @@ private:
 
 	static shaderProgramMap m_shaderPrograms;
 	static texturesMap m_textures;
-	static atlasMap m_atlases;
+	static frameAtlasMap m_FrameAtlases;
+	static spriteAtlasMap m_SpriteAtlases;
 	static levels m_levels;
 	static imageMap m_images;
 	static spriteMap m_sprites;

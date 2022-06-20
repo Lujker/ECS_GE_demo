@@ -16,6 +16,8 @@ public:
 	~PositionComponent() = default;
 
 	PositionComponent& operator=(const PositionComponent& position_component) = default;
+	PositionComponent operator+(const FPoint & point) const;
+	PositionComponent operator+(const PositionComponent & position_component) const;
 	PositionComponent& operator+=(const FPoint& point);
 	PositionComponent& operator+=(const PositionComponent& position_component);
 

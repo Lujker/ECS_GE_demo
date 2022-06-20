@@ -33,4 +33,31 @@ namespace RenderEngine
 		const static SpriteAtlas::animations_frame def_anim;
 		return def_anim;
 	}
+
+	FrameAtlas::FrameAtlas(const GLuint width, GLuint heigh, 
+		const unsigned char* data, const unsigned int channels, 
+		const GLenum filter, const GLenum wrapMode, 
+		const unsigned int textureSlot) :
+		Texture2D(width, heigh, data, channels, filter, wrapMode, textureSlot)
+	{
+	}
+	void FrameAtlas::addFrame(std::string name, const SubTexture2D& sub_texture)
+	{
+		m_frames.emplace(std::move(name), sub_texture);
+	}
+	const std::map<std::string, SubTexture2D>& FrameAtlas::getFrames() const
+	{
+		return m_frames;
+	}
+	std::list<std::string> FrameAtlas::getNames() const
+	{
+		std::list<std::string> lst;
+		for (const auto& it : m_frames)
+			lst.push_back(it.first);
+		return lst;
+	}
+	FrameAtlas::frames_iterator FrameAtlas::getFrame(std::string name)
+	{
+		return m_frames.find(name);
+	}
 }

@@ -113,6 +113,9 @@ void Client::DeltaLoop()
     const CollisionComponent size_sprite{ 120, 80, false };
     const CollisionComponent col_sprite{ 40, 40, 40, 0, false };
     const PositionComponent string_pos{ 300,300, 2 };
+    const auto atlas = RES.getFrameAtlas("res/atlas/_AttackNoMovement");
+    const auto imaga_atlas = std::make_shared<RenderEngine::Image2D>(atlas);
+    imaga_atlas->SetSubTexture(atlas->getFrame("1")->second);
     const auto image = RES.getSharedImage("res/images/tank.png");
     const auto sprite = RES.getSprite("res/sprites/test/Kinght");
     sprite->mirror(false, false);
@@ -133,9 +136,10 @@ void Client::DeltaLoop()
         /* Render here */
         RENDER.clear();
         RENDER.Render(sprite, pos_sprite, size_sprite);
-        RENDER.Render(image, pos_img, col_img);
+        RENDER.Render(image, pos_img + FPoint{100, 100}, col_img);
         RENDER.Render(FRect{ pos_sprite.getPosition().mX + col_sprite.getXOffset(), pos_sprite.getPosition().mY + col_sprite.getYOffset(), col_sprite.getWidth(), col_sprite.getHeight() });
         RENDER.Render(string, string_pos, 1.f, { 0.3f,1.f,0.5f, 0.6f });
+        RENDER.Render(imaga_atlas, pos_img, size_sprite);
         /* Swap front and back buffers */
         glfwSwapBuffers(m_window);
     }

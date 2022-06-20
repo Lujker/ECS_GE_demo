@@ -1,5 +1,6 @@
 #pragma once
 #include <math.h>
+#include "Point.h"
 
 class Vector2
 {
@@ -9,8 +10,12 @@ public:
 public:
 	Vector2() : x(0), y(0) { }
 	Vector2(float theX, float theY) : x(theX), y(theY) { }
+	Vector2(const FPoint& point) : x(point.mX), y(point.mY) {}
 
 	float Dot(const Vector2& v) const { return x * v.x + y * v.y; }
+	float DistanceTo(const Vector2& vector) {
+		return static_cast<float>(sqrt(pow(vector.x - this->x, 2) + pow(vector.y - this->y, 2)));
+	}
 	Vector2 operator+(const Vector2& v) const { return Vector2(x + v.x, y + v.y); }
 	Vector2 operator-(const Vector2& v) const { return Vector2(x - v.x, y - v.y); }
 	Vector2 operator-() const { return Vector2(-x, -y); }

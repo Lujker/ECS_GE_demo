@@ -8,6 +8,13 @@
 class Form
 {
 public:
+	// Structure that stores the results of the PolygonCollision function
+	struct PolygonCollisionResult {
+		bool WillIntersect; // Are the polygons going to intersect forward in time?
+		bool Intersect; // Are the polygons currently intersecting
+		Vector2 MinimumTranslationVector; // The translation to apply to polygon A to push the polygons appart.
+	};
+
 	Form() = default;
 	virtual ~Form() = default;
 	Form(const Form& figure);
@@ -16,22 +23,22 @@ public:
 
 	Form& operator=(const Form& figure);
 	Form& operator=(std::initializer_list<FPoint> in_list);
+	Form operator+(const Vector2& point) const;
 
-	virtual bool intersect2D(const Form& figure) const;
-	virtual bool include2D(const Form& figure) const;
-	virtual bool include2D(const FPoint& point) const;
-
+	Vector2 getCenter();
+	void BuildEdges();
 	//!TODO
-	static bool intersect2D(const Form& left_figure, const Form& right_figure);
-	static bool include2D(const Form& left_figure, const Form& right_figure);
-	static bool include2D(const Form& figure, const FPoint& point);
+	static bool intersect2D(const Form& left_figure, const FPoint& left_position, const Form& right_figure, const FPoint& right_position);
+	static bool include2D(const Form& left_figure, const FPoint& left_position, const Form& right_figure, const FPoint& right_position);
+	static bool include2D(const Form& figure, const FPoint& position, const FPoint& point);
 
 	void setPoints(const std::vector<FPoint>& points);
 	void setPoints(std::vector<FPoint>&& points);
-	const std::vector<FPoint>& getPoints();
-	Form operator+(const Vector2& point) const;
+	const std::vector<FPoint>& getPoints() const;
+	std::vector<FPoint> getEdges() const;
 protected:
 	std::vector<FPoint> m_points;
+	std::vector<FPoint> m_edges;
 };
 
 class AABB : public Form
@@ -49,9 +56,8 @@ public:
 
 	AABB operator+(const Vector2& point) const;
 	AABB operator-(const Vector2& point) const;
-
-	bool intersect2D(const AABB& figure) const;
-	static bool intersect2D(const AABB& left_figure, const AABB& right_figure);
+	
+	static bool intersect2D(const AABB& left_figure, const FPoint& left_position, const AABB& right_figure, const FPoint& right_position);
 	void setRect(const FRect& rect);
 	const FRect getRect() const;
 };

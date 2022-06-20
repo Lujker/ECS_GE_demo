@@ -1,0 +1,39 @@
+{
+    "info":{
+        "type" :  0,
+        "width": 480,
+        "height":80,
+        "default_frame_width":120,
+        "default_frame_height":80
+    },
+    "frames":[
+        {
+            "name" :  "0",
+            "offset_x":0,
+            "offset_y":0,
+            "width":120,
+            "height":80
+        },
+        {
+            "name" :  "1",
+            "offset_x":120,
+            "offset_y":0,
+            "width":120,
+            "height":80
+        },
+        {
+            "name" :  "2",
+            "offset_x":240,
+            "offset_y":0,
+            "width":120,
+            "height":80
+        },
+        {
+            "name" :  "3",
+            "offset_x":360,
+            "offset_y":0,
+            "width":120,
+            "height":80
+        }
+    ]
+}

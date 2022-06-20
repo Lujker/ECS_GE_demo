@@ -10,6 +10,20 @@ PositionComponent::PositionComponent(int x, int y, float layer, float rotation):
 {
 }
 
+PositionComponent PositionComponent::operator+(const FPoint& point) const
+{
+	auto new_pos = *this;
+	new_pos += point;
+	return new_pos;
+}
+
+PositionComponent PositionComponent::operator+(const PositionComponent& position_component) const
+{
+	auto new_pos = *this;
+	new_pos += position_component;
+	return new_pos;
+}
+
 PositionComponent& PositionComponent::operator+=(const FPoint& point)
 {
 	m_position += point;

@@ -1,5 +1,39 @@
 #include "Shape.h"
 
+
+// Calculate the distance between [minA, maxA] and [minB, maxB]
+		// The distance will be negative if the intervals overlap
+float IntervalDistance(float minA, float maxA, float minB, float maxB) {
+	if (minA < minB) {
+		return minB - maxA;
+	}
+	else {
+		return minA - maxB;
+	}
+}
+
+// Calculate the projection of a polygon on an axis and returns it as a [min, max] interval
+void ProjectPolygon(const Vector2& axis, const Form& polygon, float& min, float& max) {
+	// To project a point on an axis use the dot product
+	if(polygon.getPoints().empty())
+		return;
+	float d = axis.Dot(polygon.getPoints()[0]);
+	min = d;
+	max = d;
+	for(const auto& it : polygon.getPoints())
+	{
+		d = Vector2{ it }.Dot(axis);
+		if (d < min) {
+			min = d;
+		}
+		else {
+			if (d > max) {
+				max = d;
+			}
+		}
+	}
+}
+
 	Form::Form(const Form& figure) :
 		m_points(figure.m_points)
 	{
@@ -27,38 +61,92 @@
 		return *this;
 	}
 
-	bool Form::intersect2D(const Form& figure) const
+	Vector2 Form::getCenter()
 	{
-		return intersect2D(*this, figure);
+		float totalX = 0;
+		float totalY = 0;
+		for(const auto& it : m_points)
+		{
+			totalX += it.mX;
+			totalY += it.mY;
+		}
+		return { totalX / static_cast<float>(m_points.size()), totalY / static_cast<float>(m_points.size()) };
 	}
 
-	bool Form::include2D(const Form& figure) const
+	void Form::BuildEdges()
 	{
-		return include2D(*this, figure);
+		Vector2 p1;
+		Vector2 p2;
+		m_edges.clear();
+		for (int i = 0; i < m_points.size(); i++) {
+			p1 = m_points[i];
+			if (i + 1 >= m_points.size()) {
+				p2 = m_points[0];
+			}
+			else {
+				p2 = m_points[i + 1];
+			}
+			const auto next_edge = p2 - p1;
+			m_edges.emplace_back(FPoint{ next_edge.x, next_edge.y });
+		}
 	}
-
-	bool Form::include2D(const FPoint& point) const
-	{
-		return include2D(*this, point);
-	}
+	
 	//!TODO Left figure intersect right figure?
-	bool Form::intersect2D(const Form& left_figure, const Form& right_figure)
+	bool Form::intersect2D(const Form& left_figure, const FPoint& left_position, const Form& right_figure, const FPoint& right_position)
 	{
+		auto polygonA = left_figure + left_position;
+		polygonA.BuildEdges();
+		auto polygonB = right_figure + right_position;
+		polygonB.BuildEdges();
+
+		const int edgeCountA = polygonA.getEdges().size();
+		const int edgeCountB = polygonB.getEdges().size();
+		Vector2 edge;
+
+		// Loop through all the edges of both polygons
+		for (int edgeIndex = 0; edgeIndex < edgeCountA + edgeCountB; edgeIndex++) 
+		{
+			if (edgeIndex < edgeCountA) {
+				edge = polygonA.getEdges()[edgeIndex];
+			}
+			else {
+				edge = polygonB.getEdges()[edgeIndex - edgeCountA];
+			}
+
+			// ===== 1. Find if the polygons are currently intersecting =====
+
+			// Find the axis perpendicular to the current edge
+			Vector2 axis(-edge.y, edge.x);
+			axis = axis.Normalize();
+
+			// Find the projection of the polygon on the current axis
+			float minA = 0; float minB = 0; float maxA = 0; float maxB = 0;
+			ProjectPolygon(axis, polygonA, minA, maxA);
+			ProjectPolygon(axis, polygonB, minB, maxB);
+
+			// Check if the polygon projections are currentlty intersecting
+			if (IntervalDistance(minA, maxA, minB, maxB) <= 0)
+			{
+				return true;
+			}
+		}
 		return false;
 	}
+
 	//!TODO Left figure has plase in right figure?
-	bool Form::include2D(const Form& left_figure, const Form& right_figure)
+	bool Form::include2D(const Form& left_figure, const FPoint& left_position, const Form& right_figure, const FPoint& right_position)
 	{
 		return false;
 	}
 
-	bool Form::include2D(const Form& figure, const FPoint& point)
+	bool Form::include2D(const Form& figure, const FPoint& position, const FPoint& point)
 	{
 		bool result = false;
 		size_t j = figure.m_points.size() - 1;
 		for (size_t i = 0; i < figure.m_points.size(); i++) {
-			if ((figure.m_points[i].mY < point.mY && figure.m_points[j].mY >= point.mY || figure.m_points[j].mY < point.mY && figure.m_points[i].mY >= point.mY) &&
-				(figure.m_points[i].mX + (point.mY - figure.m_points[i].mY) / (figure.m_points[j].mY - figure.m_points[i].mY) * (figure.m_points[j].mX - figure.m_points[i].mX) < point.mX))
+			const auto point_in_pos = figure.m_points[i] + position;
+			if ((point_in_pos.mY < point.mY && point_in_pos.mY >= point.mY) || ((point_in_pos.mY < point.mY && point_in_pos.mY >= point.mY) &&
+				point_in_pos.mX + (point.mY - point_in_pos.mY) / (point_in_pos.mY - point_in_pos.mY) * (point_in_pos.mX - point_in_pos.mX) < point.mX))
 				result = !result;
 			j = i;
 		}
@@ -75,9 +163,14 @@
 		m_points = points;
 	}
 
-	const std::vector<FPoint>& Form::getPoints()
+	const std::vector<FPoint>& Form::getPoints() const
 	{
 		return m_points;
+	}
+
+	std::vector<FPoint> Form::getEdges() const
+	{
+		return m_edges;
 	}
 
 	Form Form::operator+(const Vector2& point) const
@@ -87,6 +180,7 @@
 			it += {point.x, point.y};
 		return next;
 	}
+
 	AABB::AABB(const AABB& figure) :
 		Form(figure)
 	{
@@ -96,12 +190,10 @@
 								{rect.mX + rect.mWidth, rect.mY + rect.mHeight}, {rect.mX + rect.mWidth, rect.mY} })
 	{
 	}
-	AABB::AABB(std::initializer_list<FPoint> in_list)
-	{
-		m_points.reserve(4);
-		for (auto it : in_list)
-			m_points.push_back(std::move(it));
-	}
+	AABB::AABB(std::initializer_list<FPoint> in_list) :
+		Form(in_list)
+	{}
+
 	AABB& AABB::operator=(const AABB& figure)
 	{
 		m_points = figure.m_points;
@@ -131,13 +223,10 @@
 			it -= {point.x, point.y};
 		return next;
 	}
-	bool AABB::intersect2D(const AABB& figure) const
+
+	bool AABB::intersect2D(const AABB& left_figure, const FPoint& left_position, const AABB& right_figure, const FPoint& right_position)
 	{
-		return intersect2D(*this, figure);
-	}
-	bool AABB::intersect2D(const AABB& left_figure, const AABB& right_figure)
-	{
-		return left_figure.getRect().Intersects(right_figure.getRect());
+		return (left_figure + left_position).getRect().Intersects((right_figure + right_position).getRect());
 	}
 	void AABB::setRect(const FRect& rect)
 	{

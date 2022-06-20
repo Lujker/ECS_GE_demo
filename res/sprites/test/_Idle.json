@@ -1,5 +1,6 @@
 {
     "info":{
+        "type" :  1,
         "width": 1200,
         "height":80,
         "default_frame_width":120,

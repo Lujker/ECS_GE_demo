@@ -6,6 +6,13 @@
 
 namespace RenderEngine
 {
+	enum class eAtlasType : int
+	{
+		eNone = -1,
+		eFrames = 0,
+		eSprite
+	};
+
 	struct SubTexture2D
 	{
 		glm::vec2 leftBottomUV;
@@ -23,6 +30,25 @@ namespace RenderEngine
 		~SubTexture2D() = default;
 		bool operator==(SubTexture2D right) { return this->rightTopUV == right.rightTopUV && this->leftBottomUV == right.leftBottomUV; }
 		bool operator!=(SubTexture2D right) { return !((*this) == right); }
+	};
+
+	class FrameAtlas : public Texture2D
+	{
+	public:
+		using frames_iterator = std::map<std::string, SubTexture2D>::const_iterator;
+		FrameAtlas(const GLuint width, GLuint heigh,
+			const unsigned char* data,
+			const unsigned int channels,
+			const GLenum filter = GL_LINEAR,
+			const GLenum wrapMode = GL_CLAMP_TO_EDGE,
+			const unsigned int textureSlot = GL_TEXTURE0);
+		~FrameAtlas() override = default;
+		virtual void addFrame(std::string name, const SubTexture2D& sub_texture);
+		virtual const std::map<std::string, SubTexture2D>& getFrames() const;
+		virtual std::list<std::string> getNames() const;
+		virtual frames_iterator getFrame(std::string name);
+	private:
+		std::map<std::string, SubTexture2D> m_frames;
 	};
 
 	class SpriteAtlas : public Texture2D
