@@ -5,6 +5,7 @@
 #include "FontManager.h"
 #include "ResourceManager.h"
 #include "ShaderProgram.h"
+#include <algorithm>
 #include "Sprite.h"
 
 RenderSystem& RenderSystem::Instanse()
@@ -30,7 +31,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Sprite> sprite, const Po
     }
 
     CAMERA.UseShader(shader);
-    shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX, size.mY, position.getRotation()));
+    shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
     shader->setFloat("layer", position.getLayer());
     shader->setInt("tex", sprite->getTexture2D()->getSlot());
     sprite->getTexture2D()->bind();
@@ -54,7 +55,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
     }
 
     CAMERA.UseShader(shader);
-	shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX, size.mY, position.getRotation()));
+	shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
 	shader->setFloat("layer", position.getLayer());
     shader->setInt("tex", image->getTexture2D()->getSlot());
     image->getTexture2D()->bind();
@@ -95,6 +96,16 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
 void RenderSystem::Render(const FRect& rect)
 {
     drawRect(rect.mX, rect.mY, rect.mWidth, rect.mHeight);
+}
+
+void RenderSystem::Render(const CollisionComponent& collision, const PositionComponent& position)
+{
+    if(!collision.getForm() || collision.getForm()->getPoints().size() < 3)
+        return;
+    auto drawable_points = collision.getForm()->getPoints();
+    for(auto& it : drawable_points)
+        it += position.getPosition();
+    drawForm(drawable_points, collision.getScale());
 }
 
 void RenderSystem::setClearColor(float r, float g, float b, float alpha)
@@ -160,7 +171,9 @@ std::string RenderSystem::getVersionStr()
 
 void RenderSystem::drawRect(const int x, const int y, const int width, const int height)
 {
-    auto shader_program = RES.getShader("default");
+    const auto shader_program = RES.getShader("default");
+    if (!shader_program)
+        return;
     static const GLfloat vertexes[] =
     {
         0.f, 0.f, 0.f,
@@ -201,7 +214,70 @@ void RenderSystem::drawRect(const int x, const int y, const int width, const int
     model = glm::scale(model, glm::vec3(glm::vec2{ width,height }, 1.f));
 
     shader_program->setMatrix4("modelMatrix", model);
+
+    glLineWidth(1);
     glDrawArrays(GL_LINE_LOOP, 0, 4);
+}
+
+void RenderSystem::drawForm(const std::vector<FPoint>& points, float scale)
+{
+    const auto shader_program = RES.getShader("default");
+    if (!shader_program)
+        return;
+
+    std::vector<GLfloat> vertexes;
+    std::vector<GLfloat> colors;
+    const auto max_y = std::max_element(points.begin(), points.end(), [&](const auto& left, const auto& right)
+        {
+            return left.mY < right.mY;
+        })->mY;
+    const auto max_x = std::max_element(points.begin(), points.end(), [&](const auto& left, const auto& right)
+         {
+             return left.mX < right.mX;
+         })->mX;
+    const auto min_y = std::min_element(points.begin(), points.end(), [&](const auto& left, const auto& right)
+         {
+             return left.mY < right.mY;
+         })->mY;
+    const auto min_x = std::min_element(points.begin(), points.end(), [&](const auto& left, const auto& right)
+         {
+             return left.mX < right.mX;
+         })->mX;
+    for(const auto& it : points)
+    {
+        auto norm_x = 1 + ((it.mX - min_x) / (max_x - min_x)) * (-1.f);
+        auto norm_y = 1 + ((it.mY - min_y) / (max_y - min_y)) * (-1.f);
+        vertexes.push_back(norm_x); vertexes.push_back(norm_y); vertexes.push_back(0);
+        colors.push_back(1); colors.push_back(0); colors.push_back(0);
+    }
+
+    CAMERA.UseShader(shader_program);
+    static RenderEngine::VertexArray vertexArray;
+    static RenderEngine::VertexBuffer vertexBuffer;
+    static RenderEngine::VertexBuffer colorsBuffer;
+
+    vertexBuffer.bind();
+    vertexBuffer.init(vertexes.data(), vertexes.size() * sizeof(GLfloat));
+
+    colorsBuffer.bind();
+    colorsBuffer.init(colors.data(), colors.size() * sizeof(GLfloat));
+
+    vertexArray.bind();
+    glEnableVertexAttribArray(0);
+    vertexBuffer.bind();
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
+
+    glEnableVertexAttribArray(1);
+    colorsBuffer.bind();
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
+
+    glm::mat4 model(1.f);
+    model = glm::translate(model, glm::vec3(glm::vec2{ min_x, min_y }, 0.f));
+    model = glm::scale(model, glm::vec3(glm::vec2{ (max_x - min_x) * scale, (max_y - min_y) * scale }, 1.f));
+
+    shader_program->setMatrix4("modelMatrix", model);
+    glLineWidth(1);
+    glDrawArrays(GL_LINE_LOOP, 0, (int)vertexes.size()/3);
 }
 
 void RenderSystem::draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::IndexBuffer& indexBuffer, const RenderEngine::ShaderProgram& shader)

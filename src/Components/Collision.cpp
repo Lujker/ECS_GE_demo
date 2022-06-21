@@ -2,31 +2,31 @@
 
 #include <algorithm>
 
-CollisionComponent::CollisionComponent(bool collision):
-	m_form(nullptr), collision(collision)
+CollisionComponent::CollisionComponent(bool collision, float scale):
+	m_form(nullptr), collision(collision), m_scale(scale)
 {}
 
-CollisionComponent::CollisionComponent(const FRect& rect, bool collision):
-	collision(collision)
+CollisionComponent::CollisionComponent(const FRect& rect, bool collision, float scale):
+	collision(collision), m_scale(scale)
 {
 	m_form = std::make_shared<AABB>(rect);
 }
 
-CollisionComponent::CollisionComponent(float width, float hight, float x_offset, float y_offset, bool collision):
-	CollisionComponent(FRect{ x_offset,y_offset, width, hight}, collision)
+CollisionComponent::CollisionComponent(float width, float hight, float x_offset, float y_offset, bool collision, float scale):
+	CollisionComponent(FRect{ x_offset,y_offset, width, hight}, collision, scale)
 {}
 
-CollisionComponent::CollisionComponent(const std::vector<FPoint>& points, bool collision):
-	m_form(std::make_shared<Form>(points)), collision(collision)
+CollisionComponent::CollisionComponent(const std::vector<FPoint>& points, bool collision, float scale):
+	m_form(std::make_shared<Form>(points)), collision(collision), m_scale(scale)
 {}
 
 CollisionComponent::CollisionComponent(const CollisionComponent& collision):
-	m_form(collision.m_form.get()), collision(collision.collision)
+	m_form(collision.m_form.get()), collision(collision.collision), m_scale(collision.m_scale)
 {
 }
 
 CollisionComponent::CollisionComponent(CollisionComponent&& collision) noexcept:
-	m_form(std::move(collision.m_form)), collision(collision.collision)
+	m_form(std::move(collision.m_form)), collision(collision.collision), m_scale(collision.m_scale)
 {
 }
 
@@ -34,6 +34,7 @@ CollisionComponent& CollisionComponent::operator=(const CollisionComponent& coll
 {
 	m_form.reset(collision.m_form.get());
 	this->collision = collision.collision;
+	m_scale = collision.m_scale;
 	return (*this);
 }
 
@@ -41,6 +42,7 @@ CollisionComponent& CollisionComponent::operator=(CollisionComponent&& collision
 {
 	m_form = std::move(collision.m_form);
 	this->collision = collision.collision;
+	m_scale = collision.m_scale;
 	return (*this);
 }
 
@@ -118,6 +120,11 @@ FPoint CollisionComponent::getCenterPoint() const
 		return getSize() / 2;
 	}
 	return {};
+}
+
+float CollisionComponent::getScale() const
+{
+	return m_scale;
 }
 
 void CollisionComponent::setRect(const FRect& rect)

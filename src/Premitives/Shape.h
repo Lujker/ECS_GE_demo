@@ -8,12 +8,6 @@
 class Form
 {
 public:
-	// Structure that stores the results of the PolygonCollision function
-	struct PolygonCollisionResult {
-		bool WillIntersect; // Are the polygons going to intersect forward in time?
-		bool Intersect; // Are the polygons currently intersecting
-		Vector2 MinimumTranslationVector; // The translation to apply to polygon A to push the polygons appart.
-	};
 
 	Form() = default;
 	virtual ~Form() = default;

@@ -116,7 +116,7 @@ void ProjectPolygon(const Vector2& axis, const Form& polygon, float& min, float&
 			// ===== 1. Find if the polygons are currently intersecting =====
 
 			// Find the axis perpendicular to the current edge
-			Vector2 axis(-edge.y, edge.x);
+			Vector2 axis(edge.x,- edge.y);
 			axis = axis.Normalize();
 
 			// Find the projection of the polygon on the current axis
@@ -176,7 +176,7 @@ void ProjectPolygon(const Vector2& axis, const Form& polygon, float& min, float&
 	Form Form::operator+(const Vector2& point) const
 	{
 		Form next(*this);
-		for (auto it : next.m_points)
+		for (auto& it : next.m_points)
 			it += {point.x, point.y};
 		return next;
 	}

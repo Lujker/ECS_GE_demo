@@ -4,7 +4,7 @@ set (PROJ_NAME ECS_GE_demo)
 project(${PROJ_NAME})
 
 set(SRC
-	src/Client/Client.cpp
+	src/Engine/Engine.cpp
 	src/Managers/FileSystemManager.cpp
 	src/Managers/ResourceManager.cpp
 	src/Managers/CameraManager.cpp
@@ -32,6 +32,7 @@ set(SRC
 	src/Systems/UpdateSystem.cpp
 	src/Systems/CollisionSystem.cpp
 	src/Systems/MoveSystem.cpp
+	src/Systems/LogSystem.cpp
 	src/Widgets/Widget.cpp
 	src/Widgets/GlobalWidget.cpp
 	src/Widgets/WidgetContainer.cpp
@@ -39,7 +40,7 @@ set(SRC
 
 set(INCLUDE
 	src/gl_include.h
-	src/Client/Client.h
+	src/Engine/Engine.h
 	src/Managers/FileSystemManager.h
 	src/Managers/ResourceManager.h
 	src/Managers/CameraManager.h
@@ -74,6 +75,7 @@ set(INCLUDE
 	src/Systems/UpdateSystem.h
 	src/Systems/CollisionSystem.h
 	src/Systems/MoveSystem.h
+	src/Systems/LogSystem.h
 	src/Widgets/Widget.h
 	src/Widgets/GlobalWidget.h
 	src/Widgets/WidgetContainer.h
@@ -87,7 +89,7 @@ add_executable(${PROJ_NAME}
 
 include_directories(
 	src 
-	src/Client
+	src/Engine
 	src/Managers
 	src/Components
 	src/Premitives

@@ -98,6 +98,18 @@ public:
 	{
 		return (mX == theRect.mX) && (mY == theRect.mY) && (mWidth == theRect.mWidth) && (mHeight == theRect.mHeight);
 	}
+
+	TRect<_T>& operator+=(const TRect<_T>& theRect)
+	{
+		mX += theRect.mX; mY += theRect.mY; mWidth += theRect.mWidth; mHeight += theRect.mHeight;
+		return *this;
+	}
+
+	TRect<_T>& operator+=(const FPoint& point)
+	{
+		mX += point.mX; mY += point.mY;
+		return *this;
+	}
 };
 
 typedef TRect<int> Rect;
