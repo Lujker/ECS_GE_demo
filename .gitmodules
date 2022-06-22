@@ -1,12 +1,12 @@
-[submodule "external/sabmodules/rapidjson"]
-	path = external/sabmodules/rapidjson
+[submodule "engine/ECS_GE/external/sabmodules/rapidjson"]
+	path = engine/ECS_GE/external/sabmodules/rapidjson
 	url = https://github.com/Tencent/rapidjson.git
-[submodule "external/sabmodules/glfw"]
-	path = external/sabmodules/glfw
+[submodule "engine/ECS_GE/external/sabmodules/glfw"]
+	path = engine/ECS_GE/external/sabmodules/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "external/sabmodules/glm"]
-	path = external/sabmodules/glm
+[submodule "engine/ECS_GE/external/sabmodules/glm"]
+	path = engine/ECS_GE/external/sabmodules/glm
 	url = https://github.com/g-truc/glm.git
-[submodule "external/sabmodules/freetype"]
-	path = external/sabmodules/freetype
+[submodule "engine/ECS_GE/external/sabmodules/freetype"]
+	path = engine/ECS_GE/external/sabmodules/freetype
 	url = https://gitlab.freedesktop.org/freetype/freetype.git
