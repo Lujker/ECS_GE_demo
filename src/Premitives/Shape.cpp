@@ -94,6 +94,7 @@ void ProjectPolygon(const Vector2& axis, const Form& polygon, float& min, float&
 	//!TODO Left figure intersect right figure?
 	bool Form::intersect2D(const Form& left_figure, const FPoint& left_position, const Form& right_figure, const FPoint& right_position)
 	{
+		bool result = true;
 		auto polygonA = left_figure + left_position;
 		polygonA.BuildEdges();
 		auto polygonB = right_figure + right_position;
@@ -113,7 +114,7 @@ void ProjectPolygon(const Vector2& axis, const Form& polygon, float& min, float&
 				edge = polygonB.getEdges()[edgeIndex - edgeCountA];
 			}
 
-			// ===== 1. Find if the polygons are currently intersecting =====
+			//  Find if the polygons are currently intersecting
 
 			// Find the axis perpendicular to the current edge
 			Vector2 axis(edge.x,- edge.y);
@@ -125,12 +126,13 @@ void ProjectPolygon(const Vector2& axis, const Form& polygon, float& min, float&
 			ProjectPolygon(axis, polygonB, minB, maxB);
 
 			// Check if the polygon projections are currentlty intersecting
-			if (IntervalDistance(minA, maxA, minB, maxB) <= 0)
+			if (IntervalDistance(minA, maxA, minB, maxB) > 0)
 			{
-				return true;
+				result = false;
+				break;
 			}
 		}
-		return false;
+		return result;
 	}
 
 	//!TODO Left figure has plase in right figure?

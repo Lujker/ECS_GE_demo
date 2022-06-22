@@ -13,14 +13,20 @@ bool CollisionSystem::intersect2D(const CollisionComponent& collision_left, cons
 	if (collision_left.isRect() && collision_right.isRect())
 		return intersect2D(collision_left.getRect(), position_left, collision_right.getRect(), position_right);
 	auto l_form = collision_left.getForm()->getPoints();
-	for (auto& point : l_form)
-	{
-		point.mX *= collision_left.getScale(); point.mY *= collision_left.getScale();
-	}
 	auto r_form = collision_right.getForm()->getPoints();
-	for (auto& point : r_form)
+	if (collision_left.getScale() != 1.f && collision_left.getScale() != 0.f)
 	{
-		point.mX *= collision_right.getScale(); point.mY *= collision_right.getScale();
+		for (auto& point : l_form)
+		{
+			point.mX *= collision_left.getScale(); point.mY *= collision_left.getScale();
+		}
+	}
+	if (collision_right.getScale() != 1.f && collision_right.getScale() != 0.f)
+	{
+		for (auto& point : r_form)
+		{
+			point.mX *= collision_right.getScale(); point.mY *= collision_right.getScale();
+		}
 	}
 	return Form::intersect2D(l_form, position_left.getPosition(), r_form, position_right.getPosition());
 }
@@ -28,8 +34,16 @@ bool CollisionSystem::intersect2D(const CollisionComponent& collision_left, cons
 bool CollisionSystem::intersect2D(const FRect& rect_left, float left_scale, const PositionComponent& position_left, const FRect& rect_right, float right_scale, const PositionComponent& position_right)
 {
 	auto l_r = rect_left; auto r_r = rect_right;
-	l_r += position_left.getPosition(); l_r.mWidth *= left_scale;
-	r_r += position_right.getPosition(); r_r.mWidth *= right_scale;
+	l_r += position_left.getPosition();
+	r_r += position_right.getPosition();
+	if (left_scale != 1.f && left_scale != 0.f)
+	{
+		l_r.mWidth *= left_scale; l_r.mHeight *= left_scale;
+	}
+	if (right_scale != 1.f && right_scale != 0.f)
+	{
+		r_r.mWidth *= right_scale; r_r.mHeight *= right_scale;
+	}
 	return l_r.Intersects(r_r);
 }
 

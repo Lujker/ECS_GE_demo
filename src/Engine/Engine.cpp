@@ -114,7 +114,7 @@ void Engine::DeltaLoop()
     const CollisionComponent size_sprite{ 120, 80, false };
     const CollisionComponent col_sprite{ 40, 40, 30, 0, false };
 
-    const CollisionComponent col_form{ std::vector<FPoint>{ {30, 0}, {35, 10}, {35, 25}, {25, 30}, {15, 25}}, false, 1 };
+    const CollisionComponent col_form{ std::vector<FPoint>{ {30, 0},{15, 25}, {25, 30},{35, 25} ,{35, 10} }, false, 2 };
     const PositionComponent string_pos{ 300,300, 2 };
     const auto atlas = RES.getFrameAtlas("res/atlas/_AttackNoMovement");
     const auto imaga_atlas = std::make_shared<RenderEngine::Image2D>(atlas);
@@ -129,7 +129,7 @@ void Engine::DeltaLoop()
         std::cout << i << std::endl;
     /* Loop until the user closes the window */
 
-    if(COLLISION.intersect2D(col_form, { 300,300 }, col_form, { 400,300 }))
+    if(COLLISION.intersect2D(col_form, { 300,300 }, col_form, { 320,300 }))
         std::cout<<"Intersect2D"<<std::endl;
     else
         std::cout<<"Not intersect2D" << std::endl;
@@ -146,7 +146,7 @@ void Engine::DeltaLoop()
         RENDER.Render(sprite, pos_sprite, size_sprite);
         RENDER.Render(image, pos_img + FPoint{ 100, 100 }, col_img);
         RENDER.Render(col_form, { 300,300 });
-        RENDER.Render(col_form, { 400,300 });
+        RENDER.Render(col_form, { 320,300 });
         RENDER.Render(FRect{ pos_sprite.getPosition().mX + col_sprite.getXOffset(), pos_sprite.getPosition().mY + col_sprite.getYOffset(), col_sprite.getWidth(), col_sprite.getHeight() });
         RENDER.Render(string, string_pos, 1.f, { 0.3f,1.f,0.5f, 0.6f });
         RENDER.Render(imaga_atlas, pos_img, size_sprite);
