@@ -74,7 +74,6 @@ bool Engine::Init(const std::string& init_path)
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 
-
     FONT.init();
     FONT.setFont("arial");
     RENDER.setClearColor(1, 1, 1, 1);
@@ -130,7 +129,7 @@ void Engine::DeltaLoop()
     /* Loop until the user closes the window */
 
     if(COLLISION.intersect2D(col_form, { 300,300 }, col_form, { 320,300 }))
-        std::cout<<"Intersect2D"<<std::endl;
+        std::cout<<"Intersect2D!"<<std::endl;
     else
         std::cout<<"Not intersect2D" << std::endl;
 
