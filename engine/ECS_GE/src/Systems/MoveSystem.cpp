@@ -3,14 +3,27 @@
 #include "Move.h"
 #include "Position.h"
 
+Vector2  MoveSystem::m_gravity = { 0.f, -9.80665f };
+
 MoveSystem& MoveSystem::Instance()
 {
 	static MoveSystem move_system;
 	return move_system;
 }
 
-void MoveSystem::Move(PositionComponent& position, const MoveComponent& move, float delta_time)
+PositionComponent MoveSystem::Move(const PositionComponent& position, const MoveComponent& move, float delta_time)
 {
-	const auto new_posVec = move.getDirection() * move.getVelocity() * delta_time;
-	position = position.getPosition() * FPoint{ new_posVec.x, new_posVec.y };
+	PositionComponent next_pos = position;
+	const MoveComponent next_move = CalculateGravity(move, delta_time);
+	const Vector2 add_posVec = next_move.getVelocity() * delta_time;
+	next_pos = position.getPosition() + FPoint{ add_posVec.x, add_posVec.y };
+	return next_pos;
+}
+
+MoveComponent MoveSystem::CalculateGravity(const MoveComponent& move, float delta_time)
+{
+	MoveComponent nextMove = move;
+	nextMove.SetVelocity(nextMove.getVelocity() + (nextMove.getAcceleration() * delta_time));
+	nextMove.SetAcceleration(nextMove.getAcceleration() + m_gravity);
+	return nextMove;
 }

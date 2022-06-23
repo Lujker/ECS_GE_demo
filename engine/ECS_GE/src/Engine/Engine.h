@@ -9,7 +9,8 @@ public:
 	~Engine();
 	bool Init(const std::string& init_path);
 	static void Destroy() noexcept;
-	void DeltaLoop();
+	int DispatchEvents();
+	void SwapBuffers();
 private:
 	GLFWwindow* m_window;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ISystem.h"
+#include "Vector.h"
 
 #define MOVE MoveSystem::Instance()
 class MoveComponent;
@@ -9,8 +10,10 @@ class PositionComponent;
 class MoveSystem : public ISystem
 {
 	static MoveSystem& Instance();
-	static void Move(PositionComponent& position, const MoveComponent& move, float delta_time);
+	static PositionComponent Move(const PositionComponent& position, const MoveComponent& move, float delta_time);
+	static MoveComponent CalculateGravity(const MoveComponent& move, float delta_time);
 private:
+	static Vector2 m_gravity;
 	MoveSystem() = default;
 	~MoveSystem() = default;
 	MoveSystem(const MoveSystem&) = delete;
