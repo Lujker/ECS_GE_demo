@@ -1,6 +1,5 @@
 #include "Engine.h"
 #include <iostream>
-#include "Windows.h"
 
 #include "CameraManager.h"
 #include "CollisionSystem.h"
@@ -12,13 +11,7 @@
 
 #include "RenderSystem.h"
 #include "UpdateSystem.h"
-void APIENTRY glDebugOutput(GLenum source,
-    GLenum type,
-    GLuint id,
-    GLenum severity,
-    GLsizei length,
-    const GLchar* message,
-    const void* userParam);
+#include "LogSystem.h"
 
 Engine::Engine() :
     m_window(nullptr)
@@ -46,6 +39,10 @@ bool Engine::Init(const std::string& init_path)
 
     /* Create a windowed mode window and its OpenGL context */
     CAMERA.setActiveWindowSize(1310, 768);
+    LOGER.init(init_path);
+	FILES.setExecutablePath(init_path);
+    RES.setExecutablePath(init_path);
+    FONT.init(init_path);
     m_window = glfwCreateWindow(CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight, "ECS_GE_demo", nullptr, nullptr);
     if (!m_window)
     {
@@ -61,8 +58,8 @@ bool Engine::Init(const std::string& init_path)
             GL_DEBUG_SEVERITY_MEDIUM, -1, "Failed to initialize OpenGL context");
         return false;
     }
-    std::cout << "Render: " << RENDER.getRendererStr() << std::endl;
-    std::cout << "OpenGL version: " << RENDER.getVersionStr() << std::endl;
+    LOG("Render: " + RENDER.getRendererStr());
+    LOG("OpenGL version: " + RENDER.getVersionStr());
 
     GLint ContextFlags;
     glGetIntegerv(GL_CONTEXT_FLAGS, &ContextFlags);
@@ -70,17 +67,14 @@ bool Engine::Init(const std::string& init_path)
     {
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback(glDebugOutput, nullptr);
+        glDebugMessageCallback(LOGER.glDebugOutput, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 
-    FONT.init();
     FONT.setFont("arial");
     RENDER.setClearColor(1, 1, 1, 1);
     RENDER.setBlendMode(true);
     RENDER.setDepthTest(true);
-    FILES.setExecutablePath(init_path);
-    RES.setExecutablePath(init_path);
     if (!RES.loadResJSON("res/res.json"))
     {
         glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
@@ -92,7 +86,7 @@ bool Engine::Init(const std::string& init_path)
     CAMERA.Init({ 0., 0., CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight });
     glfwSetWindowFocusCallback(m_window, CAMERA.glfwWindowFocusCallback);
     glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
-        GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Init clint is ok");
+        GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Init engine is ok");
     return true;
 }
 
@@ -128,10 +122,10 @@ void Engine::DeltaLoop()
         std::cout << i << std::endl;
     /* Loop until the user closes the window */
 
-    if(COLLISION.intersect2D(col_form, { 300,300 }, col_form, { 320,300 }))
-        std::cout<<"Intersect2D!"<<std::endl;
+    if (COLLISION.intersect2D(col_form, { 300,300 }, col_form, { 320,300 }))
+        LOG("Intersect2D!");
     else
-        std::cout<<"Not intersect2D" << std::endl;
+        LOG("Not intersect2D");
 
     UPDATE.GlobalUpdate(true);
     while (!glfwWindowShouldClose(m_window))
@@ -152,50 +146,4 @@ void Engine::DeltaLoop()
         /* Swap front and back buffers */
         glfwSwapBuffers(m_window);
     }
-}
-//!TODO need Loger
-void APIENTRY glDebugOutput(GLenum source,
-    GLenum type,
-    GLuint id,
-    GLenum severity,
-    GLsizei length,
-    const GLchar* message,
-    const void* userParam)
-{
-    // ignore non-significant error/warning codes
-    if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
-    static std::map<GLenum, const GLchar*> Sources =
-    {
-        {GL_DEBUG_SOURCE_API, "API"},
-        {GL_DEBUG_SOURCE_WINDOW_SYSTEM, "WINDOW_SYSTEM"},
-        {GL_DEBUG_SOURCE_SHADER_COMPILER, "SHADER_COMPILER"},
-        {GL_DEBUG_SOURCE_THIRD_PARTY, "THIRD_PARTY"},
-        {GL_DEBUG_SOURCE_APPLICATION, "APPLICATION"},
-        {GL_DEBUG_SOURCE_OTHER, "OTHER"}
-    };
-
-    static std::map<GLenum, const GLchar*> Severities =
-    {
-        {GL_DEBUG_SEVERITY_HIGH, "HIGH"},
-        {GL_DEBUG_SEVERITY_MEDIUM, "MEDIUM"},
-        {GL_DEBUG_SEVERITY_LOW, "LOW"},
-        {GL_DEBUG_SEVERITY_NOTIFICATION, "NOTIFICATION"}
-    };
-
-    static std::map<GLenum, const GLchar*> Types =
-    {
-        {GL_DEBUG_TYPE_ERROR, "ERROR"},
-        {GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "DEPRECATED_BEHAVIOR"},
-        {GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "UNDEFINED_BEHAVIOR"},
-        {GL_DEBUG_TYPE_PORTABILITY, "PORTABILITY"},
-        {GL_DEBUG_TYPE_PERFORMANCE, "PERFORMANCE"},
-        {GL_DEBUG_TYPE_MARKER, "MARKER"},
-        {GL_DEBUG_TYPE_PUSH_GROUP, "PUSH_GROUP"},
-        {GL_DEBUG_TYPE_POP_GROUP, "POP_GROUP"},
-        {GL_DEBUG_TYPE_OTHER, "OTHER"}
-    };
-    char ErrorString[512];
-    sprintf_s(ErrorString, "[OpenGL %s] - SEVERITY: %s, SOURCE: %s, ID: %d: %s\n", Types[type], Severities[severity], Sources[source], id, message);
-    //printf("[OpenGL %s] - SEVERITY: %s, SOURCE: %s, ID: %d: %s\n", Types[type], Severities[severity], Sources[source], id, message);
-    OutputDebugStringA(ErrorString);
 }

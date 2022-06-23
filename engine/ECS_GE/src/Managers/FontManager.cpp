@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "DisplayString.h"
+#include "LogSystem.h"
 #include "texture2D.h"
 
 FontManager& FontManager::Instanse()
@@ -20,10 +21,10 @@ void FontManager::freeFontRes()
 	initial = false;
 }
 
-bool FontManager::setFont(const std::string& path)
+bool FontManager::setFont(const std::string& font_name)
 {
-	if (FT_New_Face(m_libRef, (std::string{ "bin/Debug/res/fonts/" } + path + std::string{ ".ttf" }).c_str(), 0, &m_face))
-		std::cerr << "ERROR::FREETYPE: Failed to load font" << std::endl;
+	if (FT_New_Face(m_libRef, (to_res_path + font_name + std::string{ ".ttf" }).c_str(), 0, &m_face))
+		LOG("ERROR::FREETYPE: Failed to load font", LOG_TYPE::WAR);
 	else
 	{
 		return true;
@@ -31,12 +32,16 @@ bool FontManager::setFont(const std::string& path)
 	return false;
 }
 
-bool FontManager::init()
+bool FontManager::init(std::string pathToExe)
 {
 	if (FT_Init_FreeType(&m_libRef))
-		std::cerr << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-	else 
+		LOG("ERROR::FREETYPE: Could not init FreeType Library", LOG_TYPE::WAR);
+	else
+	{
+		const size_t found = pathToExe.find_last_of("/\\");
+		to_res_path = pathToExe.substr(0, found) + "/\\res/\\fonts/\\";
 		initial = true;
+	}
 	return initial;
 }
 
@@ -65,7 +70,7 @@ std::optional<Character> FontManager::loadCharacter(FT_ULong code_char)
 		// Load character glyph
 	if (FT_Load_Char(FONT.getFace(), code_char, FT_LOAD_RENDER))
 	{
-		std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
+		LOG("ERROR::FREETYTPE: Failed to load Glyph", LOG_TYPE::WAR);
 		return std::nullopt;
 	}
 	// Now store character for later use

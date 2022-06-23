@@ -9,6 +9,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
 #include <algorithm>
+
+#include "LogSystem.h"
 #include "stb_image.h"
 
 ResourceManager::shaderProgramMap ResourceManager::m_shaderPrograms;
@@ -69,7 +71,7 @@ std::shared_ptr<RenderEngine::SpriteAtlas> ResourceManager::loadSpriteAtlas(std:
 						width = default_frame_width;
 					else
 					{
-						std::cerr << "Default_frame_width is null and width is null!" << std::endl;
+						LOG("Default_frame_width is null and width is null!", LOG_TYPE::WAR);
 						return nullptr;
 					}
 					if (current_frame.HasMember("height") && !current_frame["height"].IsNull())
@@ -78,7 +80,7 @@ std::shared_ptr<RenderEngine::SpriteAtlas> ResourceManager::loadSpriteAtlas(std:
 						height = default_frame_height;
 					else
 					{
-						std::cerr << "Default_frame_height is null and height is null!" << std::endl;
+						LOG("Default_frame_height is null and height is null!", LOG_TYPE::WAR);
 						return nullptr;
 					}
 					if (current_frame.HasMember("duration") && !current_frame["duration"].IsNull())
@@ -87,7 +89,7 @@ std::shared_ptr<RenderEngine::SpriteAtlas> ResourceManager::loadSpriteAtlas(std:
 						duration = default_duration;
 					else
 					{
-						std::cerr << "Default_frame_width is null and width is null!" << std::endl;
+						LOG("Default_frame_width is null and width is null!", LOG_TYPE::WAR);
 						return nullptr;
 					}
 
@@ -157,7 +159,7 @@ std::shared_ptr<RenderEngine::FrameAtlas>  ResourceManager::loadFrameAtlas(std::
 				width = default_frame_width;
 			else
 			{
-				std::cerr << "Default_frame_width is null and width is null!" << std::endl;
+				LOG("Default_frame_width is null and width is null!", LOG_TYPE::WAR);
 				return nullptr;
 			}
 			if (current_frame.HasMember("height") && !current_frame["height"].IsNull())
@@ -166,7 +168,7 @@ std::shared_ptr<RenderEngine::FrameAtlas>  ResourceManager::loadFrameAtlas(std::
 				height = default_frame_height;
 			else
 			{
-				std::cerr << "Default_frame_height is null and height is null!" << std::endl;
+				LOG("Default_frame_height is null and height is null!", LOG_TYPE::WAR);
 				return nullptr;
 			}
 
@@ -207,7 +209,7 @@ void ResourceManager::loadShader(const rapidjson::Document::MemberIterator& shad
 			file_path_fragment = current_shader["fragment_path"].GetString();
 		if(name.empty() || file_path_fragment.empty() || file_path_vertex.empty())
 		{
-			std::cerr << "Incorrect shader obj in parsed json" << std::endl;
+			LOG("Incorrect shader obj in parsed json", LOG_TYPE::WAR);
 			continue;
 		}
 		else
@@ -232,7 +234,7 @@ void ResourceManager::loadTexture2D(const rapidjson::Document::MemberIterator& t
 		else if (!path.empty())
 			RES.loadTexture(path, path);
 		else
-			std::cerr << "Incorrect texture2D obj in parsed json" << std::endl;
+			LOG("Incorrect texture2D obj in parsed json", LOG_TYPE::WAR);
 	}
 }
 //! need rewrite
@@ -254,7 +256,7 @@ void ResourceManager::loadAtlas(const rapidjson::Document::MemberIterator& atlas
 		else if (!path.empty())
 			RES.loadAtlas(path, path);
 		else
-			std::cerr << "Incorrect atlas obj in parsed json" << std::endl;
+			LOG( "Incorrect atlas obj in parsed json", LOG_TYPE::WAR);
 	}
 }
 
@@ -273,7 +275,7 @@ void ResourceManager::loadImage(const rapidjson::Document::MemberIterator& image
 		else if (!path.empty())
 			RES.getSharedImage(path);
 		else
-			std::cerr << "Incorrect image obj in parsed json" << std::endl;
+			LOG("Incorrect image obj in parsed json", LOG_TYPE::WAR);
 	}
 }
 
@@ -292,7 +294,7 @@ void ResourceManager::loadSprite(const rapidjson::Document::MemberIterator& spri
 		else if (!path.empty())
 			RES.loadSprite(path, path);
 		else
-			std::cerr << "Incorrect sprite obj in parsed json" << std::endl;
+			LOG( "Incorrect sprite obj in parsed json", LOG_TYPE::WAR);
 	}
 }
 
@@ -360,13 +362,13 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 	std::string vertexShader = getFileString(vertexPath);
 	if (vertexShader.empty())
 	{
-		std::cerr << "No vertex shader!" << std::endl;
+		LOG("No vertex shader!", LOG_TYPE::WAR);
 		return nullptr;
 	}
 	std::string fragmentShader = getFileString(fragmentPath);
 	if (fragmentShader.empty())
 	{
-		std::cerr << "No vertex shader!" << std::endl;
+		LOG("No vertex shader!", LOG_TYPE::WAR);
 		return nullptr;
 	}
 
@@ -374,9 +376,9 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 	if (newShader->isCompiled())
 		return newShader;
 
-	std::cerr << "Can't load shader program: \n"
-		<< " Vertex: " << vertexPath << std::endl
-		<< " Fragment: " << fragmentPath << std::endl;
+	LOG(std::string("Can't load shader program: ") +
+		 " Vertex: " + vertexPath +
+		 " Fragment: " + fragmentPath , LOG_TYPE::WAR);
 	return nullptr;
 	
 }
@@ -388,7 +390,7 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::getShader(const st
 	{
 		return it->second;
 	}
-	std::cerr << "Can't find the shader program: " << shaderName << std::endl;
+	LOG("Can't find the shader program: " + shaderName, LOG_TYPE::WAR);
 	return nullptr;
 }
 
@@ -398,7 +400,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 	const auto& pixels = FILES.getPixelFile(texturePath);
 	if (!pixels->isLoaded() && !pixels->getData())
 	{
-		std::cerr << "Can't load image: " << texturePath << std::endl;
+		LOG("Can't load image: " + texturePath, LOG_TYPE::WAR);
 		return nullptr;
 	}
 	const auto newTexture = m_textures.emplace(textureName, std::make_shared<RenderEngine::Texture2D>
@@ -413,7 +415,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 	auto it = m_textures.find(textureName);
 	if (it != m_textures.end())
 		return it->second;
-	std::cerr << "Can't find the texture: " << textureName << std::endl;
+	LOG("Can't find the texture: " + textureName, LOG_TYPE::WAR);
 	return nullptr;
 }
 
@@ -423,7 +425,7 @@ std::shared_ptr<RenderEngine::Image2D> ResourceManager::loadImage(const std::str
 	const auto image = m_images.emplace(imageName, std::make_shared<RenderEngine::Image2D>(texture));
 	if(image.second)
 		return image.first->second;
-	std::cerr << "Can't load the image: " << imageName << std::endl;
+	LOG("Can't load the image: " + imageName, LOG_TYPE::WAR);
 	return nullptr;
 }
 
@@ -432,7 +434,7 @@ std::shared_ptr<RenderEngine::Image2D> ResourceManager::getImage(const std::stri
 	auto it = m_images.find(imageName);
 	if (it != m_images.end())
 		return it->second;
-	std::cerr << "Can't find the image: " << imageName << std::endl;
+	LOG("Can't find the image: " + imageName, LOG_TYPE::WAR);
 	return nullptr;
 }
 
@@ -452,7 +454,7 @@ bool ResourceManager::removeSharedImage(const std::string& path)
 		m_images.erase(it);
 		return true;
 	}
-	std::cerr << "Can't find the image: " << path << std::endl;
+	LOG("Can't find the image: " + path, LOG_TYPE::WAR);
 	return false;
 }
 
@@ -464,7 +466,7 @@ std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> Re
 	const auto frame_it = m_FrameAtlases.find(textureName);
 	if (frame_it != m_FrameAtlases.end())
 		return { RenderEngine::eAtlasType::eFrames, frame_it->second };
-	std::cerr << "Can't find the atlas: " << textureName << std::endl;
+	LOG("Can't find the atlas: " + textureName, LOG_TYPE::WAR);
 	return { RenderEngine::eAtlasType::eNone, nullptr };
 }
 
@@ -483,7 +485,7 @@ std::shared_ptr<RenderEngine::FrameAtlas> ResourceManager::getFrameAtlas(const s
 				return frame_it->second;
 		}
 	}
-	std::cerr << "Can't find the atlas: " << path << std::endl;
+	LOG("Can't find the atlas: " + path, LOG_TYPE::WAR);
 	return nullptr;
 }
 
@@ -502,7 +504,7 @@ std::shared_ptr<RenderEngine::SpriteAtlas> ResourceManager::getSpriteAtlas(const
 				return sprite_it->second;
 		}
 	}
-	std::cerr << "Can't find the atlas: " << path << std::endl;
+	LOG("Can't find the atlas: " + path, LOG_TYPE::WAR);
 	return nullptr;
 }
 
@@ -521,15 +523,15 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::loadSprite(const std::str
 	const auto& json_doc = getFileString(path + ".sprite");
 	if (json_doc.empty())
 	{
-		std::cerr << "Failed to parse json: " << path << std::endl;
+		LOG("Failed to parse json: " + path, LOG_TYPE::WAR);
 		return nullptr;
 	}
 	rapidjson::Document document;
 	rapidjson::ParseResult parse_result = document.Parse(json_doc.c_str());
 	if (!parse_result)
 	{
-		std::cerr << "Json parse error: " << rapidjson::GetParseError_En(parse_result.Code()) << " ("
-			<< parse_result.Offset() << ") in file: " << path << std::endl;
+		LOG(std::string("Json parse error: ") + std::string(rapidjson::GetParseError_En(parse_result.Code())) + std::string(" (")
+			+ std::string(parse_result.Offset() + ") in file: ") + path, LOG_TYPE::WAR);
 		return nullptr;
 	}
 	const auto& atlas_iterator = document.FindMember("atlases");
@@ -567,22 +569,22 @@ std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> Re
 	const auto& pixels = FILES.getPixelFile(path + ".png");
 	if (!pixels->isLoaded() && !pixels->getData())
 	{
-		std::cerr << "Can't load atlas: " << path << std::endl;
+		LOG("Can't load atlas: " + path, LOG_TYPE::WAR);
 		return{ RenderEngine::eAtlasType::eNone, nullptr };
 	}	///Загрузка пикселей в массив байт из файла текстуры
 
 	const auto& json_doc = getFileString(path + ".json");
 	if (json_doc.empty())
 	{
-		std::cerr << "Failed to parse json: " << path << std::endl;
+		LOG("Failed to parse json: " + path, LOG_TYPE::WAR);
 		return { RenderEngine::eAtlasType::eNone, nullptr };
 	}
 	rapidjson::Document document;
 	rapidjson::ParseResult parse_result = document.Parse(json_doc.c_str());
 	if (!parse_result)
 	{
-		std::cerr << "Json parse error: " << rapidjson::GetParseError_En(parse_result.Code()) << " ("
-			<< parse_result.Offset() << ") in file: " << path << std::endl;
+		LOG("Json parse error: " + std::string(rapidjson::GetParseError_En(parse_result.Code())) + " ("
+			+ std::string(parse_result.Offset() + ") in file: ") + path, LOG_TYPE::WAR);
 		return { RenderEngine::eAtlasType::eNone, nullptr };
 	}
 	
@@ -594,15 +596,15 @@ std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> Re
 				type = document["info"]["type"].GetUint();
 			else 
 			{
-				std::cerr << "Json parse error: " << rapidjson::GetParseError_En(parse_result.Code()) << " ("
-					<< parse_result.Offset() << ") in file: " << path << ": Failed to parse {info{type...}}" << std::endl;
+				LOG("Json parse error: " + std::string(rapidjson::GetParseError_En(parse_result.Code())) + " ("
+					+ std::string(parse_result.Offset() + ") in file: ") + path + ": Failed to parse {info{type...}}", LOG_TYPE::WAR);
 				return { RenderEngine::eAtlasType::eNone, nullptr };
 			}
 	}
 	else
 	{
-		std::cerr << "Json parse error: " << rapidjson::GetParseError_En(parse_result.Code()) << " ("
-			<< parse_result.Offset() << ") in file: " << path << ": Failed to parse member {info}, member is empty" << std::endl;
+		LOG("Json parse error: " + std::string(rapidjson::GetParseError_En(parse_result.Code())) + " ("
+			+ std::string(parse_result.Offset() + ") in file: ") + path + ": Failed to parse member {info}, member is empty", LOG_TYPE::WAR);
 		return { RenderEngine::eAtlasType::eNone, nullptr };
 	}
 	//! Parse Atlases by type
@@ -632,8 +634,8 @@ std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> Re
 		}
 		return { RenderEngine::eAtlasType::eNone, nullptr };
 	}
-	std::cerr << "Json parse error: " << rapidjson::GetParseError_En(parse_result.Code()) << " ("
-		<< parse_result.Offset() << ") in file: " << path << ": Failed to parse {info{type...}}" << std::endl;
+	LOG( "Json parse error: " + std::string(rapidjson::GetParseError_En(parse_result.Code())) + " ("
+		+ std::string(parse_result.Offset() + ") in file: ") + path + ": Failed to parse {info{type...}}", LOG_TYPE::WAR);
 	return { RenderEngine::eAtlasType::eNone, nullptr };
 }
 
@@ -642,15 +644,15 @@ bool ResourceManager::loadResJSON(const std::string& path)
 	const auto& json_doc = getFileString(path);
 	if (json_doc.empty())
 	{
-		std::cerr << "Failed to parse json: " << path << std::endl;
+		LOG( "Failed to parse json: " + path, LOG_TYPE::WAR);
 		return false;
 	}
 	rapidjson::Document document;
 	rapidjson::ParseResult parse_result = document.Parse(json_doc.c_str());
 	if (!parse_result)
 	{
-		std::cerr << "Json parse error: " << rapidjson::GetParseError_En(parse_result.Code()) << " ("
-		<< parse_result .Offset()<< ") in file: "<< path << std::endl;
+		LOG("Json parse error: " + std::string(rapidjson::GetParseError_En(parse_result.Code())) + " ("
+		+ std::string(parse_result .Offset() + ") in file: ") + path, LOG_TYPE::WAR);
 		return false;
 	}
 

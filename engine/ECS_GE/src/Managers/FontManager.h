@@ -24,7 +24,7 @@ public:
 	static FontManager& Instanse();
 	void freeFontRes();
 	bool setFont(const std::string& path);
-	bool init();
+	bool init(std::string pathToExe);
 	bool isInit() const;
 	const FT_Face& getFace();
 	std::optional<Character> getCharacter(FT_ULong code_char);
@@ -34,6 +34,7 @@ private:
 	FT_Library m_libRef;
 	bool initial = false;
 	std::map<GLchar, Character> char_map;
+	std::string to_res_path;
 	FontManager() = default;
 	~FontManager();
 	FontManager(const FontManager&) = delete;

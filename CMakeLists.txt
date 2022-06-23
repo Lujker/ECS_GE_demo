@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.19.3 FATAL_ERROR)
 set (PROJ_NAME ECS_GE_demo)
 project(${PROJ_NAME})
 
+set (DEMO_SRC 
+	src/main.cpp)
+set (DEMO_INCLUDE)
+
 set(ENGINE_INCL_DIR_demo
         	engine/ECS_GE/src 
 		engine/ECS_GE/src/Engine
@@ -21,7 +25,7 @@ include_directories(
 	${ENGINE_INCL_DIR_demo}
 )
 
-add_executable(${PROJ_NAME} src/main.cpp ${ENGINE_INCLUDE})
+add_executable(${PROJ_NAME} ${DEMO_SRC} ${ENGINE_INCLUDE})
 
 target_compile_features(${PROJ_NAME} PUBLIC cxx_std_17)
 

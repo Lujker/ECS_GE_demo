@@ -1,5 +1,6 @@
 #include "FileSystemManager.h"
 
+#include "LogSystem.h"
 #include "stb_image.h"
 
 FileSystem::filesMap FileSystem::m_files;
@@ -111,7 +112,7 @@ void FileSystem::File::load(const std::string& path)
 		f.open(this->path.c_str(), std::ios::in | std::ios::binary);
 		if (!f.is_open())
 		{
-			std::cerr << "Failed to open file: " << this->path << std::endl;
+			LOG("Failed to open file: " + this->path, LOG_TYPE::WAR);
 			return;
 		}
 
@@ -124,11 +125,11 @@ void FileSystem::File::load(const std::string& path)
 	}
 	catch (const std::bad_alloc& exep)
 	{
-		std::cerr << "Failed catch bad_alloc: " << exep.what() << std::endl;
+		LOG(std::string("Failed catch bad_alloc: ") + exep.what(), LOG_TYPE::WAR);
 	}
 	catch (const std::exception& exep)
 	{
-		std::cerr << "Failed catch exeption: " << exep.what() << std::endl;
+		LOG(std::string("Failed catch exeption: ") + exep.what(), LOG_TYPE::WAR);
 	}
 }
 
@@ -158,7 +159,7 @@ const unsigned char* FileSystem::Pixels::load(const std::string& path)
 		auto pix = stbi_load(this->path.c_str(), &width, &height, &chanel, 0);
 		if (!pix)
 		{
-			std::cerr << "Can't load image: " << this->path << std::endl;
+			LOG(std::string("Can't load image: ") +this->path, LOG_TYPE::WAR);
 			return nullptr;
 		}
 		isLoad = true;
@@ -167,11 +168,11 @@ const unsigned char* FileSystem::Pixels::load(const std::string& path)
 	}
 	catch (const std::bad_alloc& exep)
 	{
-		std::cerr << "Failed catch bad_alloc: " << exep.what() << std::endl;
+		LOG(std::string("Failed catch bad_alloc: ") + exep.what(), LOG_TYPE::WAR);
 	}
 	catch (const std::exception& exep)
 	{
-		std::cerr << "Failed catch exeption: " << exep.what() << std::endl;
+		LOG(std::string("Failed catch exeption: ") + exep.what(), LOG_TYPE::WAR);
 	}
 	return nullptr;
 }
