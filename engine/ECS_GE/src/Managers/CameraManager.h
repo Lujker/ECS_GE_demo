@@ -14,7 +14,7 @@ class CameraManager
 {
 public:
 	static CameraManager& Instanse();
-	static void Init(const FRect& rect, double near = -100., double far = 100.);
+	static void Init(const FRect& rect, double near = 100., double far = -100.);
 	void ReleaseShader();
 	void SetShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader);
 	void Update();
@@ -25,6 +25,8 @@ public:
 	static const glm::mat4 getOrthMatrix();
 	static FRect getActiveWindowRect();
 	static bool windowOnFocus();
+	static double getNearLayer() { return m_near; }
+	static double getFarLayer() { return m_far; }
 	static void setActiveWindowSize(int width, int height);
 	static void glfwWindowsSizeCallback(GLFWwindow* pWindow, int width, int height);
 	static void glfwWindowsResize(GLFWwindow* pWindow, int width, int height);
