@@ -16,11 +16,13 @@ class WidgetManager : public InputListener
 	std::shared_ptr<GlobalWidget>		m_pLoadingScreen = nullptr;
 	std::string							m_execPath;
 	bool								globalWindowsChangAnim = false;
+	bool								m_isEngineInit = false;
 public:
 	static WidgetManager& Instanse();
 
 	//Engine
-	void					InitEngine(std::string	execPath);
+	bool					InitEngine(std::string	execPath);
+	bool					IsEngineInit() const;
 	std::shared_ptr<Engine> GetEngine() const;
 	void					Terminate();
 

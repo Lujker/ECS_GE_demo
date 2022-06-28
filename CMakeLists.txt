@@ -4,11 +4,20 @@ set (PROJ_NAME ECS_GE_demo)
 project(${PROJ_NAME})
 
 set (DEMO_SRC 
-	src/main.cpp)
-set (DEMO_INCLUDE)
+	src/main.cpp
+	src/Client.cpp
+	src/Windows/SandboxWindow.cpp
+	src/Entities/Knight.cpp
+)
+
+set (DEMO_INCLUDE
+	src/Client.h
+	src/Windows/SandboxWindow.h
+	src/Entities/Knight.h
+)
 
 set(ENGINE_INCL_DIR_demo
-        	engine/ECS_GE/src 
+        engine/ECS_GE/src 
 		engine/ECS_GE/src/Engine
 		engine/ECS_GE/src/Managers
 		engine/ECS_GE/src/Components
@@ -21,11 +30,13 @@ set(ENGINE_INCL_DIR_demo
 )
 
 include_directories(
-    	src
+    src
+	src/Entities
+	src/Windows
 	${ENGINE_INCL_DIR_demo}
 )
 
-add_executable(${PROJ_NAME} ${DEMO_SRC} ${ENGINE_INCLUDE})
+add_executable(${PROJ_NAME} ${DEMO_SRC} ${DEMO_INCLUDE} ${ENGINE_INCLUDE})
 
 target_compile_features(${PROJ_NAME} PUBLIC cxx_std_17)
 

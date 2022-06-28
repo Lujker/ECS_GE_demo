@@ -6,6 +6,7 @@
 #include "FontManager.h"
 #include "ResourceManager.h"
 #include "DisplayString.h"
+#include "InputManager.h"
 
 #include "RenderSystem.h"
 #include "LogSystem.h"
@@ -82,6 +83,9 @@ bool Engine::Init(const std::string& init_path)
     }
     CAMERA.Init({ 0., 0., CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight });
     glfwSetWindowFocusCallback(m_window, CAMERA.glfwWindowFocusCallback);
+    glfwSetCursorPosCallback(m_window, INPUTS.ÑursorPositionCallback);
+    glfwSetKeyCallback(m_window, INPUTS.KeyCallback);
+    glfwSetMouseButtonCallback(m_window, INPUTS.MouseButtonCallback);
     glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
         GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Init engine is ok");
     initial = true;

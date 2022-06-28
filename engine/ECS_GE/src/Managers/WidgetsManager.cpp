@@ -10,11 +10,17 @@ WidgetManager& WidgetManager::Instanse()
 	return widget_manager;
 }
 
-void WidgetManager::InitEngine(std::string execPath)
+bool WidgetManager::InitEngine(std::string execPath)
 {
 	m_pAppEngine = std::make_shared<Engine>();
 	m_execPath = std::move(execPath);
-	m_pAppEngine->Init(m_execPath);
+	m_isEngineInit = m_pAppEngine->Init(m_execPath);
+	return m_isEngineInit;
+}
+
+bool WidgetManager::IsEngineInit() const
+{
+	return m_isEngineInit;
 }
 
 std::shared_ptr<Engine> WidgetManager::GetEngine() const
@@ -39,8 +45,11 @@ void WidgetManager::SetNextWidget(const std::shared_ptr<GlobalWidget>& nextWindo
 		{
 			if (m_pNextWidget)
 				m_pNextWidget->AddedToContainer(nullptr);
+			else return;
+			m_pNextWidget->OriginRectSet();
 			LOG("Push widget: " + m_pNextWidget->GetName() + " to GLOBAL MANAGER!");
-			m_pFocusWidget->StartClose([&]()
+			if(m_pFocusWidget)
+				m_pFocusWidget->StartClose([&]()
 				{
 					if (m_pFocusWidget)
 						m_pFocusWidget->RemovedFromContainer(nullptr);

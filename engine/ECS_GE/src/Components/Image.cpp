@@ -107,6 +107,8 @@ namespace RenderEngine
 			horizontal ? 0.f : 1.f, vertical ? 1.f :0.f,
 		};
 		m_vertexCoordsBuffer.update(vertex_coords, sizeof(vertex_coords));
+		m_isHorizontalMirror = horizontal;
+		m_isVerticalMirror = vertical;
 	}
 
 	void Image2D::init()

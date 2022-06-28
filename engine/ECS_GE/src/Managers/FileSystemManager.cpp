@@ -35,7 +35,7 @@ void FileSystem::unloadAllFiles()
 
 std::string FileSystem::getFormatedPath(const std::string& path)
 {
-	return m_path + "/" + path;
+	return m_path + "\\" + path;
 }
 
 std::shared_ptr<FileSystem::File> FileSystem::loadFile(std::string path)

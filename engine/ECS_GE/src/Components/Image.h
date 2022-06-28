@@ -36,6 +36,8 @@ namespace RenderEngine
 		virtual void SetSubTexture(const SubTexture2D& sub_texture);
 		virtual bool isValid() const;
 		virtual void mirror(bool vertical, bool horizontal);
+		virtual bool isVerticalMirror() const { return m_isVerticalMirror; }
+		virtual bool isHorizontalMirror() const { return m_isHorizontalMirror; }
 
 	protected:
 		virtual void init();
@@ -45,5 +47,7 @@ namespace RenderEngine
 		VertexBuffer m_vertexCoordsBuffer;
 		VertexBuffer m_textureCoordsBuffer;
 		IndexBuffer  m_indexBuffer;
+		bool		 m_isHorizontalMirror = false;
+		bool		 m_isVerticalMirror = false;
 	};
 }

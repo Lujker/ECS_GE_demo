@@ -2,11 +2,16 @@
 
 #include "LogSystem.h"
 #include "Widget.h"
-#include "Animator.h"
 
 WidgetContainer::WidgetContainer(const std::string& widgetName, const eWidgetPriority& priority, const std::shared_ptr<WidgetContainer>& parent):
-	mParent(parent), mName(widgetName), mPriority(priority)
+	mParent(parent), mName(widgetName), mPriority(priority), showedAnimList(std::make_unique<Animation::AnimationsList>())
 {
+	INPUTS.ListenerAdd(this);
+}
+
+WidgetContainer::~WidgetContainer()
+{
+	INPUTS.ListenerRemove(this);
 }
 
 eWidgetPriority WidgetContainer::GetPriority() const
@@ -121,7 +126,6 @@ void WidgetContainer::StartShow(const std::function<void()>& callback, bool with
 
 void WidgetContainer::StartClose(const std::function<void()>& callback, bool with_animation)
 {
-
 	if (with_animation)
 	{
 		mIsShowed = false;

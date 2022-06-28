@@ -7,11 +7,7 @@
 
 #include "InputManager.h"
 #include "Point.h"
-
-namespace Animation
-{
-	class AnimationsList;
-}
+#include "Animator.h"
 
 class Widget;
 class WidgetManager;
@@ -40,7 +36,7 @@ protected:
 							showedAnimList;
 public:
 	explicit WidgetContainer(const std::string& widgetName, const eWidgetPriority& priority, const std::shared_ptr<WidgetContainer>& parent = nullptr);
-	virtual ~WidgetContainer() override = default;
+	virtual ~WidgetContainer() override;
 
 	eWidgetPriority GetPriority() const;
 	std::string		GetName() const;

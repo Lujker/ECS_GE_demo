@@ -10,6 +10,21 @@ InputManager& InputManager::Instanse()
 	return input_manager;
 }
 
+void InputManager::ListenerAdd(InputListener* listener)
+{
+	if (listener != nullptr)
+		listeners.push_back(listener);
+}
+
+void InputManager::ListenerRemove(InputListener* listener)
+{
+	const auto it = std::find(listeners.begin(), listeners.end(), listener);
+	if (it != listeners.end())
+	{
+		listeners.erase(it);
+	}
+}
+
 void InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (action == GLFW_PRESS)
