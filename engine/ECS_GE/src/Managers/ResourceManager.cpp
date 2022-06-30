@@ -422,9 +422,12 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 std::shared_ptr<RenderEngine::Image2D> ResourceManager::loadImage(const std::string& imageName, const std::string& textureName, const std::string& texturePath)
 {
 	auto texture = loadTexture(textureName, texturePath);
-	const auto image = m_images.emplace(imageName, std::make_shared<RenderEngine::Image2D>(texture));
-	if(image.second)
-		return image.first->second;
+	if(texture)
+	{
+		const auto image = m_images.emplace(imageName, std::make_shared<RenderEngine::Image2D>(texture));
+		if(image.second)
+			return image.first->second;
+	}
 	LOG("Can't load the image: " + imageName, LOG_TYPE::WAR);
 	return nullptr;
 }

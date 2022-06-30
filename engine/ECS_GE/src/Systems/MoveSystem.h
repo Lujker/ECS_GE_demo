@@ -11,7 +11,7 @@ class MoveSystem : public ISystem
 {
 	static MoveSystem& Instance();
 	static PositionComponent Move(const PositionComponent& position, const MoveComponent& move, float delta_time);
-	static MoveComponent CalculateGravity(const MoveComponent& move, float delta_time);
+	static MoveComponent CalculateVelocity(const MoveComponent& move, float delta_time, bool withGravity = true);
 private:
 	static Vector2 m_gravity;
 	MoveSystem() = default;

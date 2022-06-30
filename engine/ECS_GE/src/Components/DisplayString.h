@@ -22,6 +22,7 @@ public:
 	void resize(unsigned int width, unsigned int height);
 	bool isEmpty() const;
 	std::list<Character> getDisplayChars();
+	std::string getInitString() { return m_initString; }
 
 	const RenderEngine::VertexArray& getVertexArray() const { return m_vertexArray; }
 	const RenderEngine::VertexBuffer& getVertexCoordsBuffer() const { return m_vertexCoordsBuffer; }

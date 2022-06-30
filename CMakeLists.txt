@@ -8,12 +8,14 @@ set (DEMO_SRC
 	src/Client.cpp
 	src/Windows/SandboxWindow.cpp
 	src/Entities/Knight.cpp
+	src/Entities/GameObject.cpp
 )
 
 set (DEMO_INCLUDE
 	src/Client.h
 	src/Windows/SandboxWindow.h
 	src/Entities/Knight.h
+	src/Entities/GameObject.h
 )
 
 set(ENGINE_INCL_DIR_demo

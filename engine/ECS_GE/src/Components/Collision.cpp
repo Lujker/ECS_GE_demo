@@ -21,7 +21,7 @@ CollisionComponent::CollisionComponent(const std::vector<FPoint>& points, bool c
 {}
 
 CollisionComponent::CollisionComponent(const CollisionComponent& collision):
-	m_form(collision.m_form.get()), collision(collision.collision), m_scale(collision.m_scale)
+	m_form(collision.m_form), collision(collision.collision), m_scale(collision.m_scale)
 {
 }
 
@@ -32,7 +32,7 @@ CollisionComponent::CollisionComponent(CollisionComponent&& collision) noexcept:
 
 CollisionComponent& CollisionComponent::operator=(const CollisionComponent& collision)
 {
-	m_form.reset(collision.m_form.get());
+	m_form = collision.m_form;
 	this->collision = collision.collision;
 	m_scale = collision.m_scale;
 	return (*this);

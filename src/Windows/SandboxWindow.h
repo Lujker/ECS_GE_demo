@@ -1,6 +1,7 @@
 #pragma once
 #include "Collision.h"
 #include "GlobalWidget.h"
+#include "Knight.h"
 #include "Position.h"
 
 class DisplayString;
@@ -27,11 +28,5 @@ public:
 	void KeyUnpress(const int& key) override;
 private:
 	std::shared_ptr<RenderEngine::Image2D> m_bg;
-	std::shared_ptr<RenderEngine::Sprite>  m_knight;
-	std::shared_ptr<DisplayString>		   m_string;
-
-
-	PositionComponent  pos_string;
-	PositionComponent  pos_sprite;
-	CollisionComponent size_sprite;
+	std::shared_ptr<Knight> m_knight;
 };
