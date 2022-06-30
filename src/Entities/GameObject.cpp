@@ -26,7 +26,7 @@ void IGameObject::Draw()
 		RENDER.Render(m_size, m_position);
 	if (isDrawName)
 	{
-		RENDER.Render(m_name, m_position + FPoint{ 0.f, m_size.getHeight() });
+		RENDER.Render(m_name, m_position + FPoint{ 0.f, m_size.getHeight() }, 0.5, {0.4f,0.5,0.7f,1});
 	}
 }
 

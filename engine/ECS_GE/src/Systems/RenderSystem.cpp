@@ -70,7 +70,7 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     const auto shader = RES.getShader("freetype");
     CAMERA.UseShader(shader);
     shader->setVec3("textColor", { collor.getR(), collor.getG(), collor.getB() });
-    shader->setFloat("layer", position.getLayer());
+    shader->setFloat("layer", position.getLayer() + 1);
     shader->setFloat("alpha", collor.getAlpha());
 
     auto charList = string->getDisplayChars();
@@ -78,8 +78,8 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     
     for(const auto& ch : charList)
     {
-        const auto y_offset = (ch.Bearing.y - ch.texture->getHeight()) * scale;
-        const auto x_offset = ch.Bearing.x * scale;
+        const float y_offset = (ch.Bearing.y - static_cast<float>(ch.texture->getHeight())) * scale;
+        const float x_offset = ch.Bearing.x * scale;
         const auto model = getTransformMatrix(
             x + x_offset, y + y_offset,
             ch.texture->getWidth() * scale,

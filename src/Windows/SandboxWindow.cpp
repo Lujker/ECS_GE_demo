@@ -24,7 +24,7 @@ void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetC
 {
     const CollisionComponent col_form{ std::vector<FPoint>{ {30, 0},{15, 25}, {25, 30},{35, 25} ,{35, 10} }, false, 2 };
     m_bg = RES.getSharedImage("res/images/Layer_0001_8.png");
-    m_knight = std::make_shared<Knight>("knight", PositionComponent{ 350, 100, 0, 0 }, CollisionComponent{ 120, 80, false }, CollisionComponent{ 120, 80, true } );
+    m_knight = std::make_shared<Knight>("player", PositionComponent{ 350, 100, 0, 0 }, CollisionComponent{ 120, 80, false }, CollisionComponent{ 120, 80, true } );
     if (m_knight)
         m_knight->Init();
     
@@ -54,8 +54,10 @@ void SandboxWindow::Update(float deltaTime)
 
 void SandboxWindow::KeyPress(const int& key)
 {
+    m_knight->KeyPress(key);
 }
 
 void SandboxWindow::KeyUnpress(const int& key)
 {
+    m_knight->KeyUnpress(key);
 }

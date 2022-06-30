@@ -9,11 +9,13 @@ class PositionComponent;
 
 class MoveSystem : public ISystem
 {
+public:
 	static MoveSystem& Instance();
 	PositionComponent Move(const PositionComponent& position, const MoveComponent& move, float delta_time);
-	MoveComponent CalculateVelocity(const MoveComponent& move, float delta_time, bool withGravity = true);
+	MoveComponent CalculateVelocity(const MoveComponent& move, float delta_time);
+	MoveComponent Gravity(const MoveComponent& move);
 private:
-	Vector2 m_gravity = { 0.f, -9.80665f };
+	Vector2 m_gravity = { 0.f, -98.0665f };
 	MoveSystem() = default;
 	~MoveSystem() = default;
 	MoveSystem(const MoveSystem&) = delete;

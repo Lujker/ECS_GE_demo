@@ -6,6 +6,9 @@
         },
         {
             "path" : "res/sprites/test/_idle"
+        },
+        {
+            "path" : "res/sprites/test/_Run"
         }
     ]
 }
