@@ -3,11 +3,7 @@
 #include "UpdateSystem.h"
 
 using namespace std;
-FRect CameraManager::projMatrix;
-FRect CameraManager::activeWindowSize;
-double CameraManager::m_near = 0.;
-double CameraManager::m_far = 0.;
-bool CameraManager::fockused = true;
+
 
 CameraManager& CameraManager::Instanse()
 {
@@ -17,26 +13,26 @@ CameraManager& CameraManager::Instanse()
 
 void CameraManager::glfwWindowsSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
-	setActiveWindowSize(width, height);	
-    RENDER.setViewport(getActiveWindowRect().mWidth, getActiveWindowRect().mHeight);
+	CAMERA.setActiveWindowSize(width, height);
+    RENDER.setViewport(CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight);
 }
 
 void CameraManager::glfwWindowsResize(GLFWwindow* pWindow, int width, int height)
 {
-	setActiveWindowSize(width, height);
-	glfwSetWindowSize(pWindow, getActiveWindowRect().mWidth, getActiveWindowRect().mHeight);
+	CAMERA.setActiveWindowSize(width, height);
+	glfwSetWindowSize(pWindow, CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight);
 }
 
 void CameraManager::glfwWindowFocusCallback(GLFWwindow* window, int focused)
 {
-	CameraManager::fockused = focused;
+	CAMERA.fockused = focused;
 }
 
 void CameraManager::Init(const FRect& rect, double d_near, double d_far)
 {
-	CameraManager::projMatrix = rect;
-	CameraManager::m_near = d_near;
-	CameraManager::m_far = d_far;
+	projMatrix = rect;
+	m_near = d_near;
+	m_far = d_far;
 }
 
 void CameraManager::ReleaseShader()

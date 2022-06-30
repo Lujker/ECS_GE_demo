@@ -3,7 +3,6 @@
 #include "Move.h"
 #include "Position.h"
 
-Vector2  MoveSystem::m_gravity = { 0.f, -9.80665f };
 
 MoveSystem& MoveSystem::Instance()
 {

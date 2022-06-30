@@ -46,17 +46,17 @@ public:
 	};
 
 	static FileSystem& Instanse();
-	static void setExecutablePath(const std::string& execPath);
-	static void unloadAllFiles();
-	static std::string getFormatedPath(const std::string& path);
-	static std::shared_ptr<File> loadFile(std::string path = "");
-	static std::shared_ptr<File> getFile(std::string path = "");
-	static std::shared_ptr<Pixels> loadPixelFile(std::string path = "");
-	static std::shared_ptr<Pixels> getPixelFile(std::string path = "");
+	void setExecutablePath(const std::string& execPath);
+	void unloadAllFiles();
+	std::string getFormatedPath(const std::string& path);
+	std::shared_ptr<File> loadFile(std::string path = "");
+	std::shared_ptr<File> getFile(std::string path = "");
+	std::shared_ptr<Pixels> loadPixelFile(std::string path = "");
+	std::shared_ptr<Pixels> getPixelFile(std::string path = "");
 	typedef std::map<const std::string, std::shared_ptr<File>> filesMap;
 	typedef std::map<const std::string, std::shared_ptr<Pixels>> pixelsFileMap;
 private:
-	static filesMap m_files;
-	static pixelsFileMap m_pixels;
-	static std::string m_path;
+	filesMap m_files;
+	pixelsFileMap m_pixels;
+	std::string m_path;
 };

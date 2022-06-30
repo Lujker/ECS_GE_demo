@@ -21,17 +21,18 @@ class UpdateSystem : public ISystem
 {
 public:
 	static UpdateSystem& Instanse();
-	static float GlobalUpdate(bool restart = false);
-	static void Update(std::shared_ptr<RenderEngine::Sprite> sprite);
-	static void Update(Animation::AnimationsList& anim_list);
-	static void Update(Timer& timer);
-	static void Pause();
-	static void Resume();
+	float GlobalUpdate(bool restart = false);
+	void Update(std::shared_ptr<RenderEngine::Sprite> sprite);
+	void Update(Animation::AnimationsList& anim_list);
+	void Update(Timer& timer);
+	void Pause();
+	void Resume();
+	void Pause(long nMillis);
 private:
-	static std::chrono::time_point<std::chrono::steady_clock> lastTime;
-	static float last_duration;
-	static bool pause;
-	UpdateSystem() = default;
+	std::chrono::time_point<std::chrono::steady_clock> lastTime;
+	float last_duration = 0.f;
+	bool pause = false;
+	UpdateSystem();
 	~UpdateSystem() = default;
 	UpdateSystem(const UpdateSystem&) = delete;
 	UpdateSystem(UpdateSystem&&) = delete;

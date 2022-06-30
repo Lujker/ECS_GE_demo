@@ -14,31 +14,31 @@ class CameraManager
 {
 public:
 	static CameraManager& Instanse();
-	static void Init(const FRect& rect, double near = -100., double far = 100.);
+	void Init(const FRect& rect, double near = -100., double far = 100.);
 	void ReleaseShader();
 	void SetShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader);
 	void Update();
-	static void UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader);
-	static void Move(int x, int y);
-	static void Resize(int width, int height);
-	static FRect getProjRect();
-	static const glm::mat4 getOrthMatrix();
-	static FRect getActiveWindowRect();
-	static bool windowOnFocus();
-	static double getNearLayer() { return m_near; }
-	static double getFarLayer() { return m_far; }
-	static void setActiveWindowSize(int width, int height);
+	void UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader);
+	void Move(int x, int y);
+	void Resize(int width, int height);
+	FRect getProjRect();
+	const glm::mat4 getOrthMatrix();
+	FRect getActiveWindowRect();
+	bool windowOnFocus();
+	double getNearLayer() { return m_near; }
+	double getFarLayer() { return m_far; }
+	void setActiveWindowSize(int width, int height);
 	static void glfwWindowsSizeCallback(GLFWwindow* pWindow, int width, int height);
 	static void glfwWindowsResize(GLFWwindow* pWindow, int width, int height);
 	static void glfwWindowFocusCallback(GLFWwindow* window, int focused);
 private:
 	std::shared_ptr<RenderEngine::ShaderProgram> m_shader;
-	static FRect projMatrix;
-	static FRect activeWindowSize;
-	static double m_near;
-	static double m_far;
-	static Point mainWindowSize;
-	static bool fockused;
+	FRect projMatrix;
+	FRect activeWindowSize;
+	double m_near = -100.;
+	double m_far = 100.;
+	Point mainWindowSize;
+	bool fockused = true;
 	CameraManager() = default;
 	~CameraManager() = default;
 	CameraManager(const CameraManager&) = delete;

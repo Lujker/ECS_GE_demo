@@ -22,23 +22,23 @@ class RenderSystem : public ISystem
 {
 public:
 	static RenderSystem& Instanse();
-	static void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
-	static void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
-	static void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const CollorComponent& collor = CollorComponent{1.f,1.f,1.f});
-	static void Render(const FRect& rect);
-	static void Render(const CollisionComponent& collision, const PositionComponent& position);
-	static void setClearColor(float r, float g, float b, float alpha);
-	static void setBlendMode(bool on);
-	static void setDepthTest(bool on);
-	static void clear();
-	static void setViewport(unsigned int width, unsigned int height, unsigned int leftOffset = 0, unsigned int bottomOffset = 0);
-	static glm::mat4 getTransformMatrix(const float x, const float y, const float width, const float height, float rotation = 0);
-	static std::string getRendererStr();
-	static std::string getVersionStr();
+	void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
+	void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
+	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const CollorComponent& collor = CollorComponent{1.f,1.f,1.f});
+	void Render(const FRect& rect);
+	void Render(const CollisionComponent& collision, const PositionComponent& position);
+	void setClearColor(float r, float g, float b, float alpha);
+	void setBlendMode(bool on);
+	void setDepthTest(bool on);
+	void clear();
+	void setViewport(unsigned int width, unsigned int height, unsigned int leftOffset = 0, unsigned int bottomOffset = 0);
+	glm::mat4 getTransformMatrix(const float x, const float y, const float width, const float height, float rotation = 0);
+	std::string getRendererStr();
+	std::string getVersionStr();
 private:
-	static void drawRect(const int x, const int y, const int width, const int height);
-	static void drawForm(const std::vector<FPoint>& points, float scale);
-	static void draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::IndexBuffer& indexBuffer, const RenderEngine::ShaderProgram& shader);
+	void drawRect(const int x, const int y, const int width, const int height);
+	void drawForm(const std::vector<FPoint>& points, float scale);
+	void draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::IndexBuffer& indexBuffer, const RenderEngine::ShaderProgram& shader);
 	RenderSystem() = default;
 	~RenderSystem() = default;
 	RenderSystem(const RenderSystem&) = delete;

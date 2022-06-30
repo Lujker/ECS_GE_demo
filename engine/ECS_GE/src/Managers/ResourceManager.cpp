@@ -13,15 +13,6 @@
 #include "LogSystem.h"
 #include "stb_image.h"
 
-ResourceManager::shaderProgramMap ResourceManager::m_shaderPrograms;
-ResourceManager::texturesMap ResourceManager::m_textures;
-ResourceManager::levels ResourceManager::m_levels;
-ResourceManager::spriteAtlasMap ResourceManager::m_SpriteAtlases;
-ResourceManager::frameAtlasMap ResourceManager::m_FrameAtlases;
-ResourceManager::imageMap ResourceManager::m_images;
-ResourceManager::spriteMap ResourceManager::m_sprites;
-std::string ResourceManager::m_path;
-
 std::shared_ptr<RenderEngine::SpriteAtlas> ResourceManager::loadSpriteAtlas(std::shared_ptr<RenderEngine::SpriteAtlas> newAtlas, const rapidjson::Document& document)
 {
 	unsigned atlas_width = newAtlas->getWidth(), atlas_height = newAtlas->getHeight(), default_frame_width = 0, default_frame_height = 0, default_duration = 1000;

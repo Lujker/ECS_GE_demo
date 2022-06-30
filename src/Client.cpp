@@ -3,8 +3,10 @@
 #include "Engine.h"
 #include <Components/Position.h>
 
+#include "CameraManager.h"
 #include "CollisionSystem.h"
 #include "DisplayString.h"
+#include "FileSystemManager.h"
 #include "LogSystem.h"
 #include "RenderSystem.h"
 #include "ResourceManager.h"
@@ -26,6 +28,9 @@ Client::~Client()
 
 bool Client::unload()
 {
+    FILES.unloadAllFiles();
+    RES.unloadAllResources();
+    WIDGET.Terminate();
 	return true;
 }
 
@@ -47,14 +52,18 @@ bool Client::init()
 
 bool Client::deltaLoop()
 {
+    constexpr float freq = 1000.0f / 60.0f; //60 FPS lock 
     UPDATE.GlobalUpdate(true);
     while (!WIDGET.GetEngine()->DispatchEvents())
     {
+        const unsigned long startMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
         WIDGET.Update(UPDATE.GlobalUpdate());
         /* Render here */
         RENDER.clear();
         WIDGET.Draw();
         WIDGET.GetEngine()->SwapBuffers();
+        const unsigned long endMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() - startMS;
+        UPDATE.Pause(freq - endMS);
     }
     return true;
 }

@@ -5,17 +5,15 @@
 #include "Sprite.h"
 #include "Timer.h"
 
-std::chrono::time_point<std::chrono::steady_clock> UpdateSystem::lastTime = std::chrono::high_resolution_clock::now();
-float UpdateSystem::last_duration = 0.f;
-bool UpdateSystem::pause = false;
-
 float UpdateSystem::GlobalUpdate(bool restart)
 {
 	if(restart)
 		lastTime = std::chrono::high_resolution_clock::now();
 	const auto currentTime = std::chrono::high_resolution_clock::now();
-	if (!pause && CAMERA.windowOnFocus())
+	if (!pause && CAMERA.windowOnFocus()) 
+	{
 		last_duration = std::chrono::duration<float, std::milli>(currentTime - lastTime).count();
+	}
 	else
 		last_duration = 0;
 	lastTime = currentTime;
@@ -48,6 +46,21 @@ void UpdateSystem::Pause()
 void UpdateSystem::Resume()
 {
 	pause = false;
+}
+
+void UpdateSystem::Pause(long nMillis)
+{
+	const long long nStartTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+	long nDelta;
+	do {
+		const long long nCurTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+		nDelta = nCurTime - nStartTime;
+	} while (nDelta >= 0 && nDelta < nMillis);
+}
+
+UpdateSystem::UpdateSystem():
+	lastTime(std::chrono::high_resolution_clock::now())
+{
 }
 
 UpdateSystem& UpdateSystem::Instanse()

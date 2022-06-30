@@ -3,9 +3,6 @@
 #include "LogSystem.h"
 #include "stb_image.h"
 
-FileSystem::filesMap FileSystem::m_files;
-FileSystem::pixelsFileMap FileSystem::m_pixels;
-std::string FileSystem::m_path;
 
 FileSystem& FileSystem::Instanse()
 {
