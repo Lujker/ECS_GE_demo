@@ -17,7 +17,7 @@ public:
 	void Update(const float& delta_time) override;
 	void KeyPress(const int& key) override;
 	void KeyUnpress(const int& key) override;
+	void CheckDirection();
 private:
-	MoveComponent m_move;
 	std::shared_ptr<RenderEngine::Sprite> m_sprite;
 };

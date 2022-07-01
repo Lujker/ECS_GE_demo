@@ -44,9 +44,12 @@ void WidgetManager::SetNextWidget(const std::shared_ptr<GlobalWidget>& nextWindo
 	m_pNextWidget->StartShow([&]()
 		{
 			if (m_pNextWidget)
+			{
+				m_pNextWidget->OriginRectSet();
 				m_pNextWidget->AddedToContainer(nullptr);
-			else return;
-			m_pNextWidget->OriginRectSet();
+			}
+			else 
+				return;
 			LOG("Push widget: " + m_pNextWidget->GetName() + " to GLOBAL MANAGER!");
 			if(m_pFocusWidget)
 				m_pFocusWidget->StartClose([&]()

@@ -16,20 +16,28 @@ IGameObject::~IGameObject()
 
 void IGameObject::Init()
 {
+	isInit = true;
 }
 
 void IGameObject::Draw()
 {
+	if (!isInit)
+		return;
 	if (isDrawCollision)
 		RENDER.Render(m_collision, m_position);
 	if (isDrawSize)
 		RENDER.Render(m_size, m_position);
 	if (isDrawName)
 	{
-		RENDER.Render(m_name, m_position + FPoint{ 0.f, m_size.getHeight() }, 0.5, {0.4f,0.5,0.7f,1});
+		RENDER.Render(m_name, m_position + FPoint{ 0.f, m_size.getHeight() }, 0.5);
 	}
 }
 
 void IGameObject::Update(const float& delta_time)
 {
+}
+
+bool IGameObject::operator==(const IGameObject& object) const
+{
+	return GetName() == object.GetName();
 }

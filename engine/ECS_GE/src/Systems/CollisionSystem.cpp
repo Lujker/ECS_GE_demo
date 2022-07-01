@@ -11,7 +11,7 @@ bool CollisionSystem::intersect2D(const CollisionComponent& collision_left, cons
 	if (!collision_left.isValid() || !collision_right.isValid())
 		return false;
 	if (collision_left.isRect() && collision_right.isRect())
-		return intersect2D(collision_left.getRect(), position_left, collision_right.getRect(), position_right);
+		return intersect2D(collision_left.getRect(), collision_left.getScale(),position_left, collision_right.getRect(), collision_right.getScale(), position_right);
 	auto l_form = collision_left.getForm()->getPoints();
 	auto r_form = collision_right.getForm()->getPoints();
 	if (collision_left.getScale() != 1.f && collision_left.getScale() != 0.f)

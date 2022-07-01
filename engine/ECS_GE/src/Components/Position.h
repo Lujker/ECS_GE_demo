@@ -12,6 +12,9 @@ public:
 	PositionComponent(int x, int y,
 		float layer = 0,
 		float rotation = 0);
+	PositionComponent(double x, double y,
+		float layer = 0,
+		float rotation = 0);
 	PositionComponent(const PositionComponent& position_component) = default;
 	~PositionComponent() = default;
 

@@ -15,7 +15,7 @@ PositionComponent MoveSystem::Move(const PositionComponent& position, const Move
 	PositionComponent next_pos = position;
 	const MoveComponent next_move = CalculateVelocity(move, delta_time);
 	const Vector2 add_posVec = next_move.getVelocity() * (delta_time / 1000);
-	next_pos = position.getPosition() + FPoint{ add_posVec.x, add_posVec.y };
+	next_pos = { position.getPosition() + FPoint{ add_posVec.x, add_posVec.y }, next_pos.getLayer(), next_pos.getRotation() };
 	return next_pos;
 }
 
@@ -26,9 +26,9 @@ MoveComponent MoveSystem::CalculateVelocity(const MoveComponent& move, float del
 	return nextMove;
 }
 
-MoveComponent MoveSystem::Gravity(const MoveComponent& move)
+MoveComponent MoveSystem::Gravity(const MoveComponent& move, float delta_time)
 {
 	MoveComponent nextMove = move;
-	nextMove.SetAcceleration(nextMove.getAcceleration() + m_gravity);
+	nextMove.SetAcceleration(nextMove.getAcceleration() + m_gravity / (delta_time / 1000));
 	return nextMove;
 }

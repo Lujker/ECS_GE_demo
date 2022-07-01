@@ -6,15 +6,19 @@ project(${PROJ_NAME})
 set (DEMO_SRC 
 	src/main.cpp
 	src/Client.cpp
+	src/Systems/PhysicsSystem.cpp
 	src/Windows/SandboxWindow.cpp
 	src/Entities/Knight.cpp
+	src/Entities/Board.cpp
 	src/Entities/GameObject.cpp
 )
 
 set (DEMO_INCLUDE
 	src/Client.h
+	src/Systems/PhysicsSystem.h
 	src/Windows/SandboxWindow.h
 	src/Entities/Knight.h
+	src/Entities/Board.h
 	src/Entities/GameObject.h
 )
 
@@ -35,6 +39,7 @@ include_directories(
     src
 	src/Entities
 	src/Windows
+	src/Systems
 	${ENGINE_INCL_DIR_demo}
 )
 

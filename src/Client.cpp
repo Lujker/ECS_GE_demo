@@ -8,6 +8,7 @@
 #include "DisplayString.h"
 #include "FileSystemManager.h"
 #include "LogSystem.h"
+#include "PhysicsSystem.h"
 #include "RenderSystem.h"
 #include "ResourceManager.h"
 #include "Sprite.h"
@@ -57,7 +58,9 @@ bool Client::deltaLoop()
     while (!WIDGET.GetEngine()->DispatchEvents())
     {
         const unsigned long startMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-        WIDGET.Update(UPDATE.GlobalUpdate());
+        const float delta_time = UPDATE.GlobalUpdate();
+        PHYSICS.Update(delta_time);
+        WIDGET.Update(delta_time);
         /* Render here */
         RENDER.clear();
         WIDGET.Draw();
