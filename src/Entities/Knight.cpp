@@ -20,6 +20,7 @@ void Knight::Init()
 		std::cout << i << std::endl;
 	isDrawSize = true;
 	isDrawName = true;
+	isCameraObject = true;
 	IGameObject::Init();
 }
 

@@ -24,6 +24,8 @@ public:
 	[[nodiscard]] virtual CollisionComponent	GetCollision() const { return m_collision; }
 	[[nodiscard]] virtual std::string			GetName() const { return m_name->getInitString(); }
 
+	[[nodiscard]] virtual bool					IsCameraObject() const { return isCameraObject; }
+
 	virtual void SetPosition(const PositionComponent& next_pos) { m_position = next_pos; }
 	virtual void SetMove(const MoveComponent& next_move) { m_move = next_move; }
 	virtual void SetSize(const CollisionComponent& next_size) { m_size = next_size; }
@@ -41,5 +43,6 @@ protected:
 	bool								isDrawCollision = false;
 	bool								isDrawName = false;
 	bool								isInit = false;
+	bool								isCameraObject = false;
 };
 

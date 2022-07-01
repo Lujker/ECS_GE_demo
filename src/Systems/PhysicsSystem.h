@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "ISystem.h"
+#include "Position.h"
 
 class IGameObject;
 
@@ -18,7 +19,8 @@ public:
 	void Clear();
 private:
 	void MoveObjects(float delta_time) const;
-	void MoveCamera(int x, int y) const;
+	void MoveCamera(double x, double y) const;
+	void MoveCameraTo(const PositionComponent& pos) const;
 	std::vector<std::shared_ptr<IGameObject>> m_objects;
 	std::mutex								  m_mutex;
 	PhysicsSystem() = default;

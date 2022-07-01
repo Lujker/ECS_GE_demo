@@ -25,12 +25,14 @@ class CameraManager
 {
 public:
 	static CameraManager& Instanse();
-	void Init(const FRect& rect, double near = -100., double far = 100.);
+	void Init(const FRect& rect, const FRect& worldRect = { 0,0,0,0}, double near = -100., double far = 100.);
+	void SetWorldRect(const FRect& rect);
 	void ReleaseShader();
 	void SetShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader);
 	void Update();
 	void UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader);
-	void Move(int x, int y);
+	void Move(double x, double y);
+	void SetCenterPoint(FPoint point);
 	void Resize(int width, int height);
 
 	bool AddListener(CameraListener*);
@@ -39,6 +41,7 @@ public:
 
 	FRect getProjRect();
 	FRect getActiveWindowRect();
+	FRect getWorldRect();
 	const glm::mat4 getOrthMatrix();
 	bool windowOnFocus();
 	[[nodiscard]] double getNearLayer() const { return m_near; }
@@ -53,6 +56,7 @@ private:
 	std::deque<CameraListener*> m_listeners;
 	FRect projMatrix;
 	FRect activeWindowSize;
+	FRect worldRect;
 	double m_near = -100.;
 	double m_far = 100.;
 	Point mainWindowSize;

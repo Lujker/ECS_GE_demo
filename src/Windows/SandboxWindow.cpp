@@ -19,6 +19,7 @@ SandboxWindow::SandboxWindow():
 void SandboxWindow::OriginRectSet()
 {
 	GlobalWidget::OriginRectSet();
+    CAMERA.SetWorldRect({ 0,0,3000, 2000 });
 }
 
 void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)
@@ -27,7 +28,7 @@ void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetC
     
     m_knight = std::make_shared<Knight>("player", PositionComponent{ 350, 100, 0, 0 }, CollisionComponent{ 120, 80, false }, CollisionComponent{ 120, 80, true } );
     m_board = std::make_shared<Board>("board", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
-        CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(mOrigin.mHeight) }, CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(55) });
+        CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(mOrigin.mHeight) }, CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(60) });
 
     if (m_knight)
     {
@@ -39,12 +40,6 @@ void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetC
         m_board->Init();
         PHYSICS.Registrate(m_board);
 	}
-
-    
-    if (COLLISION.intersect2D(col_form, { 300,300 }, col_form, { 320,300 }))
-        LOG("Intersect2D!");
-    else
-        LOG("Not intersect2D");
 }
 
 void SandboxWindow::RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)

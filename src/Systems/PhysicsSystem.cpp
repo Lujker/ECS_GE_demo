@@ -38,9 +38,11 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 					break;
 				if (sec_it == it)
 					continue;
+				//! Check intersect with other obj by x coord
 				if (!canMoveX)
 					canMoveX = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {next_pos.getPosition().mX, it->GetPosition().getPosition().mY}, it->GetPosition().getLayer() },
 						sec_it->GetCollision(), sec_it->GetPosition());
+				//! And check by y
 				if (!canMoveY)
 					canMoveY = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {it->GetPosition().getPosition().mX,  next_pos.getPosition().mY}, it->GetPosition().getLayer() },
 						sec_it->GetCollision(), sec_it->GetPosition());
@@ -54,15 +56,23 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 				next_pos = { {next_pos.getPosition().mX,it->GetPosition().getPosition().mY }, it->GetPosition().getLayer(), it->GetPosition().getRotation() };
 			}
 		}
-		//! need if(it->IsCameraMan()) MoveCamera(nextPost - it.pos);
+		if(it->IsCameraObject())
+		{
+			MoveCameraTo(next_pos);
+		}
 		it->SetPosition(next_pos);
 		it->MoveCallback();
 	}
 }
 
-void PhysicsSystem::MoveCamera(int x, int y) const
+void PhysicsSystem::MoveCamera(double x, double y) const
 {
-	//CAMERA.Move(next_pos.getPosition().mX - m_position.getPosition().mX, next_pos.getPosition().mY - m_position.getPosition().mY);
+	CAMERA.Move(x, y);
+}
+
+void PhysicsSystem::MoveCameraTo(const PositionComponent& pos) const
+{
+	CAMERA.SetCenterPoint({ pos.getPosition().mX, pos.getPosition().mY });
 }
 
 bool PhysicsSystem::Registrate(const std::shared_ptr<IGameObject>& object)
