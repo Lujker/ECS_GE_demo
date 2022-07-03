@@ -23,6 +23,8 @@ public:
 	PositionComponent operator+(const PositionComponent & position_component) const;
 	PositionComponent& operator+=(const FPoint& point);
 	PositionComponent& operator+=(const PositionComponent& position_component);
+	bool operator==(const PositionComponent& position_component);
+	bool operator!=(const PositionComponent& position_component);
 
 	void setPosition(const FPoint& point) { m_position = point; }
 	void setRotation(float rotation) { m_rotation = rotation; }

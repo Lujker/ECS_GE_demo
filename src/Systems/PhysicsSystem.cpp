@@ -28,40 +28,60 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 	//!Need oprimizations!
 	for (auto& it : m_objects)
 	{
+		//Calculate next move and next pos for obj
+		auto next_move = it->GetMove();
+		if (it->IsGravityObject())
+			next_move = MOVE.Gravity(next_move, delta_time);
+		next_move = MOVE.CalculateVelocity(next_move, delta_time);
 		auto next_pos = MOVE.Move(it->GetPosition(), it->GetMove(), delta_time);
+		// And check collision with other objects
 		if (it->GetCollision().hasCollision())
 		{
-			bool canMoveX = false, canMoveY = false;
+			bool cantMoveX = false, cantMoveY = false;
 			for (auto& sec_it : m_objects)
 			{
-				if (canMoveX && canMoveY)
+				if (cantMoveX && cantMoveY)
 					break;
 				if (sec_it == it)
 					continue;
 				//! Check intersect with other obj by x coord
-				if (!canMoveX)
-					canMoveX = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {next_pos.getPosition().mX, it->GetPosition().getPosition().mY}, it->GetPosition().getLayer() },
+				if (!cantMoveX)
+					cantMoveX = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {next_pos.getPosition().mX, it->GetPosition().getPosition().mY}, it->GetPosition().getLayer() },
 						sec_it->GetCollision(), sec_it->GetPosition());
 				//! And check by y
-				if (!canMoveY)
-					canMoveY = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {it->GetPosition().getPosition().mX,  next_pos.getPosition().mY}, it->GetPosition().getLayer() },
+				if (!cantMoveY)
+					cantMoveY = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {it->GetPosition().getPosition().mX,  next_pos.getPosition().mY}, it->GetPosition().getLayer() },
 						sec_it->GetCollision(), sec_it->GetPosition());
 			}
-			if (canMoveX)
+			if (cantMoveX)
 			{
 				next_pos = { {it->GetPosition().getPosition().mX, next_pos.getPosition().mY}, it->GetPosition().getLayer(), it->GetPosition().getRotation() };
+				next_move = { it->GetMove().getDirection(), {it->GetMove().getVelocity().x, next_move.getVelocity().y}, {0.f, next_move.getAcceleration().y} };
 			}
-			if (canMoveY)
+			if (cantMoveY)
 			{
 				next_pos = { {next_pos.getPosition().mX,it->GetPosition().getPosition().mY }, it->GetPosition().getLayer(), it->GetPosition().getRotation() };
+				next_move = { it->GetMove().getDirection(), {next_move.getVelocity().x, 0.f}, {next_move.getAcceleration().x, 0.f} };
 			}
 		}
-		if(it->IsCameraObject())
-		{
-			MoveCameraTo(next_pos);
+		next_move.UpdateDirection();
+		//! if move comp change
+		if (it->GetMove() != next_move)
+		{		
+			it->SetMove(next_move);
+			it->MoveChange();
 		}
-		it->SetPosition(next_pos);
-		it->MoveCallback();
+		//! if pos change
+		if (it->GetPosition() != next_pos) 
+		{
+			it->SetPosition(next_pos);
+			it->PositionChange();
+			//! If camera centrailyze to this obj
+			if (it->IsCameraObject())
+			{
+				MoveCameraTo(next_pos);
+			}
+		}
 	}
 }
 

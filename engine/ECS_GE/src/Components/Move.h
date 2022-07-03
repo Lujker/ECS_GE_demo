@@ -7,8 +7,15 @@ class MoveComponent : public IComponent
 public:
 	enum class eDirection : unsigned
 	{
-		eLeft = 0,
-		eRight = 1
+		eIdle = 0,
+		eLeft = 1,
+		eRight = 2,
+		eUp = 3,
+		eUpLeft = 4,
+		eUpRight = 5,
+		eDown = 6,
+		eDownLeft = 7,
+		eDownRight = 8,
 	};
 
 	MoveComponent() = default;
@@ -19,9 +26,12 @@ public:
 
 	MoveComponent& operator=(const MoveComponent& move_component) = default;
 	MoveComponent& operator+=(const MoveComponent& move_component);
+	bool operator==(const MoveComponent& move_component);
+	bool operator!=(const MoveComponent& move_component);
 
 	void SetDirection(eDirection direction) { m_direction = direction; }
 	void SetVelocity(const Vector2& velocity) { m_velocity = velocity; }
+	void UpdateDirection();
 	void SetVelocity(float x, float y) { m_velocity = {x, y}; }
 	void SetAcceleration(const Vector2& acceleration) { m_acceleration = acceleration; }
 

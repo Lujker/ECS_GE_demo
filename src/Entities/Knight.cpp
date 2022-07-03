@@ -21,6 +21,7 @@ void Knight::Init()
 	isDrawSize = true;
 	isDrawName = true;
 	isCameraObject = true;
+	isGravityObject = true;
 	IGameObject::Init();
 }
 
@@ -38,18 +39,6 @@ void Knight::Update(const float& delta_time)
 		return;
 	UPDATE.Update(m_sprite);
 	IGameObject::Update(delta_time);
-	//auto next_pos = MOVE.Move(m_position, m_move, delta_time);
-
-	//CAMERA.Move(next_pos.getPosition().mX - m_position.getPosition().mX, next_pos.getPosition().mY - m_position.getPosition().mY);
-	//m_position = next_pos;
-	//if (m_position.getPosition().mY > 0)
-	//	m_move = MOVE.Gravity(m_move, delta_time);
-	//else
-	//{
-	//	m_move.SetAcceleration({ 0.f, 0.f });
-	//	m_move.SetVelocity(m_move.getVelocity().x, 0);
-	//	m_position.setPosition({ m_position.getPosition().mX, 0 });
-	//}
 }
 
 void Knight::KeyPress(const int& key)
@@ -58,22 +47,16 @@ void Knight::KeyPress(const int& key)
 		return;
 	if (key == GLFW_KEY_LEFT)
 	{
-		m_move.SetVelocity(m_move.getVelocity().x - 100.f, m_move.getVelocity().y);
+		m_move.SetVelocity(m_move.getVelocity().x - 150.f, m_move.getVelocity().y);
 	}
 	if (key == GLFW_KEY_RIGHT)
 	{
-		m_move.SetVelocity(m_move.getVelocity().x + 100.f, m_move.getVelocity().y);
+		m_move.SetVelocity(m_move.getVelocity().x + 150.f, m_move.getVelocity().y);
 	}
 	if (key == GLFW_KEY_UP)
 	{
-		m_move.SetVelocity(m_move.getVelocity().x, m_move.getVelocity().y + 100.f);
+		m_move.SetVelocity(m_move.getVelocity().x, m_move.getVelocity().y + 300.f);
 	}
-	if (key == GLFW_KEY_DOWN)
-	{
-		m_move.SetVelocity(m_move.getVelocity().x, m_move.getVelocity().y - 100.f);
-	}
-
-	CheckDirection();
 }
 
 void Knight::KeyUnpress(const int& key)
@@ -82,37 +65,34 @@ void Knight::KeyUnpress(const int& key)
 		return;
 	if (key == GLFW_KEY_LEFT)
 	{
-		m_move.SetVelocity(m_move.getVelocity().x + 100.f, m_move.getVelocity().y);
+		m_move.SetVelocity(m_move.getVelocity().x + 150.f, m_move.getVelocity().y);
 	}
 	if (key == GLFW_KEY_RIGHT)
 	{
-		m_move.SetVelocity(m_move.getVelocity().x - 100.f, m_move.getVelocity().y);
+		m_move.SetVelocity(m_move.getVelocity().x - 150.f, m_move.getVelocity().y);
 	}
-	if (key == GLFW_KEY_UP)
-	{
-		m_move.SetVelocity(m_move.getVelocity().x, m_move.getVelocity().y - 100.f);
-	}
-	if (key == GLFW_KEY_DOWN)
-	{
-		m_move.SetVelocity(m_move.getVelocity().x, m_move.getVelocity().y + 100.f);
-	}
-
-	CheckDirection();
 }
 
-void Knight::CheckDirection()
+void Knight::PositionChange()
 {
-	if (m_move.getVelocity().x < 0)
+}
+
+
+void Knight::MoveChange()
+{
+	if(m_move.getDirection() == MoveComponent::eDirection::eLeft || m_move.getDirection() == MoveComponent::eDirection::eDownLeft || m_move.getDirection() == MoveComponent::eDirection::eUpLeft)
 	{
-		m_sprite->mirror(false, true);
-		if(m_sprite->getCurrentAnimName() != "Run")
+		if (!m_sprite->isHorizontalMirror())
+			m_sprite->mirror(false, true);
+		if (m_sprite->getCurrentAnimName() != "Run")
 			m_sprite->setAnimation("Run");
 	}
-	else if (m_move.getVelocity().x > 0)
+	else if (m_move.getDirection() == MoveComponent::eDirection::eRight || m_move.getDirection() == MoveComponent::eDirection::eDownRight || m_move.getDirection() == MoveComponent::eDirection::eUpRight)
 	{
-		m_sprite->mirror(false, false);
+		if (m_sprite->isHorizontalMirror())
+			m_sprite->mirror(false, false);
 		if (m_sprite->getCurrentAnimName() != "Run")
-		m_sprite->setAnimation("Run");
+			m_sprite->setAnimation("Run");
 	}
 	else
 	{

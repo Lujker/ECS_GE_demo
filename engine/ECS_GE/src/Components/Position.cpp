@@ -42,3 +42,13 @@ PositionComponent& PositionComponent::operator+=(const PositionComponent& positi
 	m_rotation += position_component.m_rotation;
 	return *this;
 }
+
+bool PositionComponent::operator==(const PositionComponent& position_component)
+{
+	return (m_position == position_component.m_position && m_rotation == position_component.m_rotation && m_layer == position_component.m_layer);
+}
+
+bool PositionComponent::operator!=(const PositionComponent& position_component)
+{
+	return !(*this==position_component);
+}

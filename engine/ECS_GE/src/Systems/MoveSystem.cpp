@@ -10,15 +10,16 @@ MoveSystem& MoveSystem::Instance()
 	return move_system;
 }
 
+//! Calculate next position by velocity, acceleratin and time on milisecond
 PositionComponent MoveSystem::Move(const PositionComponent& position, const MoveComponent& move, float delta_time)
 {
 	PositionComponent next_pos = position;
-	const MoveComponent next_move = CalculateVelocity(move, delta_time);
-	const Vector2 add_posVec = next_move.getVelocity() * (delta_time / 1000);
+	const Vector2 add_posVec = (move.getVelocity() * (delta_time / 1000)) + ((move.getAcceleration() * pow((delta_time / 1000), 2)) / 2);
 	next_pos = { position.getPosition() + FPoint{ add_posVec.x, add_posVec.y }, next_pos.getLayer(), next_pos.getRotation() };
 	return next_pos;
 }
 
+//! Calculate next velocity by acceleratin and time on milisecond
 MoveComponent MoveSystem::CalculateVelocity(const MoveComponent& move, float delta_time)
 {
 	MoveComponent nextMove = move;
@@ -26,9 +27,13 @@ MoveComponent MoveSystem::CalculateVelocity(const MoveComponent& move, float del
 	return nextMove;
 }
 
+//! Calculate acceleration by gravity constant
 MoveComponent MoveSystem::Gravity(const MoveComponent& move, float delta_time)
 {
 	MoveComponent nextMove = move;
-	nextMove.SetAcceleration(nextMove.getAcceleration() + m_gravity / (delta_time / 1000));
+	if (nextMove.getAcceleration().y >= m_gravity.y)
+		nextMove.SetAcceleration((nextMove.getAcceleration() + m_gravity) / (delta_time / 1000));
+	else
+		nextMove.SetAcceleration({ nextMove.getAcceleration().x, m_gravity.y });
 	return nextMove;
 }

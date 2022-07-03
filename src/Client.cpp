@@ -59,12 +59,15 @@ bool Client::deltaLoop()
     {
         const unsigned long startMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
         const float delta_time = UPDATE.GlobalUpdate();
-        PHYSICS.Update(delta_time);
-        WIDGET.Update(delta_time);
-        /* Render here */
-        RENDER.clear();
-        WIDGET.Draw();
-        WIDGET.GetEngine()->SwapBuffers();
+        if (delta_time > 0.f)
+        {
+            PHYSICS.Update(delta_time);
+            WIDGET.Update(delta_time);
+            /* Render here */
+            RENDER.clear();
+            WIDGET.Draw();
+            WIDGET.GetEngine()->SwapBuffers();
+        }
         const unsigned long endMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() - startMS;
         UPDATE.Pause(freq - endMS);
     }

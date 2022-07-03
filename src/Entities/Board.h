@@ -6,7 +6,7 @@ class Board : public IGameObject
 {
 public:
 	Board(const std::string& name, const PositionComponent& default_position,
-		const CollisionComponent& default_size, const CollisionComponent& default_collision);
+		const CollisionComponent& default_size, const CollisionComponent& default_collision, const std::string& image_name = "");
 	~Board() override = default;
 	void Init() override;
 	void Draw() override;

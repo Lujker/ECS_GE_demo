@@ -30,4 +30,6 @@ public:
 private:
 	std::shared_ptr<Knight> m_knight;
 	std::shared_ptr<Board> m_board;
+
+	std::shared_ptr<Board> m_board_empty;
 };

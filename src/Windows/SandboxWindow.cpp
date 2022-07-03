@@ -28,7 +28,10 @@ void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetC
     
     m_knight = std::make_shared<Knight>("player", PositionComponent{ 350, 100, 0, 0 }, CollisionComponent{ 120, 80, false }, CollisionComponent{ 120, 80, true } );
     m_board = std::make_shared<Board>("board", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
-        CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(mOrigin.mHeight) }, CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(60) });
+        CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(mOrigin.mHeight) }, CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(60) }, "res/images/Layer_0001_8.png");
+
+    m_board_empty = std::make_shared<Board>("board_1", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
+        CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(100), static_cast<float>(200) });
 
     if (m_knight)
     {
@@ -40,6 +43,11 @@ void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetC
         m_board->Init();
         PHYSICS.Registrate(m_board);
 	}
+    if (m_board_empty)
+    {
+        m_board_empty->Init();
+        PHYSICS.Registrate(m_board_empty);
+    }
 }
 
 void SandboxWindow::RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)
@@ -52,6 +60,8 @@ void SandboxWindow::Draw()
         m_board->Draw();
     if (m_knight)
 		m_knight->Draw();
+    if (m_board_empty)
+        m_board_empty->Draw();
 }
 
 void SandboxWindow::Update(float deltaTime)
@@ -60,6 +70,8 @@ void SandboxWindow::Update(float deltaTime)
         m_board->Update(deltaTime);
     if (m_knight)
 		m_knight->Update(deltaTime);
+    if (m_board_empty)
+        m_board_empty->Update(deltaTime);
 }
 
 void SandboxWindow::KeyPress(const int& key)
