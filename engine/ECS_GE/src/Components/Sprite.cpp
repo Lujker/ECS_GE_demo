@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "LogSystem.h"
+
 
 namespace RenderEngine
 {
@@ -88,9 +90,40 @@ namespace RenderEngine
 		return names;
 	}
 
+	bool Sprite::hasAnimation(const std::string& name)
+	{
+		auto animNameList = getAnimationsName();
+		const auto& it = std::find(animNameList.begin(), animNameList.end(), name);
+		if (it != animNameList.end())
+			return true;
+		return false;
+	}
+
 	std::string Sprite::getCurrentAnimName() const
 	{
 		return m_currentAnimName;
+	}
+
+	bool Sprite::getIsCurrentAnimEnd() const
+	{
+		if (m_currentAnimation && !m_currentAnimName.empty())
+			return m_currentAnimation->IsEnd();
+		return false;
+	}
+
+	std::string Sprite::nextAnimInQueue()
+	{
+		if (!m_AnimQueue.empty()) 
+		{
+			m_AnimQueue.pop();
+			return m_AnimQueue.front();
+		}
+		return "";
+	}
+
+	void Sprite::setAnimQueue(const std::queue<std::string>& m_animtions)
+	{
+		m_AnimQueue = m_animtions;
 	}
 
 	SpriteAnimation::SpriteAnimation(atlas atlas):
@@ -195,8 +228,11 @@ namespace RenderEngine
 			{
 				if (animation_iterator->second.first)
 					frame_iterator = animation_iterator->second.second.begin();
-				else
+				else 
+				{
+					m_isAnimEnd = true;
 					--frame_iterator;
+				}
 			}
 			if(lastFrame != *frame_iterator)
 				lastFrame = *frame_iterator;

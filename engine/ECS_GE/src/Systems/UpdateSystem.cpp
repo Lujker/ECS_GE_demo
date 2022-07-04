@@ -24,6 +24,13 @@ void UpdateSystem::Update(std::shared_ptr<RenderEngine::Sprite> sprite)
 {
 	if(!sprite || !sprite->getCurrentAnimation())
 		return;
+	if (sprite->getIsCurrentAnimEnd())
+	{
+		if (const auto animName = sprite->nextAnimInQueue(); !animName.empty() && sprite->hasAnimation(animName))
+		{
+			sprite->setAnimation(animName);
+		}
+	}
 	sprite->getCurrentAnimation()->Update(last_duration);
 	sprite->SetSubTexture(sprite->getCurrentAnimation()->getLastFrame());
 }

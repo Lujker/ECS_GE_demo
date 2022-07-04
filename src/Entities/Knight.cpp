@@ -14,7 +14,7 @@ Knight::Knight(const std::string& name, const PositionComponent& default_positio
 
 void Knight::Init()
 {
-	m_sprite = RES.getSprite("res/sprites/test/Kinght");
+	m_sprite = RES.getSprite("res/sprites/Humans/Kinght");
 	m_sprite->setAnimation("idle");
 	for (auto i : m_sprite->getAnimationsName())
 		std::cout << i << std::endl;
@@ -69,7 +69,7 @@ void Knight::KeyUnpress(const int& key)
 	}
 	if (key == GLFW_KEY_RIGHT)
 	{
-		m_move.SetVelocity(m_move.getVelocity().x - 150.f, m_move.getVelocity().y);
+		m_move.SetVelocity(m_move.getVelocity().x - 150.f, m_move.getVelocity().y); 
 	}
 }
 
@@ -80,14 +80,14 @@ void Knight::PositionChange()
 
 void Knight::MoveChange()
 {
-	if(m_move.getDirection() == MoveComponent::eDirection::eLeft || m_move.getDirection() == MoveComponent::eDirection::eDownLeft || m_move.getDirection() == MoveComponent::eDirection::eUpLeft)
+	if(m_move.getDirection() == MoveComponent::eDirection::eLeft || m_move.getDirection() == MoveComponent::eDirection::eUpLeft || m_move.getDirection() == MoveComponent::eDirection::eDownLeft)
 	{
 		if (!m_sprite->isHorizontalMirror())
 			m_sprite->mirror(false, true);
 		if (m_sprite->getCurrentAnimName() != "Run")
 			m_sprite->setAnimation("Run");
 	}
-	else if (m_move.getDirection() == MoveComponent::eDirection::eRight || m_move.getDirection() == MoveComponent::eDirection::eDownRight || m_move.getDirection() == MoveComponent::eDirection::eUpRight)
+	else if (m_move.getDirection() == MoveComponent::eDirection::eRight || m_move.getDirection() == MoveComponent::eDirection::eUpRight || m_move.getDirection() == MoveComponent::eDirection::eDownRight)
 	{
 		if (m_sprite->isHorizontalMirror())
 			m_sprite->mirror(false, false);

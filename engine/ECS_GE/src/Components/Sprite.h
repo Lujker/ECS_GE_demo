@@ -4,6 +4,7 @@
 #include <memory>
 #include "Image.h"
 #include <list>
+#include <queue>
 
 namespace RenderEngine
 {
@@ -28,12 +29,14 @@ namespace RenderEngine
 		FPoint getSize(const std::string& name);
 		SubTexture2D getLastFrame() const;
 		void Update(float delta_time);
+		bool IsEnd() { return m_isAnimEnd; }
 	private:
-		atlas m_atlas;
-		float currentFramDuration = 0;
-		RenderEngine::SpriteAtlas::animations_iterator animation_iterator;
-		RenderEngine::SpriteAtlas::frames_iterator frame_iterator;
-		SubTexture2D lastFrame;
+		atlas											m_atlas;
+		float											currentFramDuration = 0;
+		RenderEngine::SpriteAtlas::animations_iterator	animation_iterator;
+		RenderEngine::SpriteAtlas::frames_iterator		frame_iterator;
+		SubTexture2D									lastFrame;
+		bool											m_isAnimEnd = false;
 	};
 
 	class Sprite : public Image2D
@@ -46,10 +49,15 @@ namespace RenderEngine
 		SpriteAnimation getSpriteAnimation(const std::string& name);
 		std::shared_ptr<SpriteAnimation> getCurrentAnimation();
 		std::list<std::string> getAnimationsName();
+		bool		hasAnimation(const std::string& name);
 		std::string getCurrentAnimName() const;
+		bool		getIsCurrentAnimEnd() const;
+		std::string		nextAnimInQueue();
+		void			setAnimQueue(const std::queue<std::string>& m_animtions);
 	private:
-		std::shared_ptr<SpriteAnimation> m_currentAnimation;
-		std::list<SpriteAnimation> m_animations;
-		std::string m_currentAnimName;
+		std::queue<std::string>				m_AnimQueue;
+		std::shared_ptr<SpriteAnimation>	m_currentAnimation;
+		std::list<SpriteAnimation>			m_animations;
+		std::string							m_currentAnimName;
 	};
 }

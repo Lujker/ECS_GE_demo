@@ -1,7 +1,7 @@
 {
     "info":{
         "type" :  1,
-        "width": 480,
+        "width": 360,
         "height":80,
         "default_frame_width":120,
         "default_frame_height":80,
@@ -10,7 +10,7 @@
     "animations": 
     [    
         {
-            "name": "atack",
+            "name": "jump",
             "loop": true,
             "frames":[
                 {
@@ -32,14 +32,6 @@
                 {
                     "name":"2",
                     "offset_x":240,
-                    "offset_y":0,
-                    "width":120,
-                    "height":80,
-                    "duration":100
-                },
-                {
-                    "name":"3",
-                    "offset_x":360,
                     "offset_y":0,
                     "width":120,
                     "height":80,

@@ -52,6 +52,7 @@ void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetC
 
 void SandboxWindow::RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)
 {
+    PHYSICS.Clear();
 }
 
 void SandboxWindow::Draw()

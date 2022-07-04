@@ -71,7 +71,7 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 			it->SetMove(next_move);
 			it->MoveChange();
 		}
-		//! if pos change
+		//! if pos comp change
 		if (it->GetPosition() != next_pos) 
 		{
 			it->SetPosition(next_pos);

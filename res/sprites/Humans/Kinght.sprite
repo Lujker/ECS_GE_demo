@@ -1,0 +1,35 @@
+{
+    "atlases" :
+    [
+        {
+            "path" : "res/sprites/Humans/Knight_/_Attack"
+        },
+        {
+            "path" : "res/sprites/Humans/Knight_/_idle"
+        },
+        {
+            "path" : "res/sprites/Humans/Knight_/_Run"
+        },
+        {
+            "path" : "res/sprites/Humans/Knight_/_Attack2"
+        },
+        {
+            "path" : "res/sprites/Humans/Knight_/_AttackCombo"
+        },
+        {
+            "path" : "res/sprites/Humans/Knight_/_Fall"
+        },
+        {
+            "path" : "res/sprites/Humans/Knight_/_Jump"
+        },
+        {
+            "path" : "res/sprites/Humans/Knight_/_Roll"
+        },
+        {
+            "path" : "res/sprites/Humans/Knight_/_SlideAll"
+        },
+        {
+            "path" : "res/sprites/Humans/Knight_/_Death"
+        }
+    ]
+}
