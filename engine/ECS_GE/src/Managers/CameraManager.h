@@ -46,6 +46,8 @@ public:
 	bool windowOnFocus();
 	[[nodiscard]] double getNearLayer() const { return m_near; }
 	[[nodiscard]] double getFarLayer() const { return m_far; }
+	[[nodiscard]] bool isDrawDebugInfo() const { return drawDebugInfo; }
+	void setDrawDebugInfo(bool need_draw) { drawDebugInfo = need_draw; }
 	void setActiveWindowSize(int width, int height);
 
 	static void glfwWindowsSizeCallback(GLFWwindow* pWindow, int width, int height);
@@ -61,6 +63,7 @@ private:
 	double m_far = 100.;
 	Point mainWindowSize;
 	bool fockused = true;
+	bool drawDebugInfo = true;
 	CameraManager() = default;
 	~CameraManager() = default;
 	CameraManager(const CameraManager&) = delete;

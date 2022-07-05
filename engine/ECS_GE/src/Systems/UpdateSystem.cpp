@@ -17,6 +17,7 @@ float UpdateSystem::GlobalUpdate(bool restart)
 	else
 		last_duration = 0;
 	lastTime = currentTime;
+	fps.Update(last_duration);
 	return last_duration;
 }
 
@@ -66,6 +67,11 @@ void UpdateSystem::Pause(long nMillis)
 	} while (nDelta >= 0 && nDelta < nMillis);
 }
 
+unsigned UpdateSystem::GetFPS() const
+{
+	return fps.GetFPS();
+}
+
 UpdateSystem::UpdateSystem():
 	lastTime(std::chrono::high_resolution_clock::now())
 {
@@ -75,4 +81,33 @@ UpdateSystem& UpdateSystem::Instanse()
 {
     static UpdateSystem update_system;
     return update_system;
+}
+
+FPSCounter::FPSCounter() : timer(0.f), counter(0), lastFPS(0)
+{
+}
+
+void FPSCounter::Update(float delta_time)
+{
+	if (delta_time > 0.f)
+	{
+		timer += delta_time;
+		++counter;
+		if (timer >= 1000)
+		{
+			lastFPS = counter;
+			counter = 0u;
+			timer = 0.f;
+		}
+	}
+}
+
+float FPSCounter::GetTimer() const
+{
+	return timer;
+}
+
+unsigned FPSCounter::GetFPS() const 
+{
+	return lastFPS;
 }

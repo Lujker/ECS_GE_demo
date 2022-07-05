@@ -30,6 +30,10 @@ void IGameObject::Draw()
 	if (isDrawName)
 	{
 		RENDER.Render(m_name, m_position + FPoint{ 0.f, m_collision.getHeight() }, 0.5);
+		auto r = m_name->getRect(0.5f);
+		r.mX += m_position.getPosition().mX;
+		r.mY += m_position.getPosition().mY + m_collision.getHeight();
+		RENDER.Render(r);
 	}
 }
 

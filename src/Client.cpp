@@ -66,10 +66,28 @@ bool Client::deltaLoop()
             /* Render here */
             RENDER.clear();
             WIDGET.Draw();
+            drawFPS();
             WIDGET.GetEngine()->SwapBuffers();
         }
         const unsigned long endMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() - startMS;
         UPDATE.Pause(freq - endMS);
     }
     return true;
+}
+
+void Client::drawFPS()
+{
+    if(CAMERA.isDrawDebugInfo())
+    {
+        if (!fps)
+        {
+            fps = std::make_shared<DisplayString>("");
+        }
+        const auto str = std::to_string(UPDATE.GetFPS()) + " fps";
+    	fps->setString(str);
+        constexpr float scale = 0.5f;
+    	const auto rect = fps->getRect(scale);
+    	const PositionComponent pos = { CAMERA.getProjRect().mWidth - rect.mWidth, CAMERA.getProjRect().mHeight - rect.mHeight + rect.mY, static_cast<float>(CAMERA.getNearLayer() + 1.) };
+    	RENDER.Render(fps, pos, scale);
+    }
 }

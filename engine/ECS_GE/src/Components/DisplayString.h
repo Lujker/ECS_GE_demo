@@ -6,6 +6,7 @@
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "FontManager.h"
+#include "Rect.h"
 
 struct Character {
 	std::shared_ptr<RenderEngine::Texture2D> texture; // текстура глифа
@@ -28,6 +29,7 @@ public:
 	const RenderEngine::VertexBuffer& getVertexCoordsBuffer() const { return m_vertexCoordsBuffer; }
 	const RenderEngine::VertexBuffer& getTextureCoordsBuffer() const { return m_textureCoordsBuffer; }
 	const RenderEngine::IndexBuffer& getIndexCoordsBuffer() const { return m_indexBuffer; }
+	const Rect						 getRect(float scale = 1.f);
 	const unsigned getWidth() const { return width; }
 	const unsigned getHeight() const { return height; }
 	virtual void mirror(bool vertical, bool horizontal);

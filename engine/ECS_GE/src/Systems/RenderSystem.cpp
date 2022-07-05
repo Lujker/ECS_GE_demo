@@ -98,6 +98,11 @@ void RenderSystem::Render(const FRect& rect)
     drawRect(rect.mX, rect.mY, rect.mWidth, rect.mHeight);
 }
 
+void RenderSystem::Render(const Rect& rect)
+{
+    drawRect(rect.mX, rect.mY, rect.mWidth, rect.mHeight);
+}
+
 void RenderSystem::Render(const CollisionComponent& collision, const PositionComponent& position)
 {
     if(!collision.getForm() || collision.getForm()->getPoints().size() < 3)

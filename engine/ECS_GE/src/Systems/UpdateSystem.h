@@ -10,6 +10,18 @@ namespace RenderEngine
 }
 
 class Timer;
+class FPSCounter
+{
+public:
+	FPSCounter();
+	void Update(float delta_time);
+	float GetTimer() const;
+	unsigned GetFPS() const;
+private:
+	float timer = 0.f;
+	unsigned counter = 0u;
+	unsigned lastFPS = 0u;
+};
 
 namespace Animation
 {
@@ -28,10 +40,12 @@ public:
 	void Pause();
 	void Resume();
 	void Pause(long nMillis);
+	unsigned GetFPS() const;
 private:
 	std::chrono::time_point<std::chrono::steady_clock> lastTime;
 	float last_duration = 0.f;
 	bool pause = false;
+	FPSCounter fps;
 	UpdateSystem();
 	~UpdateSystem() = default;
 	UpdateSystem(const UpdateSystem&) = delete;

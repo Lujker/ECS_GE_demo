@@ -26,6 +26,7 @@ void DisplayString::setString(const std::string& string, unsigned int width, uns
 	{
 		FT_Set_Pixel_Sizes(FONT.getFace(), width, height);
 		m_characters.clear();
+		m_initString = string;
 		initChars();
 		initial = true;
 	}
@@ -63,6 +64,27 @@ std::list<Character> DisplayString::getDisplayChars()
 		}
 	}
 	return list;
+}
+
+const Rect DisplayString::getRect(float scale)
+{
+	auto charList = getDisplayChars();
+	unsigned width = 0, height = 0;
+	float x = 0, y = 0;
+	for (const auto& ch : charList)
+	{
+		const float y_offset = (ch.Bearing.y - static_cast<float>(ch.texture->getHeight()));
+		const float x_offset = ch.Bearing.x * scale;
+		x += x_offset;
+		if ((ch.texture->getHeight() - y_offset) * scale  > height)
+		{
+			height = (ch.texture->getHeight() - y_offset) * scale;
+			y = y_offset * scale;
+		}
+		x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+	}
+	width = x;
+	return Rect(0, y, width, height);
 }
 
 void DisplayString::mirror(bool vertical, bool horizontal)
