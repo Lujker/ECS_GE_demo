@@ -10,6 +10,14 @@ namespace RenderEngine
 {
 	class SpriteAtlas;
 
+	class SpriteAnimListener
+	{
+	public:
+		virtual ~SpriteAnimListener();
+		virtual void IsAnimationStart(const std::string& anim) {}
+		virtual void IsAnimationEnd(const std::string& anim) {}
+	};
+
 	class SpriteAnimation
 	{
 	public:
@@ -43,18 +51,23 @@ namespace RenderEngine
 	{
 	public:
 		Sprite(std::list<SpriteAnimation> anim_list);
-		FPoint getCurrentAnimSize();
-		bool setAnimation(const std::string& name);
-		void addSpriteAnimation(const SpriteAnimation& animation);
-		SpriteAnimation getSpriteAnimation(const std::string& name);
-		std::shared_ptr<SpriteAnimation> getCurrentAnimation();
-		std::list<std::string> getAnimationsName();
-		bool		hasAnimation(const std::string& name);
-		std::string getCurrentAnimName() const;
-		bool		getIsCurrentAnimEnd() const;
-		std::string		nextAnimInQueue();
-		void			setAnimQueue(const std::queue<std::string>& m_animtions);
+		FPoint								getCurrentAnimSize();
+		bool								setAnimation(const std::string& name);
+		void								addSpriteAnimation(const SpriteAnimation& animation);
+		SpriteAnimation						getSpriteAnimation(const std::string& name);
+		std::shared_ptr<SpriteAnimation>	getCurrentAnimation();
+		std::list<std::string>				getAnimationsName();
+		bool								hasAnimation(const std::string& name);
+		std::string							getCurrentAnimName() const;
+		bool								getIsCurrentAnimEnd() const;
+		void								addListener(SpriteAnimListener* listener);
+		void								removeListener(SpriteAnimListener* listener);
+		void								emitStartAnimation(const std::string& name) const;
+		void								emitEndAnimation(const std::string& name) const;
+		std::string							nextAnimInQueue();
+		void								setAnimQueue(const std::queue<std::string>& m_animtions);
 	private:
+		std::vector<SpriteAnimListener*>	m_listeners;
 		std::queue<std::string>				m_AnimQueue;
 		std::shared_ptr<SpriteAnimation>	m_currentAnimation;
 		std::list<SpriteAnimation>			m_animations;

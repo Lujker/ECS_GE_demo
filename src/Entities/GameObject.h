@@ -17,6 +17,7 @@ public:
 	virtual void Init();
 	virtual void Draw();
 	virtual void Update(const float& delta_time);
+	virtual bool operator==(const IGameObject& object) const;
 
 	[[nodiscard]] virtual PositionComponent		GetPosition() const { return m_position; }
 	[[nodiscard]] virtual MoveComponent			GetMove() const { return m_move; }
@@ -32,9 +33,9 @@ public:
 	virtual void SetSize(const CollisionComponent& next_size) { m_size = next_size; }
 	virtual void SetCollision(const CollisionComponent& next_collision) { m_collision = next_collision; }
 
-	virtual void MoveChange() {};
-	virtual void PositionChange() {};
-	virtual bool operator==(const IGameObject& object) const;
+	//!callback's
+	virtual void MoveChange() {}
+	virtual void PositionChange() {}
 protected:
 	std::shared_ptr<DisplayString>		m_name;
 	PositionComponent					m_position;

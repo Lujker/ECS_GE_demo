@@ -64,10 +64,10 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 				next_move = { it->GetMove().getDirection(), {next_move.getVelocity().x, 0.f}, {next_move.getAcceleration().x, 0.f} };
 			}
 		}
-		next_move.UpdateDirection();
 		//! if move comp change
 		if (it->GetMove() != next_move)
-		{		
+		{
+			next_move.UpdateDirection();
 			it->SetMove(next_move);
 			it->MoveChange();
 		}

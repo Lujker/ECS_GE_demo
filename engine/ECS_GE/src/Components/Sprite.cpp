@@ -35,8 +35,8 @@ namespace RenderEngine
 			m_currentAnimation = std::make_shared<SpriteAnimation>(*it);
 			m_currentAnimation->setAnnimation(name);
 			m_pTexture = it->getAtlas();
-			m_subTexture = it->getLastFrame();
-			SetSubTexture(m_subTexture);
+			//SetSubTexture(it->getLastFrame());
+			emitStartAnimation(name);
 			return true;
 		}
 		return false;
@@ -111,6 +111,40 @@ namespace RenderEngine
 		return false;
 	}
 
+	void Sprite::addListener(SpriteAnimListener* listener)
+	{
+		const auto it = std::find(m_listeners.begin(), m_listeners.end(), listener);
+		if (it == m_listeners.end())
+		{
+			m_listeners.push_back(listener);
+		}
+	}
+
+	void Sprite::removeListener(SpriteAnimListener* listener)
+	{
+		const auto it = std::find(m_listeners.begin(), m_listeners.end(), listener);
+		if (it != m_listeners.end())
+		{
+			m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), *it), m_listeners.end());
+		}
+	}
+
+	void Sprite::emitStartAnimation(const std::string& name) const
+	{
+		for (const auto& lst : m_listeners)
+		{
+			lst->IsAnimationStart(name);
+		}
+	}
+
+	void Sprite::emitEndAnimation(const std::string& name) const
+	{
+		for (const auto& lst : m_listeners)
+		{
+			lst->IsAnimationEnd(name);
+		}
+	}
+
 	std::string Sprite::nextAnimInQueue()
 	{
 		if (!m_AnimQueue.empty()) 
@@ -124,6 +158,12 @@ namespace RenderEngine
 	void Sprite::setAnimQueue(const std::queue<std::string>& m_animtions)
 	{
 		m_AnimQueue = m_animtions;
+		if (!m_AnimQueue.empty())
+			setAnimation(m_AnimQueue.front());
+	}
+
+	SpriteAnimListener::~SpriteAnimListener()
+	{
 	}
 
 	SpriteAnimation::SpriteAnimation(atlas atlas):

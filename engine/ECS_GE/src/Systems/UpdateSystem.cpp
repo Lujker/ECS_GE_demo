@@ -26,6 +26,7 @@ void UpdateSystem::Update(std::shared_ptr<RenderEngine::Sprite> sprite)
 		return;
 	if (sprite->getIsCurrentAnimEnd())
 	{
+		sprite->emitEndAnimation(sprite->getCurrentAnimName());
 		if (const auto animName = sprite->nextAnimInQueue(); !animName.empty() && sprite->hasAnimation(animName))
 		{
 			sprite->setAnimation(animName);

@@ -1,10 +1,10 @@
 #include "Knight.h"
 
 #include "CameraManager.h"
+#include "LogSystem.h"
 #include "MoveSystem.h"
 #include "RenderSystem.h"
 #include "ResourceManager.h"
-#include "Sprite.h"
 #include "UpdateSystem.h"
 
 Knight::Knight(const std::string& name, const PositionComponent& default_position, const CollisionComponent& default_size, const CollisionComponent& default_collision):
@@ -12,12 +12,22 @@ Knight::Knight(const std::string& name, const PositionComponent& default_positio
 {
 }
 
+Knight::~Knight()
+{
+	if (m_sprite)
+		m_sprite->removeListener(this);
+}
+
 void Knight::Init()
 {
 	m_sprite = RES.getSprite("res/sprites/Humans/Kinght");
-	m_sprite->setAnimation("idle");
-	for (auto i : m_sprite->getAnimationsName())
-		std::cout << i << std::endl;
+	if (m_sprite)
+	{
+		m_sprite->setAnimation("idle");
+		for (auto i : m_sprite->getAnimationsName())
+			std::cout << i << std::endl;
+		m_sprite->addListener(this);
+	}
 	isDrawSize = true;
 	isDrawName = true;
 	isCameraObject = true;
@@ -71,9 +81,25 @@ void Knight::KeyUnpress(const int& key)
 	{
 		m_move.SetVelocity(m_move.getVelocity().x - 150.f, m_move.getVelocity().y); 
 	}
+	if (key == GLFW_KEY_SPACE)
+	{
+		std::queue<std::string> q;
+		q.push("atack_combo");
+		q.push("atack_combo2");
+		q.push("idle");
+		m_sprite->setAnimQueue(q);
+	}
 }
 
 void Knight::PositionChange()
+{
+}
+
+void Knight::IsAnimationEnd(const std::string& anim)
+{
+}
+
+void Knight::IsAnimationStart(const std::string& anim)
 {
 }
 
@@ -94,9 +120,9 @@ void Knight::MoveChange()
 		if (m_sprite->getCurrentAnimName() != "Run")
 			m_sprite->setAnimation("Run");
 	}
-	else
-	{
-		if (m_sprite->getCurrentAnimName() != "idle")
-			m_sprite->setAnimation("idle");
-	}
+	//else
+	//{
+	//	if (m_sprite->getCurrentAnimName() != "idle")
+	//		m_sprite->setAnimation("idle");
+	//}
 }

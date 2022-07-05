@@ -48,7 +48,7 @@
             ]
         },
         {
-            "name": "atack2",
+            "name": "atack_combo2",
             "loop": false,
             "frames":[
                 {
