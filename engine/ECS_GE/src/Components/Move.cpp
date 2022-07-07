@@ -1,5 +1,10 @@
 #include "Move.h"
 
+MoveComponent::MoveComponent():
+	m_direction(eDirection::eIdle), m_velocity(0.f, 0.f), m_acceleration(0.f, 0.f)
+{
+}
+
 MoveComponent::MoveComponent(eDirection direction, const Vector2& velocity, const Vector2& acceleration):
 	m_direction(direction), m_velocity(velocity), m_acceleration(acceleration)
 {}
@@ -7,6 +12,19 @@ MoveComponent::MoveComponent(eDirection direction, const Vector2& velocity, cons
 MoveComponent::MoveComponent(eDirection direction, float x_velocity, float y_velocity, float a_x, float a_y):
 	m_direction(direction), m_velocity(x_velocity, y_velocity), m_acceleration({a_x, a_y })
 {}
+
+MoveComponent::MoveComponent(const MoveComponent & move_component):
+	m_direction(move_component.m_direction), m_velocity(move_component.m_velocity), m_acceleration(move_component.m_acceleration)
+{
+}
+
+MoveComponent& MoveComponent::operator=(const MoveComponent& move_component)
+{
+	m_direction = move_component.m_direction;
+	m_velocity = move_component.m_velocity;
+	m_acceleration = move_component.m_acceleration;
+	return *this;
+}
 
 MoveComponent& MoveComponent::operator+=(const MoveComponent& move_component)
 {
@@ -29,7 +47,10 @@ bool MoveComponent::operator!=(const MoveComponent& move_component)
 void MoveComponent::UpdateDirection()
 {
 	if (m_velocity.x == 0.f && m_velocity.y == 0.f)
+	{
 		m_direction = eDirection::eIdle;
+		return;
+	}
 	if (m_velocity.x > 0.f)
 	{
 		if (m_velocity.y > 0.f)

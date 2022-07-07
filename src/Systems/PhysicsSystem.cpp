@@ -33,11 +33,12 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 		if (it->IsGravityObject())
 			next_move = MOVE.Gravity(next_move, delta_time);
 		next_move = MOVE.CalculateVelocity(next_move, delta_time);
-		auto next_pos = MOVE.Move(it->GetPosition(), it->GetMove(), delta_time);
+		auto next_pos = MOVE.Move(it->GetPosition(), next_move, delta_time);
+		
+		std::shared_ptr<IGameObject> collisionX = nullptr, collisionY = nullptr;
 		// And check collision with other objects
-		if (it->GetCollision().hasCollision())
+		if (bool cantMoveX = false, cantMoveY = false; it->GetCollision().hasCollision())
 		{
-			bool cantMoveX = false, cantMoveY = false;
 			for (auto& sec_it : m_objects)
 			{
 				if (cantMoveX && cantMoveY)
@@ -46,28 +47,55 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 					continue;
 				//! Check intersect with other obj by x coord
 				if (!cantMoveX)
+				{
 					cantMoveX = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {next_pos.getPosition().mX, it->GetPosition().getPosition().mY}, it->GetPosition().getLayer() },
 						sec_it->GetCollision(), sec_it->GetPosition());
+					collisionX = sec_it;
+				}
 				//! And check by y
 				if (!cantMoveY)
+				{
 					cantMoveY = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {it->GetPosition().getPosition().mX,  next_pos.getPosition().mY}, it->GetPosition().getLayer() },
 						sec_it->GetCollision(), sec_it->GetPosition());
+					collisionY = sec_it;
+				}
 			}
+			auto pos_x = next_pos.getPosition().mX, pos_y = next_pos.getPosition().mY;
+			auto vel_x = next_move.getVelocity().x, vel_y = next_move.getVelocity().y;
+			auto acs_x = next_move.getAcceleration().x, acs_y = next_move.getAcceleration().y;
 			if (cantMoveX)
 			{
-				next_pos = { {it->GetPosition().getPosition().mX, next_pos.getPosition().mY}, it->GetPosition().getLayer(), it->GetPosition().getRotation() };
-				next_move = { it->GetMove().getDirection(), {it->GetMove().getVelocity().x, next_move.getVelocity().y}, {0.f, next_move.getAcceleration().y} };
+				pos_x = it->GetPosition().getPosition().mX;
+				vel_x = it->GetMove().getVelocity().x;
+				acs_x = 0.f;
+				if (collisionX)
+				{
+					if (collisionX->GetPosition().getPosition().mX >= it->GetPosition().getPosition().mX + it->GetCollision().getWidth())
+						pos_x = collisionX->GetPosition().getPosition().mX;
+					else if (collisionX->GetPosition().getPosition().mX + collisionX->GetCollision().getWidth() <= it->GetPosition().getPosition().mX)
+						pos_x = collisionX->GetPosition().getPosition().mX + collisionX->GetCollision().getWidth();
+				}
 			}
 			if (cantMoveY)
 			{
-				next_pos = { {next_pos.getPosition().mX,it->GetPosition().getPosition().mY }, it->GetPosition().getLayer(), it->GetPosition().getRotation() };
-				next_move = { it->GetMove().getDirection(), {next_move.getVelocity().x, 0.f}, {next_move.getAcceleration().x, 0.f} };
+				pos_y = it->GetPosition().getPosition().mY;
+				vel_y = 0.f;
+				acs_y = 0.f;
+				if (collisionY)
+				{
+					if (collisionY->GetPosition().getPosition().mY >= it->GetPosition().getPosition().mY + it->GetCollision().getHeight())
+						pos_y = collisionY->GetPosition().getPosition().mY;
+					else if (collisionY->GetPosition().getPosition().mY + collisionY->GetCollision().getHeight() <= it->GetPosition().getPosition().mY)
+						pos_y = collisionY->GetPosition().getPosition().mY + collisionY->GetCollision().getHeight();
+				}
 			}
+			next_pos = { {pos_x, pos_y}, it->GetPosition().getLayer(), it->GetPosition().getRotation() };
+			next_move = { it->GetMove().getDirection(), {vel_x, vel_y}, {acs_x, acs_y} };
 		}
 		//! if move comp change
+		next_move.UpdateDirection();
 		if (it->GetMove() != next_move)
 		{
-			next_move.UpdateDirection();
 			it->SetMove(next_move);
 			it->MoveChange();
 		}

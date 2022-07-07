@@ -18,13 +18,13 @@ public:
 		eDownRight = 8,
 	};
 
-	MoveComponent() = default;
+	MoveComponent();
 	MoveComponent(eDirection direction, const Vector2& velocity, const Vector2& acceleration = {0.f,0.f});
 	MoveComponent(eDirection direction, float x_velocity, float y_velocity, float a_x = 0.f, float a_y = 0.f);
-	MoveComponent(const MoveComponent& move_component) = default;
+	MoveComponent(const MoveComponent& move_component);
 	~MoveComponent() = default;
 
-	MoveComponent& operator=(const MoveComponent& move_component) = default;
+	MoveComponent& operator=(const MoveComponent& move_component);
 	MoveComponent& operator+=(const MoveComponent& move_component);
 	bool operator==(const MoveComponent& move_component);
 	bool operator!=(const MoveComponent& move_component);

@@ -25,10 +25,19 @@ void DisplayString::setString(const std::string& string, unsigned int width, uns
 	if (FONT.isInit())
 	{
 		FT_Set_Pixel_Sizes(FONT.getFace(), width, height);
-		m_characters.clear();
 		m_initString = string;
 		initChars();
 		initial = true;
+	}
+}
+
+void DisplayString::updateString(const std::string& string)
+{
+	if (FONT.isInit())
+	{
+		m_initString = string;
+		initial = true;
+		initChars(true);
 	}
 }
 
@@ -100,9 +109,10 @@ void DisplayString::mirror(bool vertical, bool horizontal)
 	m_vertexCoordsBuffer.update(vertex_coords, sizeof(vertex_coords));
 }
 
-void DisplayString::initChars()
+void DisplayString::initChars(bool update)
 {
-    m_characters.clear();
+	if(!update)
+		m_characters.clear();
     for (const auto& c : m_initString)
     {
 		auto curr_char = FONT.getCharacter(c);

@@ -19,6 +19,7 @@ public:
 	DisplayString(const std::string& string, unsigned int width = 0, unsigned int height = 48);
 	~DisplayString();
 	void setString(const std::string& string, unsigned int width = 0, unsigned int height = 48);
+	void updateString(const std::string& string);
 	void clearString();
 	void resize(unsigned int width, unsigned int height);
 	bool isEmpty() const;
@@ -34,7 +35,7 @@ public:
 	const unsigned getHeight() const { return height; }
 	virtual void mirror(bool vertical, bool horizontal);
 private:
-	void initChars();
+	void initChars(bool update = false);
 	void initBuffers();
 	void init();
 	std::string m_initString;

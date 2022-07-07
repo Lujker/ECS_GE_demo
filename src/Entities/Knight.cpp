@@ -81,14 +81,14 @@ void Knight::KeyUnpress(const int& key)
 	{
 		m_move.SetVelocity(m_move.getVelocity().x - 150.f, m_move.getVelocity().y); 
 	}
-	if (key == GLFW_KEY_SPACE)
-	{
-		std::queue<std::string> q;
-		q.push("atack_combo");
-		q.push("atack_combo2");
-		q.push("idle");
-		m_sprite->setAnimQueue(q);
-	}
+	//if (key == GLFW_KEY_SPACE)
+	//{
+	//	std::queue<std::string> q;
+	//	q.push("atack_combo");
+	//	q.push("atack_combo2");
+	//	q.push("idle");
+	//	m_sprite->setAnimQueue(q);
+	//}
 }
 
 void Knight::PositionChange()
@@ -106,23 +106,35 @@ void Knight::IsAnimationStart(const std::string& anim)
 
 void Knight::MoveChange()
 {
-	if(m_move.getDirection() == MoveComponent::eDirection::eLeft || m_move.getDirection() == MoveComponent::eDirection::eUpLeft || m_move.getDirection() == MoveComponent::eDirection::eDownLeft)
+	if (m_move.getDirection() == MoveComponent::eDirection::eLeft || m_move.getDirection() == MoveComponent::eDirection::eUpLeft || m_move.getDirection() == MoveComponent::eDirection::eDownLeft)
 	{
 		if (!m_sprite->isHorizontalMirror())
 			m_sprite->mirror(false, true);
-		if (m_sprite->getCurrentAnimName() != "Run")
-			m_sprite->setAnimation("Run");
 	}
 	else if (m_move.getDirection() == MoveComponent::eDirection::eRight || m_move.getDirection() == MoveComponent::eDirection::eUpRight || m_move.getDirection() == MoveComponent::eDirection::eDownRight)
 	{
 		if (m_sprite->isHorizontalMirror())
 			m_sprite->mirror(false, false);
+	}
+
+	if (m_move.getDirection() == MoveComponent::eDirection::eRight || m_move.getDirection() == MoveComponent::eDirection::eLeft)
+	{
 		if (m_sprite->getCurrentAnimName() != "Run")
 			m_sprite->setAnimation("Run");
 	}
-	//else
-	//{
-	//	if (m_sprite->getCurrentAnimName() != "idle")
-	//		m_sprite->setAnimation("idle");
-	//}
+	else if (m_move.getDirection() == MoveComponent::eDirection::eUp || m_move.getDirection() == MoveComponent::eDirection::eUpRight || m_move.getDirection() == MoveComponent::eDirection::eUpLeft)
+	{
+		if (m_sprite->getCurrentAnimName() != "jump")
+			m_sprite->setAnimation("jump");
+	}
+	else if (m_move.getDirection() == MoveComponent::eDirection::eDown || m_move.getDirection() == MoveComponent::eDirection::eDownRight || m_move.getDirection() == MoveComponent::eDirection::eDownLeft)
+	{
+		if (m_sprite->getCurrentAnimName() != "fall")
+			m_sprite->setAnimation("fall");
+	}	
+	else
+	{
+		if (m_sprite->getCurrentAnimName() != "idle")
+			m_sprite->setAnimation("idle");
+	}
 }

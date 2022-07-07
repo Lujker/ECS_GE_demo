@@ -84,7 +84,7 @@ void Client::drawFPS()
             fps = std::make_shared<DisplayString>("");
         }
         const auto str = std::to_string(UPDATE.GetFPS()) + " fps";
-    	fps->setString(str);
+    	fps->updateString(str);
         constexpr float scale = 0.5f;
     	const auto rect = fps->getRect(scale);
     	const PositionComponent pos = { CAMERA.getProjRect().mWidth - rect.mWidth, CAMERA.getProjRect().mHeight - rect.mHeight + rect.mY, static_cast<float>(CAMERA.getNearLayer() + 1.) };
