@@ -8,18 +8,23 @@ set (DEMO_SRC
 	src/Client.cpp
 	src/Systems/PhysicsSystem.cpp
 	src/Windows/SandboxWindow.cpp
+	src/Windows/MainMenuWindow.cpp
 	src/Entities/Knight.cpp
 	src/Entities/Board.cpp
 	src/Entities/GameObject.cpp
+	src/Entities/Button.cpp
+
 )
 
 set (DEMO_INCLUDE
 	src/Client.h
 	src/Systems/PhysicsSystem.h
 	src/Windows/SandboxWindow.h
+	src/Windows/MainMenuWindow.h
 	src/Entities/Knight.h
 	src/Entities/Board.h
 	src/Entities/GameObject.h
+	src/Entities/Button.h
 )
 
 set(ENGINE_INCL_DIR_demo

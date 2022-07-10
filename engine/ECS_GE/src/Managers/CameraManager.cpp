@@ -132,10 +132,10 @@ void CameraManager::SetCenterPoint(FPoint point)
 	auto next_rect = projMatrix;
 	const auto width = projMatrix.mWidth - projMatrix.mX;
 	const auto height = projMatrix.mHeight - projMatrix.mY;
-	next_rect.mX = ceil(point.mX - width/2);
-	next_rect.mY = ceil(point.mY - height/2);
-	next_rect.mWidth = ceil(point.mX + width / 2);
-	next_rect.mHeight = ceil(point.mY + height / 2);
+	next_rect.mX = (point.mX - width/2);
+	next_rect.mY = (point.mY - height/2);
+	next_rect.mWidth = (point.mX + width / 2);
+	next_rect.mHeight = (point.mY + height / 2);
 
 	if (next_rect.mX == projMatrix.mX || next_rect.mY == projMatrix.mY)
 		return;

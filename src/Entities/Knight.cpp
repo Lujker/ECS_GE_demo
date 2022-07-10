@@ -31,7 +31,7 @@ void Knight::Init()
 	isDrawSize = true;
 	isDrawName = true;
 	isCameraObject = true;
-	isGravityObject = true;
+	isGravityEnable = true;
 	IGameObject::Init();
 }
 

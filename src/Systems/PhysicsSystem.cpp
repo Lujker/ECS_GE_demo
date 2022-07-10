@@ -30,7 +30,7 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 	{
 		//Calculate next move and next pos for obj
 		auto next_move = it->GetMove();
-		if (it->IsGravityObject())
+		if (it->gravityEnable())
 			next_move = MOVE.Gravity(next_move, delta_time);
 		next_move = MOVE.CalculateVelocity(next_move, delta_time);
 		auto next_pos = MOVE.Move(it->GetPosition(), next_move, delta_time);
@@ -105,7 +105,7 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 			it->SetPosition(next_pos);
 			it->PositionChange();
 			//! If camera centrailyze to this obj
-			if (it->IsCameraObject())
+			if (it->cameraObject())
 			{
 				MoveCameraTo(next_pos);
 			}

@@ -63,7 +63,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
 	draw(image->getVertexArray(), image->getIndexCoordsBuffer(), *shader);
 }
 
-void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale, const CollorComponent& collor)
+void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale, const ColorComponent& collor)
 {
     if (!string || string->isEmpty())
         return;
