@@ -93,7 +93,7 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     }
 }
 
-void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& collision, const ColorComponent& collor)
+void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& size, const ColorComponent& collor)
 {
     if (!string || string->isEmpty())
         return;
@@ -104,21 +104,34 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     shader->setFloat("alpha", collor.getAlpha());
 
     auto charList = string->getDisplayChars();
-    unsigned x = position.getPosition().mX + collision.getXOffset(), y = position.getPosition().mY + collision.getYOffset();
+    unsigned max_width = 0, max_height = 0;
     for (const auto& ch : charList)
     {
-        const float y_offset = (ch.Bearing.y - static_cast<float>(ch.texture->getHeight())) * collision.getScale();
-        const float x_offset = ch.Bearing.x * collision.getScale();
+        auto x = (ch.Advance >> 6) * size.getScale();
+        auto y = ch.texture->getHeight() * size.getScale();
+        if (x > max_width)
+            max_width = x;
+        if (y > max_height)
+            max_height = y;
+    }
+    float rect_scale_x = size.getWidth() / static_cast<float>(max_width * charList.size());
+    float rect_scale_y = size.getHeight() / static_cast<float>(max_height * charList.size());
+
+    unsigned x = position.getPosition().mX + size.getXOffset(), y = position.getPosition().mY + size.getYOffset();
+    for (const auto& ch : charList)
+    {
+        const float y_offset = (ch.Bearing.y - static_cast<float>(ch.texture->getHeight())) * size.getScale() * rect_scale_y;
+        const float x_offset = ch.Bearing.x * size.getScale();
         const auto model = getTransformMatrix(
-            x + x_offset, y + y_offset,
-            ch.texture->getWidth() * collision.getScale(),
-            ch.texture->getHeight() * collision.getScale(),
+            (x + x_offset), (y + y_offset),
+            ch.texture->getWidth() * size.getScale() * rect_scale_x,
+            ch.texture->getHeight() * size.getScale() * rect_scale_y,
             position.getRotation());
         shader->setMatrix4("modelMatrix", model);
         ch.texture->bind();
 
         draw(string->getVertexArray(), string->getIndexCoordsBuffer(), *shader);
-        x += (ch.Advance >> 6) * collision.getScale(); // Bitshift by 6 to get value in pixels (2^6 = 64)
+        x += (ch.Advance >> 6) * size.getScale() * rect_scale_x; // Bitshift by 6 to get value in pixels (2^6 = 64)
     }
 }
 

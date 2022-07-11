@@ -5,6 +5,8 @@
 #include <map>
 
 #define INPUTS InputManager::Instanse()
+#include <vector>
+
 #include "Point.h"
 
 class InputListener
@@ -32,7 +34,7 @@ public:
 private:
 	static std::map<int, bool> key_map;
 	static FPoint last_cursor_pos;
-	static std::deque<InputListener*> listeners;
+	static std::vector<InputListener*> listeners;
 	InputManager() = default;
 	~InputManager() = default;
 	InputManager(const InputManager&) = delete;

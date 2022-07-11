@@ -2,7 +2,7 @@
 
 std::map<int, bool> InputManager::key_map;
 FPoint InputManager::last_cursor_pos;
-std::deque<InputListener*> InputManager::listeners;
+std::vector<InputListener*> InputManager::listeners;
 
 InputManager& InputManager::Instanse()
 {
@@ -21,7 +21,7 @@ void InputManager::ListenerRemove(InputListener* listener)
 	const auto it = std::find(listeners.begin(), listeners.end(), listener);
 	if (it != listeners.end())
 	{
-		listeners.erase(it);
+		listeners.erase(std::remove(listeners.begin(), listeners.end(), *it), listeners.end());
 	}
 }
 

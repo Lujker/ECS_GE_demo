@@ -31,7 +31,7 @@ void Button::removeListener(ButtonListener* listener)
 	const auto it = std::find(m_listeners.begin(), m_listeners.end(), listener);
 	if (it != m_listeners.end())
 	{
-		m_listeners.erase(it);
+		m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), *it), m_listeners.end());
 	}
 }
 
@@ -72,9 +72,15 @@ void Button::setString(std::shared_ptr<DisplayString> string)
 void Button::setAutoInput(bool isAutoInput)
 {
 	if (isAutoInput && !isAddedToInputManager)
+	{
+		isAddedToInputManager = true;
 		INPUTS.ListenerAdd(this);
+	}
 	else if (!isAutoInput && isAddedToInputManager)
+	{
+		isAddedToInputManager = false;
 		INPUTS.ListenerRemove(this);
+	}
 }
 
 void Button::setSizeString(const CollisionComponent& size_string)

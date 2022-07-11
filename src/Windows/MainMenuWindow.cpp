@@ -29,7 +29,7 @@ void MainMenuWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidget
 	CollisionComponent size{200,200, 0, 0};
 	auto button = std::make_shared<Button>(0, PositionComponent{ mOrigin.mX + mOrigin.mWidth / 2 - 200, mOrigin.mY + mOrigin.mHeight / 2 }, size, size);
 	button->setImage(RES.getSharedImage("res/images/test_button.png"));
-	button->setString(std::make_shared<DisplayString>("button"));
+	button->setString(std::make_shared<DisplayString>("to sandbox"));
 	button->setAutoInput(true);
 	button->addListener(this);
 	m_objects.push_back(button);

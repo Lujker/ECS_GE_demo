@@ -59,12 +59,14 @@ void WidgetManager::SetNextWidget(const std::shared_ptr<GlobalWidget>& nextWindo
 							m_pFocusWidget->RemovedFromContainer(nullptr);
 						LOG("Remove widget: " + m_pFocusWidget->GetName() + " from GLOBAL MANAGER!");
 						std::swap(m_pFocusWidget, m_pNextWidget);
+						m_pNextWidget = nullptr;
 						globalWindowsChangAnim = false;
 					}, false);
 			}
 			else
 			{
 				std::swap(m_pFocusWidget, m_pNextWidget);
+				m_pNextWidget = nullptr;
 				globalWindowsChangAnim = false;
 			}
 		}, true);
