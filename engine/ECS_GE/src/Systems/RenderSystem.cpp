@@ -115,9 +115,9 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
             max_height = y;
     }
     float rect_scale_x = size.getWidth() / static_cast<float>(max_width * charList.size());
-    float rect_scale_y = size.getHeight() / static_cast<float>(max_height * charList.size());
+    float rect_scale_y = max_height < size.getHeight()? static_cast<float>(max_height) / size.getHeight() : size.getHeight() / static_cast<float>(max_height);
 
-    unsigned x = position.getPosition().mX + size.getXOffset(), y = position.getPosition().mY + size.getYOffset();
+    unsigned x = position.getPosition().mX + size.getXOffset(), y = position.getPosition().mY + size.getYOffset() * rect_scale_y;
     for (const auto& ch : charList)
     {
         const float y_offset = (ch.Bearing.y - static_cast<float>(ch.texture->getHeight())) * size.getScale() * rect_scale_y;
