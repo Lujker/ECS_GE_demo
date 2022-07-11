@@ -67,7 +67,17 @@ bool CollisionSystem::include2D(const FRect& rect_left, const FPoint& point_righ
 	return rect_left.Contains(point_right);
 }
 
-bool CollisionSystem::include2D(const CollisionComponent& collision_left, const FPoint& point_right)
+bool CollisionSystem::include2D(const CollisionComponent& collision_left, float left_scale,const PositionComponent& position_left, const FPoint& point_right)
 {
+	if (collision_left.isValid() && collision_left.isRect())
+	{
+		auto r = collision_left.getRect();
+		r += position_left.getPosition();
+		if (left_scale != 1.f && left_scale != 0.f)
+		{
+			r.mWidth *= left_scale; r.mHeight *= left_scale;
+		}
+		return include2D(r, point_right);
+	}
 	return false;
 }

@@ -116,11 +116,11 @@ void WidgetContainer::StartShow(const std::function<void()>& callback, bool with
 	if (with_animation)
 	{
 		//!init anim list for appear widget
-		callback();
+		showedAnimList->push_back(new Animation::Wait(1), callback, true);
 	}
 	else
 	{
-		callback();
+		showedAnimList->push_back(new Animation::Wait(1), callback, true);
 	}
 }
 
@@ -149,8 +149,9 @@ void WidgetContainer::RemovedFromContainer(std::shared_ptr<WidgetContainer> theW
 
 void WidgetContainer::UpdateAll(float deltaTime)
 {
-	if(!mIsShowed)
-		return;
+	//if(!mIsShowed)
+	//	return;
+	showedAnimList->update(deltaTime);
 	Update(deltaTime);
 	for(const auto& it : mWidgets)
 	{

@@ -15,7 +15,7 @@ public:
 	bool include2D(const CollisionComponent& collision_left, const CollisionComponent& collision_right);
 	bool include2D(const FRect& rect_left, const FRect& rect_right);
 	bool include2D(const FRect& rect_left, const FPoint& point_right);
-	bool include2D(const CollisionComponent& collision_left, const FPoint& point_right);
+	bool include2D(const CollisionComponent& collision_left, float left_scale, const PositionComponent& position_left, const FPoint& point_right);
 private:
 	CollisionSystem() = default;
 	~CollisionSystem() = default;

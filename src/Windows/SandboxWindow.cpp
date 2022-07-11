@@ -1,11 +1,14 @@
 #include "SandboxWindow.h"
 
+#include "Board.h"
 #include "CameraManager.h"
 #include "CollisionSystem.h"
+#include "Knight.h"
 #include "LogSystem.h"
+#include "MainMenuWindow.h"
 #include "PhysicsSystem.h"
-#include "RenderSystem.h"
 #include "ResourceManager.h"
+#include "WidgetsManager.h"
 
 std::shared_ptr<SandboxWindow> SandboxWindow::Create()
 {
@@ -25,28 +28,17 @@ void SandboxWindow::OriginRectSet()
 void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)
 {
     const CollisionComponent col_form{ std::vector<FPoint>{ {30, 0},{15, 25}, {25, 30},{35, 25} ,{35, 10} }, false, 2 };
-    
-    m_knight = std::make_shared<Knight>("player", PositionComponent{ 350, 100, 0, 0 }, CollisionComponent{ 120, 80, false }, CollisionComponent{ 120, 80, true } );
-    m_board = std::make_shared<Board>("board", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
-        CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(mOrigin.mHeight) }, CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(60) }, "res/images/Layer_0001_8.png");
+    m_objects.push_back(std::make_shared<Knight>("player", PositionComponent{ 350, 100, 0, 0 }, CollisionComponent{ 120, 80, false }, CollisionComponent{ 120, 80, true }));
 
-    m_board_empty = std::make_shared<Board>("board_1", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
-        CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(100), static_cast<float>(200) });
+	m_objects.push_back(std::make_shared<Board>("board", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
+		       CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(mOrigin.mHeight) }, CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(60) }, "res/images/Layer_0001_8.png"));
 
-    if (m_knight)
+	m_objects.push_back(std::make_shared<Board>("board_1", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
+               CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }));
+    for (const auto& it : m_objects)
     {
-        m_knight->Init();
-        PHYSICS.Registrate(m_knight);
-    }
-	if (m_board)
-	{
-        m_board->Init();
-        PHYSICS.Registrate(m_board);
-	}
-    if (m_board_empty)
-    {
-        m_board_empty->Init();
-        PHYSICS.Registrate(m_board_empty);
+        it->Init();
+        PHYSICS.Registrate(it);
     }
 }
 
@@ -57,32 +49,36 @@ void SandboxWindow::RemovedFromContainer(std::shared_ptr<WidgetContainer> theWid
 
 void SandboxWindow::Draw()
 {
-    if (m_board)
-        m_board->Draw();
-    if (m_knight)
-		m_knight->Draw();
-    if (m_board_empty)
-        m_board_empty->Draw();
+    for (const auto& it : m_objects)
+    {
+        it->Draw();
+    }
 }
 
 void SandboxWindow::Update(float deltaTime)
 {
-    if (m_board)
-        m_board->Update(deltaTime);
-    if (m_knight)
-		m_knight->Update(deltaTime);
-    if (m_board_empty)
-        m_board_empty->Update(deltaTime);
+    for (const auto& it : m_objects)
+    {
+        it->Update(deltaTime);
+    }
 }
 
 void SandboxWindow::KeyPress(const int& key)
 {
-    if (m_knight)
-		m_knight->KeyPress(key);
+    for (const auto& it : m_objects)
+    {
+        it->KeyPress(key);
+    }
 }
 
 void SandboxWindow::KeyUnpress(const int& key)
 {
-    if (m_knight)
-		m_knight->KeyUnpress(key);
+    if (key == GLFW_KEY_ESCAPE)
+    {
+        WIDGET.SetNextWidget(MainMenuWindow::Create());
+    }
+    for (const auto& it : m_objects)
+    {
+        it->KeyUnpress(key);
+    }
 }

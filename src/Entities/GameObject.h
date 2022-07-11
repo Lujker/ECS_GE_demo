@@ -79,6 +79,7 @@ public:
 		const CollisionComponent& default_size, const CollisionComponent& default_collision);
 	virtual ~IInterfaceObject() override = 0;
 
+	virtual void Draw() override;
 	[[nodiscard]] virtual CollisionComponent	GetCollision() const { return m_collision; }
 	[[nodiscard]] virtual unsigned				GetId() const { return m_id; }
 

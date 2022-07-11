@@ -51,17 +51,25 @@ void WidgetManager::SetNextWidget(const std::shared_ptr<GlobalWidget>& nextWindo
 			else 
 				return;
 			LOG("Push widget: " + m_pNextWidget->GetName() + " to GLOBAL MANAGER!");
-			if(m_pFocusWidget)
+			if (m_pFocusWidget)
+			{
 				m_pFocusWidget->StartClose([&]()
-				{
-					if (m_pFocusWidget)
-						m_pFocusWidget->RemovedFromContainer(nullptr);
-					LOG("Remove widget: " + m_pFocusWidget->GetName() + " from GLOBAL MANAGER!");
-					m_pFocusWidget = m_pNextWidget;
-					m_pNextWidget = nullptr;
-					globalWindowsChangAnim = false;
-				}, false);
+					{
+						if (m_pFocusWidget)
+							m_pFocusWidget->RemovedFromContainer(nullptr);
+						LOG("Remove widget: " + m_pFocusWidget->GetName() + " from GLOBAL MANAGER!");
+						std::swap(m_pFocusWidget, m_pNextWidget);
+						globalWindowsChangAnim = false;
+					}, false);
+			}
+			else
+			{
+				std::swap(m_pFocusWidget, m_pNextWidget);
+				globalWindowsChangAnim = false;
+			}
 		}, true);
+
+
 }
 
 void WidgetManager::Update(float deltaTime)

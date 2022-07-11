@@ -1,18 +1,8 @@
 #pragma once
-#include "Collision.h"
 #include "GlobalWidget.h"
-#include "Knight.h"
-#include "Board.h"
-#include "Position.h"
+#include "Button.h"
 
-class DisplayString;
-
-namespace RenderEngine
-{
-	class Image2D;
-}
-
-class MainMenuWindow : public GlobalWidget
+class MainMenuWindow : public GlobalWidget, public ButtonListener
 {
 public:
 	static std::shared_ptr<MainMenuWindow> Create();
@@ -24,10 +14,14 @@ public:
 	void RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetContainer) override;
 	void Draw() override;
 	void Update(float deltaTime) override;
-	void KeyPress(const int& key) override;
-	void KeyUnpress(const int& key) override;
-	void MouseMove(const FPoint& current_pos) override;
-	void MousePress(const int& key) override;
-	void MouseUnpress(const int& key) override;
+	//void KeyPress(const int& key) override;
+	//void KeyUnpress(const int& key) override;
+	//void MouseMove(const FPoint& current_pos) override;
+	//void MousePress(const int& key) override;
+	//void MouseUnpress(const int& key) override;
+
+	void ButtonPressed(unsigned id, const int& key) override;
+	void ButtonUnpressed(unsigned id, const int& key) override;
 private:
+	std::list<std::shared_ptr<IInterfaceObject>> m_objects;
 };

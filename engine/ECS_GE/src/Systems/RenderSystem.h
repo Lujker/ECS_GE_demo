@@ -25,6 +25,7 @@ public:
 	void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const ColorComponent& collor = ColorComponent{0.5f,0.5f,0.5f});
+	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& collision = { false }, const ColorComponent& collor = ColorComponent{ 0.5f,0.5f,0.5f });
 	void Render(const FRect& rect);
 	void Render(const Rect& rect);
 	void Render(const CollisionComponent& collision, const PositionComponent& position);

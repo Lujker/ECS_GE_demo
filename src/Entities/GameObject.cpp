@@ -74,3 +74,10 @@ IInterfaceObject::IInterfaceObject(unsigned id, const PositionComponent& default
 
 IInterfaceObject::~IInterfaceObject()
 {}
+
+void IInterfaceObject::Draw()
+{
+	IObject::Draw();
+	if (isDrawCollision)
+		RENDER.Render(m_collision, m_position);
+}

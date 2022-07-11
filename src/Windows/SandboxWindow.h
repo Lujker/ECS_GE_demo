@@ -1,17 +1,6 @@
 #pragma once
-#include "Collision.h"
+#include "GameObject.h"
 #include "GlobalWidget.h"
-#include "Knight.h"
-#include "Board.h"
-#include "Position.h"
-
-class DisplayString;
-
-namespace RenderEngine
-{
-	class Sprite;
-	class Image2D;
-}
 
 class SandboxWindow : public GlobalWidget
 {
@@ -28,8 +17,5 @@ public:
 	void KeyPress(const int& key) override;
 	void KeyUnpress(const int& key) override;
 private:
-	std::shared_ptr<Knight> m_knight;
-	std::shared_ptr<Board> m_board;
-
-	std::shared_ptr<Board> m_board_empty;
+	std::list< std::shared_ptr<IGameObject>> m_objects;
 };

@@ -187,4 +187,27 @@ namespace Animation
 		float timer;
 		float time;
 	};
+
+	class Updater : public Anim
+	{
+	public:
+		Updater(float time, std::function<void()> updateFunc) :
+			timer(0), updateFunc(updateFunc), time(time)
+		{}
+
+		bool update(const float delta_time) override
+		{
+			if ((timer += (delta_time * acceleration)) > time)
+			{
+				updateFunc();
+				return true;
+			}
+			return false;
+		}
+
+		void forceEndAnimation() { timer = time; }
+		std::function<void()> updateFunc;
+		float timer;
+		float time;
+	};
 }

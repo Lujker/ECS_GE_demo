@@ -40,6 +40,7 @@ public:
 	float getYOffset() const;
 	FPoint getCenterPoint() const;
 	float getScale() const;
+	float* getScalePtr() { return &m_scale; }
 	std::vector<FPoint> getPolygons() const noexcept
 	{
 		if (m_form)

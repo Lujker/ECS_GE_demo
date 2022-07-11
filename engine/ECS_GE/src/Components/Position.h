@@ -33,6 +33,11 @@ public:
 	FPoint getPosition() const { return  m_position; }
 	float  getRotation() const { return  m_rotation; }
 	float  getLayer() const { return m_layer; }
+
+	FPoint* getPositionPtr() { return &m_position; }
+	float* getLayerPtr() { return &m_layer; }
+	float* getRotationPtr() { return &m_rotation; }
+
 private:
 	FPoint	m_position;
 	float	m_layer;

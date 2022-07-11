@@ -1,4 +1,5 @@
 #pragma once
+#include "Animator.h"
 #include "Collision.h"
 #include "Collor.h"
 #include "DisplayString.h"
@@ -15,8 +16,8 @@ namespace RenderEngine
 struct ButtonListener
 {
 	virtual ~ButtonListener() = 0 ;
-	virtual void ButtonPressed(unsigned id) { }
-	virtual void ButtonUnpressed(unsigned id) { }
+	virtual void ButtonPressed(unsigned id, const int& key) { }
+	virtual void ButtonUnpressed(unsigned id, const int& key) { }
 	virtual void MouseMoveOnButton(unsigned id) { }
 };
 
@@ -30,6 +31,9 @@ public:
 	virtual void	addListener(ButtonListener*);
 	virtual void	removeListener(ButtonListener*);
 	virtual bool	isExistListener(ButtonListener*);
+
+	virtual void Draw() override;
+	virtual void Update(const float& delta_time) override;
 
 	virtual void	setImage(std::shared_ptr<RenderEngine::Image2D>);
 	virtual void	setString(std::shared_ptr<DisplayString>);
@@ -46,10 +50,14 @@ public:
 	virtual void	MousePress(const int& key) override;
 	virtual void	MouseUnpress(const int& key) override;
 protected:
-	std::shared_ptr<DisplayString>			m_string;
-	std::shared_ptr<RenderEngine::Image2D>	m_bg;
-	CollisionComponent						m_size_string;
-	ColorComponent							m_string_color;
-	std::list<ButtonListener*>				m_listeners;
-	bool									isAddedToInputManager = false;
+	std::shared_ptr<DisplayString>				m_string;
+	std::shared_ptr<RenderEngine::Image2D>		m_bg;
+	CollisionComponent							m_size_string;
+	ColorComponent								m_string_color = { 0.5f, 0.5f, 0.5f };
+	std::shared_ptr<Animation::AnimationsList>	m_pressed_anim;
+	std::list<ButtonListener*>					m_listeners;
+	bool										isAddedToInputManager = false;
+	bool										isPressed = false;
+	bool										isUnpressed = false;
+	bool										isCursorOnButton = false;
 };

@@ -69,7 +69,7 @@ public:
 	bool	Contains(const TPoint<_T>& thePoint) const
 	{
 		return ((thePoint.mX >= mX) && (thePoint.mX < mX + mWidth) &&
-			(thePoint.mY >= mY) && (thePoint.mY < mY + mHeight));
+			(thePoint.mY >= mY - mHeight) && (thePoint.mY < mY ));
 	}
 	
 	void	Offset(_T theX, _T theY)

@@ -8,13 +8,13 @@
 #include "DisplayString.h"
 #include "FileSystemManager.h"
 #include "LogSystem.h"
+#include "MainMenuWindow.h"
 #include "PhysicsSystem.h"
 #include "RenderSystem.h"
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "UpdateSystem.h"
 #include "WidgetsManager.h"
-#include "SandboxWindow.h"
 
 Client::Client(const char* argv):
 	m_exec_path(argv)
@@ -47,7 +47,7 @@ bool Client::init()
 	if (!WIDGET.InitEngine(m_exec_path))
 		return false;
     m_isInit = true;
-    WIDGET.SetNextWidget(SandboxWindow::Create());
+    WIDGET.SetNextWidget(MainMenuWindow::Create());
     return true;
 }
 

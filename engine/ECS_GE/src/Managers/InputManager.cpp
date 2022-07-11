@@ -61,7 +61,7 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int key, int action, 
 		key_map[key] = true;
 		for (const auto& it : listeners)
 		{
-			it->KeyPress(key);
+			it->MousePress(key);
 		}
 	}
 	if (action == GLFW_RELEASE)
@@ -69,9 +69,14 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int key, int action, 
 		key_map[key] = false;
 		for (const auto& it : listeners)
 		{
-			it->KeyUnpress(key);
+			it->MouseUnpress(key);
 		}
 	}
+}
+
+FPoint InputManager::GetLastCursorPos()
+{
+	return last_cursor_pos;
 }
 
 InputListener::~InputListener()

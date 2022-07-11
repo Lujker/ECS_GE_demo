@@ -93,6 +93,35 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     }
 }
 
+void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& collision, const ColorComponent& collor)
+{
+    if (!string || string->isEmpty())
+        return;
+    const auto shader = RES.getShader("freetype");
+    CAMERA.UseShader(shader);
+    shader->setVec3("textColor", { collor.getR(), collor.getG(), collor.getB() });
+    shader->setFloat("layer", position.getLayer() + 1);
+    shader->setFloat("alpha", collor.getAlpha());
+
+    auto charList = string->getDisplayChars();
+    unsigned x = position.getPosition().mX + collision.getXOffset(), y = position.getPosition().mY + collision.getYOffset();
+    for (const auto& ch : charList)
+    {
+        const float y_offset = (ch.Bearing.y - static_cast<float>(ch.texture->getHeight())) * collision.getScale();
+        const float x_offset = ch.Bearing.x * collision.getScale();
+        const auto model = getTransformMatrix(
+            x + x_offset, y + y_offset,
+            ch.texture->getWidth() * collision.getScale(),
+            ch.texture->getHeight() * collision.getScale(),
+            position.getRotation());
+        shader->setMatrix4("modelMatrix", model);
+        ch.texture->bind();
+
+        draw(string->getVertexArray(), string->getIndexCoordsBuffer(), *shader);
+        x += (ch.Advance >> 6) * collision.getScale(); // Bitshift by 6 to get value in pixels (2^6 = 64)
+    }
+}
+
 void RenderSystem::Render(const FRect& rect)
 {
     drawRect(rect.mX, rect.mY, rect.mWidth, rect.mHeight);
