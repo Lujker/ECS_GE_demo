@@ -8,7 +8,9 @@ Board::Board(const std::string& name, const PositionComponent& default_position,
 	IGameObject(name, default_position, default_size, default_collision)
 {
 	if (!image_name.empty())
+	{
 		m_image = RES.getSharedImage(image_name);
+	}
 }
 
 void Board::Init()

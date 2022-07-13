@@ -61,17 +61,6 @@ namespace RenderEngine
 		}
 		return FPoint();
 	}
-
-	//void Image2D::render(FRect rect, float rotation, float layer) const
-	//{
-	//	m_pShaderProgram->use();
-	//	m_pShaderProgram->setMatrix4("modelMatrix", RENDER.getTransformMatrix(rect.mX, rect.mY, rect.mWidth, rect.mHeight, rotation));
-	//	m_pShaderProgram->setFloat("layer", layer);
-	//	m_pShaderProgram->setInt("tex", m_pTexture->getSlot());
-	//	m_pTexture->bind();
-
-	//	RENDER.draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
-	//}
 	
 	void Image2D::SetSubTexture(const SubTexture2D& sub_texture)
 	{
@@ -96,6 +85,11 @@ namespace RenderEngine
 		return false;
 	}
 
+	bool Image2D::isMirrored() const
+	{
+		return is_mirrored;
+	}
+
 	void Image2D::mirror(bool vertical, bool horizontal)
 	{
 		const GLfloat vertex_coords[] =
@@ -106,9 +100,16 @@ namespace RenderEngine
 			horizontal ? 0.f : 1.f, vertical ? 0.f : 1.f,
 			horizontal ? 0.f : 1.f, vertical ? 1.f :0.f,
 		};
-		m_vertexCoordsBuffer.update(vertex_coords, sizeof(vertex_coords));
+		updateVertex(vertex_coords, sizeof(vertex_coords));
+		is_mirrored = true;
 		m_isHorizontalMirror = horizontal;
 		m_isVerticalMirror = vertical;
+	}
+
+	void Image2D::updateVertex(const void* data, const unsigned int data_size)
+	{
+		m_vertexCoordsBuffer.update(data, data_size);
+		is_mirrored = false;
 	}
 
 	void Image2D::init()

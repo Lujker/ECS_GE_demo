@@ -28,13 +28,17 @@ void SandboxWindow::OriginRectSet()
 void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)
 {
     const CollisionComponent col_form{ std::vector<FPoint>{ {30, 0},{15, 25}, {25, 30},{35, 25} ,{35, 10} }, false, 2 };
-    m_objects.push_back(std::make_shared<Knight>("player", PositionComponent{ 350, 100, 0, 0 }, CollisionComponent{ 120, 80, false }, CollisionComponent{ 120, 80, true }));
+    m_objects.push_back(std::make_shared<Knight>("player", PositionComponent{ 350., 100., 0., 0. }, 
+        CollisionComponent{ 120., 80., 0., 0., false }, CollisionComponent{ 120., 80., 0., 0.,  true }));
 
 	m_objects.push_back(std::make_shared<Board>("board", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
 		       CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(mOrigin.mHeight) }, CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(60) }, "res/images/Layer_0001_8.png"));
 
 	m_objects.push_back(std::make_shared<Board>("board_1", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
                CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }));
+
+    m_objects.push_back(std::make_shared<Board>("board_2", PositionComponent{ mOrigin.mX + mOrigin.mWidth/2, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
+        CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }));
     for (const auto& it : m_objects)
     {
         it->Init();

@@ -66,6 +66,8 @@ namespace RenderEngine
 		void								emitEndAnimation(const std::string& name) const;
 		std::string							nextAnimInQueue();
 		void								setAnimQueue(const std::queue<std::string>& m_animtions);
+
+		void								mirror(bool vertical, bool horizontal) override;
 	private:
 		std::vector<SpriteAnimListener*>	m_listeners;
 		std::queue<std::string>				m_AnimQueue;

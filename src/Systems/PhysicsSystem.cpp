@@ -1,4 +1,5 @@
 #include "PhysicsSystem.h"
+#include <future>
 
 #include "CameraManager.h"
 #include "CollisionSystem.h"
@@ -25,91 +26,98 @@ void PhysicsSystem::Clear()
 
 void PhysicsSystem::MoveObjects(float delta_time) const
 {
-	//!Need oprimizations!
 	for (auto& it : m_objects)
 	{
 		//Calculate next move and next pos for obj
-		auto next_move = it->GetMove();
-		if (it->gravityEnable())
-			next_move = MOVE.Gravity(next_move, delta_time);
-		next_move = MOVE.CalculateVelocity(next_move, delta_time);
-		auto next_pos = MOVE.Move(it->GetPosition(), next_move, delta_time);
-		
-		std::shared_ptr<IGameObject> collisionX = nullptr, collisionY = nullptr;
-		// And check collision with other objects
-		if (bool cantMoveX = false, cantMoveY = false; it->GetCollision().hasCollision())
-		{
-			for (auto& sec_it : m_objects)
+		auto chek_obj = [&](const std::shared_ptr<IGameObject> pointer) {
+			auto next_move = pointer->GetMove();
+			if (pointer->gravityEnable())
+				next_move = MOVE.Gravity(next_move, delta_time);
+			next_move = MOVE.CalculateVelocity(next_move, delta_time);
+			auto next_pos = MOVE.Move(pointer->GetPosition(), next_move, delta_time);
+
+			std::shared_ptr<IGameObject> collisionX = nullptr, collisionY = nullptr;
+			// And check collision with other objects
+			if (bool cantMoveX = false, cantMoveY = false; pointer->GetCollision().hasCollision())
 			{
-				if (cantMoveX && cantMoveY)
-					break;
-				if (sec_it == it)
-					continue;
-				//! Check intersect with other obj by x coord
-				if (!cantMoveX)
+				for (auto& sec_it : m_objects)
 				{
-					cantMoveX = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {next_pos.getPosition().mX, it->GetPosition().getPosition().mY}, it->GetPosition().getLayer() },
-						sec_it->GetCollision(), sec_it->GetPosition());
-					collisionX = sec_it;
+					if (cantMoveX && cantMoveY)
+						break;
+					if (sec_it == pointer)
+						continue;
+					//! Check intersect with other obj by x coord
+					if (!cantMoveX)
+					{
+						cantMoveX = COLLISION.intersect2D(pointer->GetCollision(), PositionComponent{ {next_pos.getPosition().mX, pointer->GetPosition().getPosition().mY}, pointer->GetPosition().getLayer() },
+							sec_it->GetCollision(), sec_it->GetPosition());
+						if (cantMoveX)
+							collisionX = sec_it;
+					}
+					//! And check by y
+					if (!cantMoveY)
+					{
+						cantMoveY = COLLISION.intersect2D(pointer->GetCollision(), PositionComponent{ {pointer->GetPosition().getPosition().mX,  next_pos.getPosition().mY}, pointer->GetPosition().getLayer() },
+							sec_it->GetCollision(), sec_it->GetPosition());
+						if (cantMoveY)
+							collisionY = sec_it;
+					}
 				}
-				//! And check by y
-				if (!cantMoveY)
+				auto pos_x = next_pos.getPosition().mX, pos_y = next_pos.getPosition().mY;
+				auto vel_x = next_move.getVelocity().x, vel_y = next_move.getVelocity().y;
+				auto acs_x = next_move.getAcceleration().x, acs_y = next_move.getAcceleration().y;
+				if (cantMoveX)
 				{
-					cantMoveY = COLLISION.intersect2D(it->GetCollision(), PositionComponent{ {it->GetPosition().getPosition().mX,  next_pos.getPosition().mY}, it->GetPosition().getLayer() },
-						sec_it->GetCollision(), sec_it->GetPosition());
-					collisionY = sec_it;
+					pos_x = pointer->GetPosition().getPosition().mX;
+					vel_x = pointer->GetMove().getVelocity().x;
+					acs_x = 0.f;
+					if (collisionX)
+					{
+						if (collisionX->GetPosition().getPosition().mX > pointer->GetPosition().getPosition().mX + pointer->GetCollision().getWidth())
+							pos_x = collisionX->GetPosition().getPosition().mX - pointer->GetCollision().getWidth();
+						else if (collisionX->GetPosition().getPosition().mX + collisionX->GetCollision().getWidth() < pointer->GetPosition().getPosition().mX)
+							pos_x = collisionX->GetPosition().getPosition().mX + collisionX->GetCollision().getWidth();
+					}
+				}
+				if (cantMoveY)
+				{
+					pos_y = pointer->GetPosition().getPosition().mY;
+					vel_y = 0.f;
+					acs_y = 0.f;
+					if (collisionY)
+					{
+						if (collisionY->GetPosition().getPosition().mY > pointer->GetPosition().getPosition().mY + pointer->GetCollision().getHeight())
+							pos_y = collisionY->GetPosition().getPosition().mY;
+						else if (collisionY->GetPosition().getPosition().mY + collisionY->GetCollision().getHeight() < pointer->GetPosition().getPosition().mY)
+							pos_y = collisionY->GetPosition().getPosition().mY + collisionY->GetCollision().getHeight();
+					}
+				}
+				next_pos = { {pos_x, pos_y}, pointer->GetPosition().getLayer(), pointer->GetPosition().getRotation() };
+				next_move = { pointer->GetMove().getDirection(), {vel_x, vel_y}, {acs_x, acs_y} };
+			}
+			//! if move comp change
+			next_move.UpdateDirection();
+			if (pointer->GetMove() != next_move)
+			{
+				pointer->SetMove(next_move);
+				pointer->MoveChange();
+			}
+			//! if pos comp change
+			if (pointer->GetPosition() != next_pos)
+			{
+				pointer->SetPosition(next_pos);
+				pointer->PositionChange();
+				//! If camera centrailyze to this obj
+				if (pointer->cameraObject())
+				{
+					MoveCameraTo(next_pos);
 				}
 			}
-			auto pos_x = next_pos.getPosition().mX, pos_y = next_pos.getPosition().mY;
-			auto vel_x = next_move.getVelocity().x, vel_y = next_move.getVelocity().y;
-			auto acs_x = next_move.getAcceleration().x, acs_y = next_move.getAcceleration().y;
-			if (cantMoveX)
-			{
-				pos_x = it->GetPosition().getPosition().mX;
-				vel_x = it->GetMove().getVelocity().x;
-				acs_x = 0.f;
-				if (collisionX)
-				{
-					if (collisionX->GetPosition().getPosition().mX >= it->GetPosition().getPosition().mX + it->GetCollision().getWidth())
-						pos_x = collisionX->GetPosition().getPosition().mX;
-					else if (collisionX->GetPosition().getPosition().mX + collisionX->GetCollision().getWidth() <= it->GetPosition().getPosition().mX)
-						pos_x = collisionX->GetPosition().getPosition().mX + collisionX->GetCollision().getWidth();
-				}
-			}
-			if (cantMoveY)
-			{
-				pos_y = it->GetPosition().getPosition().mY;
-				vel_y = 0.f;
-				acs_y = 0.f;
-				if (collisionY)
-				{
-					if (collisionY->GetPosition().getPosition().mY >= it->GetPosition().getPosition().mY + it->GetCollision().getHeight())
-						pos_y = collisionY->GetPosition().getPosition().mY;
-					else if (collisionY->GetPosition().getPosition().mY + collisionY->GetCollision().getHeight() <= it->GetPosition().getPosition().mY)
-						pos_y = collisionY->GetPosition().getPosition().mY + collisionY->GetCollision().getHeight();
-				}
-			}
-			next_pos = { {pos_x, pos_y}, it->GetPosition().getLayer(), it->GetPosition().getRotation() };
-			next_move = { it->GetMove().getDirection(), {vel_x, vel_y}, {acs_x, acs_y} };
-		}
-		//! if move comp change
-		next_move.UpdateDirection();
-		if (it->GetMove() != next_move)
-		{
-			it->SetMove(next_move);
-			it->MoveChange();
-		}
-		//! if pos comp change
-		if (it->GetPosition() != next_pos) 
-		{
-			it->SetPosition(next_pos);
-			it->PositionChange();
-			//! If camera centrailyze to this obj
-			if (it->cameraObject())
-			{
-				MoveCameraTo(next_pos);
-			}
-		}
+		};
+		//! multithread
+		auto func = std::async(std::launch::async, chek_obj, it);
+		//! singlthread
+		//chek_obj(it);
 	}
 }
 

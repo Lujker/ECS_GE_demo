@@ -16,6 +16,11 @@ CollisionComponent::CollisionComponent(float width, float hight, float x_offset,
 	CollisionComponent(FRect{ x_offset,y_offset, width, hight}, collision, scale)
 {}
 
+CollisionComponent::CollisionComponent(double width, double hight, double x_offset, double y_offset, bool collision,
+	float scale) : CollisionComponent(FRect{ x_offset,y_offset, width, hight }, collision, scale)
+{
+}
+
 CollisionComponent::CollisionComponent(const std::vector<FPoint>& points, bool collision, float scale):
 	m_form(std::make_shared<Form>(points)), collision(collision), m_scale(scale)
 {}
@@ -71,7 +76,7 @@ FPoint CollisionComponent::getSize() const
 	return {};
 }
 
-float CollisionComponent::getWidth() const
+double CollisionComponent::getWidth() const
 {
 	if (isValid())
 	{
@@ -83,7 +88,7 @@ float CollisionComponent::getWidth() const
 	return 0.0;
 }
 
-float CollisionComponent::getHeight() const
+double CollisionComponent::getHeight() const
 {
 	if (isValid())
 	{
@@ -95,7 +100,7 @@ float CollisionComponent::getHeight() const
 	return 0.0;
 }
 
-float CollisionComponent::getXOffset() const
+double CollisionComponent::getXOffset() const
 {
 	if (isValid())
 	{
@@ -104,7 +109,7 @@ float CollisionComponent::getXOffset() const
 	return 0.0;
 }
 
-float CollisionComponent::getYOffset() const
+double CollisionComponent::getYOffset() const
 {
 	if (isValid())
 	{

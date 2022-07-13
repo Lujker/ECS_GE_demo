@@ -35,6 +35,18 @@ void UpdateSystem::Update(std::shared_ptr<RenderEngine::Sprite> sprite)
 	}
 	sprite->getCurrentAnimation()->Update(last_duration);
 	sprite->SetSubTexture(sprite->getCurrentAnimation()->getLastFrame());
+	if (sprite->isMirrored())
+	{
+		const GLfloat vertex_coords[] =
+		{
+			//! X and Y
+			sprite->isHorizontalMirror() ? 1.f : 0.f, sprite->isVerticalMirror() ? 1.f : 0.f,
+			sprite->isHorizontalMirror() ? 1.f : 0.f, sprite->isVerticalMirror() ? 0.f : 1.f,
+			sprite->isHorizontalMirror() ? 0.f : 1.f, sprite->isVerticalMirror() ? 0.f : 1.f,
+			sprite->isHorizontalMirror() ? 0.f : 1.f, sprite->isVerticalMirror() ? 1.f : 0.f,
+		};
+		sprite->updateVertex(vertex_coords, sizeof(vertex_coords));
+	}
 }
 
 void UpdateSystem::Update(Animation::AnimationsList& anim_list)

@@ -162,6 +162,13 @@ namespace RenderEngine
 			setAnimation(m_AnimQueue.front());
 	}
 
+	void Sprite::mirror(bool vertical, bool horizontal)
+	{
+		is_mirrored = true;
+		m_isHorizontalMirror = horizontal;
+		m_isVerticalMirror = vertical;
+	}
+
 	SpriteAnimListener::~SpriteAnimListener()
 	{
 	}

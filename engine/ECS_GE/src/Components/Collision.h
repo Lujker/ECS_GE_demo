@@ -10,6 +10,7 @@ public:
 	CollisionComponent(bool collision = true, float scale = 1.f);
 	CollisionComponent(const FRect& rect, bool collision = true, float scale = 1.f);
 	CollisionComponent(float width, float hight, float x_offset = 0.f, float y_offset = 0, bool collision = true, float scale = 1.f);
+	CollisionComponent(double width, double hight, double x_offset = 0.f, double y_offset = 0, bool collision = true, float scale = 1.f);
 	CollisionComponent(const std::vector<FPoint>& points, bool collision = true, float scale = 1.f);
 	CollisionComponent(const CollisionComponent& collision);
 	CollisionComponent(CollisionComponent&& collision) noexcept;
@@ -34,10 +35,10 @@ public:
 	std::shared_ptr<Form> getForm() const { return m_form; }
 	FRect getRect() const;
 	FPoint getSize() const;
-	float getWidth() const;
-	float getHeight() const;
-	float getXOffset() const;
-	float getYOffset() const;
+	double getWidth() const;
+	double getHeight() const;
+	double getXOffset() const;
+	double getYOffset() const;
 	FPoint getCenterPoint() const;
 	float getScale() const;
 
