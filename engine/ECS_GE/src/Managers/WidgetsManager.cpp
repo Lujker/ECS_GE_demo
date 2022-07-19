@@ -41,37 +41,35 @@ void WidgetManager::SetNextWidget(const std::shared_ptr<GlobalWidget>& nextWindo
 {
 	m_pNextWidget = nextWindow;
 	globalWindowsChangAnim = true;
-	m_pNextWidget->StartShow([&]()
-		{
-			if (m_pNextWidget)
-			{
-				m_pNextWidget->OriginRectSet();
-				m_pNextWidget->AddedToContainer(nullptr);
-			}
-			else 
-				return;
-			LOG("Push widget: " + m_pNextWidget->GetName() + " to GLOBAL MANAGER!");
-			if (m_pFocusWidget)
-			{
-				m_pFocusWidget->StartClose([&]()
-					{
-						if (m_pFocusWidget)
-							m_pFocusWidget->RemovedFromContainer(nullptr);
-						LOG("Remove widget: " + m_pFocusWidget->GetName() + " from GLOBAL MANAGER!");
-						std::swap(m_pFocusWidget, m_pNextWidget);
-						m_pNextWidget = nullptr;
-						globalWindowsChangAnim = false;
-					}, false);
-			}
-			else
+	auto setNextWidget = [&]()
+	{
+		m_pNextWidget->OriginRectSet();
+		m_pNextWidget->AddedToContainer(nullptr);
+		m_pNextWidget->StartShow([&]()
 			{
 				std::swap(m_pFocusWidget, m_pNextWidget);
-				m_pNextWidget = nullptr;
 				globalWindowsChangAnim = false;
-			}
-		}, true);
-
-
+				m_pNextWidget.reset();
+			}, true);
+	};
+	auto closeOldWidget = [&]()
+	{
+		LOG("Remove widget: " + m_pFocusWidget->GetName() + " from GLOBAL MANAGER!");
+		m_pFocusWidget->RemovedFromContainer(nullptr);
+		m_pFocusWidget->StartClose([&, setNextWidget]()
+			{
+				LOG("Widget: " + m_pFocusWidget->GetName() + " removed!");
+				LOG("Push widget: " + m_pNextWidget->GetName() + " to GLOBAL MANAGER!");
+				setNextWidget();
+			}, true);
+	};
+	if (m_pNextWidget)
+	{
+		if (m_pFocusWidget)
+			closeOldWidget();
+		else
+			setNextWidget();
+	}
 }
 
 void WidgetManager::Update(float deltaTime)
@@ -85,7 +83,13 @@ void WidgetManager::Update(float deltaTime)
 void WidgetManager::Draw()
 {
 	if (m_pNextWidget)
+	{
+		Transform2DGuard t_r{ m_pNextWidget->mTransform };
 		m_pNextWidget->DrawAll();
+	}
 	if (m_pFocusWidget)
+	{
+		Transform2DGuard t_r{ m_pFocusWidget->mTransform };
 		m_pFocusWidget->DrawAll();
+	}
 }

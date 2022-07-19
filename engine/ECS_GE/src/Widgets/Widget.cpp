@@ -1,5 +1,7 @@
 #include "Widget.h"
 
+#include "CameraManager.h"
+
 Widget::Widget(const std::string& widgetName, const eWidgetPriority& priority, const std::shared_ptr<WidgetContainer>& parent):
 	WidgetContainer(widgetName, priority, parent), mMouseVisible(true), mDisabled(false), mHasFocus(false), mIsDirty(false)
 {}
@@ -64,11 +66,24 @@ Rect Widget::GetRect() const
 
 void Widget::StartShow(const std::function<void()>& callback, bool with_animation)
 {
+	mIsShowed = true;
+	if (with_animation)
+	{
+		mTransform.alpha = 0.f;
+		showedAnimList->push_back(new Animation::Diff(1000, 0.f, 1.f, &mTransform.alpha), true);
+		showedAnimList->push_blocker();
+	}
 	WidgetContainer::StartShow(callback, with_animation);
 }
 
 void Widget::StartClose(const std::function<void()>& callback, bool with_animation)
 {
+	if (with_animation)
+	{
+		mTransform.alpha = 1.f;
+		showedAnimList->push_back(new Animation::Diff(1000, 1.f, 0.f, &mTransform.alpha), true);
+		showedAnimList->push_blocker();
+	}
 	WidgetContainer::StartClose(callback, with_animation);
 }
 

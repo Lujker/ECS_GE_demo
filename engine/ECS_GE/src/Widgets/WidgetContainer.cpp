@@ -113,30 +113,18 @@ std::shared_ptr<Widget> WidgetContainer::FindWidget(const std::string& widgetNam
 void WidgetContainer::StartShow(const std::function<void()>& callback, bool with_animation)
 {
 	mIsShowed = true;
-	if (with_animation)
-	{
-		//!init anim list for appear widget
-		showedAnimList->push_back(new Animation::Wait(1), callback, true);
-	}
-	else
-	{
-		showedAnimList->push_back(new Animation::Wait(1), callback, true);
-	}
+	//!init anim list for appear widget
+	showedAnimList->push_back(new Animation::Wait(1), callback, true);
+	showedAnimList->push_blocker();
 }
 
 void WidgetContainer::StartClose(const std::function<void()>& callback, bool with_animation)
 {
-	if (with_animation)
-	{
+	showedAnimList->push_back(new Animation::Wait(1), [&, callback]() {
 		mIsShowed = false;
 		callback();
-		//!init anim list for disappear widget and set isShowed == false
-	}
-	else
-	{
-		mIsShowed = false;
-		callback();
-	}
+		}, true);
+	showedAnimList->push_blocker();
 }
 
 void WidgetContainer::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetManager)

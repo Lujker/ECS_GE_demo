@@ -31,9 +31,10 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Sprite> sprite, const Po
     }
 
     CAMERA.UseShader(shader);
-    shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
+    shader->setMatrix4("modelMatrix", RENDER.getTransformModel(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
     shader->setFloat("layer", position.getLayer());
     shader->setInt("tex", sprite->getTexture2D()->getSlot());
+    shader->setFloat("alpha", GetLastTransformAlpha());
     sprite->getTexture2D()->bind();
 
     draw(sprite->getVertexArray(), sprite->getIndexCoordsBuffer(), *shader);
@@ -55,9 +56,10 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
     }
 
     CAMERA.UseShader(shader);
-	shader->setMatrix4("modelMatrix", RENDER.getTransformMatrix(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
+	shader->setMatrix4("modelMatrix", RENDER.getTransformModel(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
 	shader->setFloat("layer", position.getLayer());
     shader->setInt("tex", image->getTexture2D()->getSlot());
+    shader->setFloat("alpha", GetLastTransformAlpha());
     image->getTexture2D()->bind();
 
 	draw(image->getVertexArray(), image->getIndexCoordsBuffer(), *shader);
@@ -71,16 +73,18 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     CAMERA.UseShader(shader);
     shader->setVec3("textColor", { collor.getR(), collor.getG(), collor.getB() });
     shader->setFloat("layer", position.getLayer() + 1);
-    shader->setFloat("alpha", collor.getAlpha());
-
+    shader->setFloat("alpha", collor.getAlpha() * GetLastTransformAlpha());
+    Transform2D transform;
+    if (auto t_r = LastTransform(); t_r.has_value())
+        transform = *t_r;
     auto charList = string->getDisplayChars();
-    unsigned x = position.getPosition().mX, y = position.getPosition().mY;
+    double x = position.getPosition().mX, y = position.getPosition().mY;
     
     for(const auto& ch : charList)
     {
-        const float y_offset = (ch.Bearing.y - static_cast<float>(ch.texture->getHeight())) * scale;
-        const float x_offset = ch.Bearing.x * scale;
-        const auto model = getTransformMatrix(
+        const float y_offset = (ch.Bearing.y - static_cast<float>(ch.texture->getHeight())) * scale * transform.scaleY;
+        const float x_offset = ch.Bearing.x * scale * transform.scaleX;
+        const auto model = getTransformModel(
             x + x_offset, y + y_offset,
             ch.texture->getWidth() * scale,
             ch.texture->getHeight() * scale,
@@ -89,7 +93,7 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
         ch.texture->bind();
 
         draw(string->getVertexArray(), string->getIndexCoordsBuffer(), *shader);
-        x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+        x += (ch.Advance >> 6) * scale * transform.scaleX; // Bitshift by 6 to get value in pixels (2^6 = 64)
     }
 }
 
@@ -101,28 +105,31 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     CAMERA.UseShader(shader);
     shader->setVec3("textColor", { collor.getR(), collor.getG(), collor.getB() });
     shader->setFloat("layer", position.getLayer() + 1);
-    shader->setFloat("alpha", collor.getAlpha());
+    shader->setFloat("alpha", collor.getAlpha() * GetLastTransformAlpha());
 
     auto charList = string->getDisplayChars();
     unsigned max_width = 0, max_height = 0;
+    Transform2D transform;
+    if (auto t_r = LastTransform(); t_r.has_value())
+        transform = *t_r;
     for (const auto& ch : charList)
     {
-        auto x = (ch.Advance >> 6) * size.getScale();
-        auto y = ch.texture->getHeight() * size.getScale();
+        auto x = (ch.Advance >> 6) * size.getScale() * transform.scaleX;
+        auto y = ch.texture->getHeight() * size.getScale() * transform.scaleY;
         if (x > max_width)
             max_width = x;
         if (y > max_height)
             max_height = y;
     }
-    float rect_scale_x = size.getWidth() / static_cast<float>(max_width * charList.size());
-    float rect_scale_y = max_height < size.getHeight()? static_cast<float>(max_height) / size.getHeight() : size.getHeight() / static_cast<float>(max_height);
+    float rect_scale_x = size.getWidth() * transform.scaleX / static_cast<float>(max_width * charList.size());
+    float rect_scale_y = max_height < size.getHeight() * transform.scaleY ? static_cast<float>(max_height) / size.getHeight() : size.getHeight() / static_cast<float>(max_height);
 
-    unsigned x = position.getPosition().mX + size.getXOffset(), y = position.getPosition().mY + size.getYOffset() * rect_scale_y;
+    double x = position.getPosition().mX + size.getXOffset(), y = position.getPosition().mY + size.getYOffset() * rect_scale_y;
     for (const auto& ch : charList)
     {
         const float y_offset = (ch.Bearing.y - static_cast<float>(ch.texture->getHeight())) * size.getScale() * rect_scale_y;
         const float x_offset = ch.Bearing.x * size.getScale();
-        const auto model = getTransformMatrix(
+        const auto model = getTransformModel(
             (x + x_offset), (y + y_offset),
             ch.texture->getWidth() * size.getScale() * rect_scale_x,
             ch.texture->getHeight() * size.getScale() * rect_scale_y,
@@ -131,7 +138,7 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
         ch.texture->bind();
 
         draw(string->getVertexArray(), string->getIndexCoordsBuffer(), *shader);
-        x += (ch.Advance >> 6) * size.getScale() * rect_scale_x; // Bitshift by 6 to get value in pixels (2^6 = 64)
+        x += (ch.Advance >> 6) * size.getScale() * transform.scaleX * rect_scale_x; // Bitshift by 6 to get value in pixels (2^6 = 64)
     }
 }
 
@@ -206,6 +213,22 @@ glm::mat4 RenderSystem::getTransformMatrix(const float x, const float y, const f
     return model;
 }
 
+glm::mat4 RenderSystem::getTransformModel(const float x, const float y, const float width, const float height, float rotation)
+{
+    Transform2D def_Tr;
+    if (!m_accumTransfStack.empty())
+        def_Tr = m_accumTransfStack.top();
+
+    glm::mat4 model(1.f);
+    model = glm::translate(model, glm::vec3(x + def_Tr.transX, y + def_Tr.transY, 0.f));
+    model = glm::translate(model, glm::vec3(0.5f * (width * def_Tr.scaleX), 0.5f * (height * def_Tr.scaleY), 0.f));
+    model = glm::rotate(model, glm::radians(rotation + def_Tr.rotate), glm::vec3(0.f, 0.f, 1.f));
+    model = glm::translate(model, glm::vec3(-0.5f * + (width * def_Tr.scaleX), -0.5f * (height * def_Tr.scaleY), 0.f));
+    model = glm::scale(model, glm::vec3(width * def_Tr.scaleX, height * def_Tr.scaleY, 1.f));
+
+    return model;
+}
+
 std::string RenderSystem::getRendererStr()
 {
     return (char*)glGetString(GL_RENDERER);
@@ -216,7 +239,40 @@ std::string RenderSystem::getVersionStr()
     return (char*)glGetString(GL_VERSION);
 }
 
-void RenderSystem::drawRect(const int x, const int y, const int width, const int height)
+void RenderSystem::PushGlobalTransform(Transform2D transform)
+{
+    if (!m_accumTransfStack.empty())
+        transform += m_accumTransfStack.top();
+    m_accumTransfStack.push(transform);
+}
+
+void RenderSystem::PopGlobalTransform()
+{
+    if (!m_accumTransfStack.empty())
+        m_accumTransfStack.pop();
+}
+
+void RenderSystem::ClearGlobalTransform()
+{
+    if (!m_accumTransfStack.empty())
+        m_accumTransfStack = std::stack<Transform2D>();
+}
+
+std::optional<Transform2D> RenderSystem::LastTransform()
+{
+    if (!m_accumTransfStack.empty())
+        return m_accumTransfStack.top();
+	return std::nullopt;
+}
+
+float RenderSystem::GetLastTransformAlpha()
+{
+    const auto last_transform = LastTransform();
+    const float alpha = last_transform.has_value() ? last_transform->alpha : 1.f;
+    return alpha;
+}
+
+void RenderSystem::drawRect(const int x, const int y, const int width, const int height, ColorComponent collor)
 {
     const auto shader_program = RES.getShader("default");
     if (!shader_program)
@@ -230,10 +286,10 @@ void RenderSystem::drawRect(const int x, const int y, const int width, const int
     };
     static const GLfloat colors[] =
     {
-        1.f, 0.f, 0.f,
-        1.f, 0.f, 0.f,
-        1.f, 0.f, 0.f,
-        1.f, 0.f, 0.f
+        collor.getR(), collor.getG(), collor.getB(), collor.getAlpha(),
+        collor.getR(), collor.getG(), collor.getB(), collor.getAlpha(),
+        collor.getR(), collor.getG(), collor.getB(), collor.getAlpha(),
+        collor.getR(), collor.getG(), collor.getB(),  collor.getAlpha()
     };
 
     CAMERA.UseShader(shader_program);
@@ -254,7 +310,7 @@ void RenderSystem::drawRect(const int x, const int y, const int width, const int
 
     glEnableVertexAttribArray(1);
     colorsBuffer.bind();
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr);
 
     glm::mat4 model(1.f);
     model = glm::translate(model, glm::vec3(glm::vec2{ x,y }, 0.f));
@@ -266,7 +322,7 @@ void RenderSystem::drawRect(const int x, const int y, const int width, const int
     glDrawArrays(GL_LINE_LOOP, 0, 4);
 }
 
-void RenderSystem::drawForm(const std::vector<FPoint>& points, float scale)
+void RenderSystem::drawForm(const std::vector<FPoint>& points, float scale, ColorComponent color)
 {
     const auto shader_program = RES.getShader("default");
     if (!shader_program)
@@ -295,7 +351,7 @@ void RenderSystem::drawForm(const std::vector<FPoint>& points, float scale)
         auto norm_x = 1 + ((it.mX - min_x) / (max_x - min_x)) * (-1.f);
         auto norm_y = 1 + ((it.mY - min_y) / (max_y - min_y)) * (-1.f);
         vertexes.push_back(norm_x); vertexes.push_back(norm_y); vertexes.push_back(0);
-        colors.push_back(1); colors.push_back(0); colors.push_back(0);
+        colors.push_back(color.getR()); colors.push_back(color.getG()); colors.push_back(color.getB()); colors.push_back(color.getAlpha());
     }
 
     CAMERA.UseShader(shader_program);
@@ -316,7 +372,7 @@ void RenderSystem::drawForm(const std::vector<FPoint>& points, float scale)
 
     glEnableVertexAttribArray(1);
     colorsBuffer.bind();
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr);
 
     glm::mat4 model(1.f);
     model = glm::translate(model, glm::vec3(glm::vec2{ min_x, min_y }, 0.f));
@@ -334,4 +390,89 @@ void RenderSystem::draw(const RenderEngine::VertexArray& vertexArray, const Rend
     indexBuffer.bind();
 
     glDrawElements(GL_TRIANGLES, indexBuffer.getCountElements(), GL_UNSIGNED_INT, nullptr);
+}
+
+Transform2D::Transform2D(float transX, float transY, float scaleX, float scaleY, float rotate, float alpha):
+	transX(transX), transY(transY), scaleX(scaleX), scaleY(scaleY), rotate(rotate), alpha(alpha)
+{}
+
+void Transform2D::Translate(float transX, float transY)
+{
+    this->transX = transX;
+    this->transY = transY;
+}
+
+void Transform2D::Scale(float scaleX, float scaleY)
+{
+    this->scaleX = scaleX;
+    this->scaleY = scaleY;
+}
+
+void Transform2D::Rotate(float rotate)
+{
+    this->rotate = rotate;
+}
+
+const Transform2D& Transform2D::operator*=(const Transform2D& transform)
+{
+    transX *= transform.transX;
+    transY *= transform.transY;
+    scaleX *= transform.scaleX;
+    scaleY *= transform.scaleY;
+    rotate *= transform.rotate;
+    alpha  *= transform.alpha;
+    return *this;
+}
+
+const Transform2D& Transform2D::operator+=(const Transform2D& transform)
+{
+    transX += transform.transX;
+    transY += transform.transY;
+    scaleX += transform.scaleX;
+    scaleY += transform.scaleY;
+    rotate += transform.rotate;
+    alpha  += transform.alpha;
+    return *this;
+}
+
+const Transform2D& Transform2D::operator-=(const Transform2D& transform)
+{
+    transX -= transform.transX;
+    transY -= transform.transY;
+    scaleX -= transform.scaleX;
+    scaleY -= transform.scaleY;
+    rotate -= transform.rotate;
+    alpha  -= transform.alpha;
+    return *this;
+}
+
+Transform2D Transform2D::operator*(const Transform2D& transform)
+{
+    Transform2D t_r = *this;
+    t_r *= transform;
+    return t_r;
+}
+
+Transform2D Transform2D::operator+(const Transform2D& transform)
+{
+    Transform2D t_r = *this;
+    t_r += transform;
+    return t_r;
+}
+
+Transform2D Transform2D::operator-(const Transform2D& transform)
+{
+    Transform2D t_r = *this;
+    t_r -= transform;
+    return t_r;
+}
+
+Transform2DGuard::Transform2DGuard(const Transform2D& transform)
+{
+    RENDER.PushGlobalTransform(transform);
+}
+
+Transform2DGuard::~Transform2DGuard()
+{
+    RENDER.PopGlobalTransform();
 }

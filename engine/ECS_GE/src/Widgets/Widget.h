@@ -1,18 +1,21 @@
 #pragma once
 #include "Rect.h"
+#include "RenderSystem.h"
 #include "WidgetContainer.h"
 
 class Widget : public WidgetContainer
 {
+	friend class WidgetManager;
 protected:
 	Rect		mOrigin;
+	Transform2D mTransform;
 	bool		mMouseVisible;
 	bool		mDisabled;
 	bool		mHasFocus;
 	bool		mIsDirty;
 public:
 	explicit		Widget(const std::string& widgetName, const eWidgetPriority& priority, const std::shared_ptr<WidgetContainer>& parent = nullptr);
-	virtual			~Widget() override = default;
+					~Widget() override = default;
 	virtual bool	Intersects(std::shared_ptr<Widget> theWidget);
 	virtual bool	Contains(int theX, int theY);
 	virtual bool	IsDirty() const;
@@ -29,10 +32,10 @@ public:
 	virtual Rect	GetRect() const;
 
 	//!Callback's
-	virtual void	StartShow(const std::function<void()>& callback, bool with_animation = false) override;
-	virtual void	StartClose(const std::function<void()>& callback, bool with_animation = false) override;
-	virtual void	AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetManager) override;
-	virtual void	RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetManager) override;
+	void	StartShow(const std::function<void()>& callback, bool with_animation = false) override;
+	void	StartClose(const std::function<void()>& callback, bool with_animation = false) override;
+	void	AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetManager) override;
+	void	RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetManager) override;
 
 	//////// Layout functions
 	int		Left() { return mOrigin.mX; }
