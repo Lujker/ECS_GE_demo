@@ -55,7 +55,7 @@ bool Client::deltaLoop()
 {
     constexpr float freq = 1000.0f / 60.0f; //60 FPS lock 
     UPDATE.GlobalUpdate(true);
-    while (!WIDGET.GetEngine()->DispatchEvents())
+    while (!WIDGET.GetEngine()->DispatchEvents() && !WIDGET.SholdBeClosed())
     {
         const unsigned long startMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
         const float delta_time = UPDATE.GlobalUpdate();

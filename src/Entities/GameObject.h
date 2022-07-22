@@ -72,6 +72,8 @@ protected:
 	MoveComponent						m_move;
 };
 
+typedef std::list<std::shared_ptr<IGameObject>> GameObjectList;
+
 class IInterfaceObject : public IObject, public InputListener
 {
 public:
@@ -88,3 +90,5 @@ protected:
 	unsigned							m_id;
 	CollisionComponent					m_collision;
 };
+
+typedef std::list<std::shared_ptr<IInterfaceObject>> InterfaceObjectList;

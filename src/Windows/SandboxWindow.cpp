@@ -25,7 +25,7 @@ void SandboxWindow::OriginRectSet()
     CAMERA.SetWorldRect({ 0,0,3000, 2000 });
 }
 
-void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)
+void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
 {
     const CollisionComponent col_form{ std::vector<FPoint>{ {30, 0},{15, 25}, {25, 30},{35, 25} ,{35, 10} }, false, 2 };
     m_objects.push_back(std::make_shared<Knight>("player", PositionComponent{ 350., 100., 0., 0. }, 
@@ -39,6 +39,9 @@ void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetC
 
     m_objects.push_back(std::make_shared<Board>("board_2", PositionComponent{ mOrigin.mX + mOrigin.mWidth/2, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
         CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }));
+
+    m_objects.push_back(std::make_shared<Board>("board_3", PositionComponent{ mOrigin.mX, mOrigin.mY + mOrigin.mHeight/2, static_cast<float>(CAMERA.getNearLayer() + 1) },
+        CollisionComponent{ static_cast<float>(1000), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(1000), static_cast<float>(200) }));
     for (const auto& it : m_objects)
     {
         it->Init();
@@ -46,7 +49,7 @@ void SandboxWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetC
     }
 }
 
-void SandboxWindow::RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)
+void SandboxWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContainer)
 {
     PHYSICS.Clear();
 }

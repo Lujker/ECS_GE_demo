@@ -61,3 +61,5 @@ public:
 	virtual void	Draw() {} //for this widget callback
 	virtual void	DrawAll(); //for contains widgets
 };
+
+typedef std::shared_ptr<WidgetContainer> SharedWidgetContainer;

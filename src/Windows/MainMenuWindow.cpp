@@ -24,22 +24,29 @@ void MainMenuWindow::OriginRectSet()
 	CAMERA.SetWorldRect(CAMERA.getActiveWindowRect());
 }
 
-void MainMenuWindow::AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)
+void MainMenuWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
 {
 	CollisionComponent size{200.,80., 0., 0.};
-	auto button = std::make_shared<Button>(0, PositionComponent{ mOrigin.mX + mOrigin.mWidth / 2 - 200, mOrigin.mY + mOrigin.mHeight / 2 }, size, size);
+	auto button = std::make_shared<Button>(0, PositionComponent{ mOrigin.mX + mOrigin.mWidth / 2 - 200, mOrigin.mY + mOrigin.mHeight / 2  }, size, size);
 	button->setImage(RES.getSharedImage("res/images/test_button.png"));
 	button->setString(std::make_shared<DisplayString>("to sandbox"));
 	button->setAutoInput(true);
 	button->addListener(this);
 	m_objects.push_back(button);
+	
+	auto button_1 = std::make_shared<Button>(1, PositionComponent{ mOrigin.mX + mOrigin.mWidth / 2 - 200, mOrigin.mY + mOrigin.mHeight / 2 - 100 }, size, size);
+	button_1->setImage(RES.getSharedImage("res/images/test_button.png"));
+	button_1->setString(std::make_shared<DisplayString>("exit"));
+	button_1->setAutoInput(true);
+	button_1->addListener(this);
+	m_objects.push_back(button_1);
 	for (const auto& it : m_objects)
 	{
 		it->Init();
 	}
 }
 
-void MainMenuWindow::RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetContainer)
+void MainMenuWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContainer)
 {
 }
 
@@ -65,8 +72,15 @@ void MainMenuWindow::ButtonPressed(unsigned id, const int& key)
 
 void MainMenuWindow::ButtonUnpressed(unsigned id, const int& key)
 {
-	if (id == 0 && key == GLFW_MOUSE_BUTTON_LEFT)
+	switch (static_cast<eButton>(id))
 	{
-		WIDGET.SetNextWidget(SandboxWindow::Create());
+	case eButton::eToSandbox:
+		if (key == GLFW_MOUSE_BUTTON_LEFT)
+			WIDGET.SetNextWidget(SandboxWindow::Create());
+		break;
+	case eButton::eExit:
+		if (key == GLFW_MOUSE_BUTTON_LEFT)
+			WIDGET.Close();
+		break;
 	}
 }

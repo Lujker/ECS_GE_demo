@@ -2,7 +2,7 @@
 
 #include "CameraManager.h"
 
-GlobalWidget::GlobalWidget(const std::string& widgetName, const eWidgetPriority& priority, const std::shared_ptr<WidgetContainer>& parent):
+GlobalWidget::GlobalWidget(const std::string& widgetName, const eWidgetPriority& priority, const SharedWidgetContainer& parent):
 	Widget(widgetName, priority, parent)
 {
 }

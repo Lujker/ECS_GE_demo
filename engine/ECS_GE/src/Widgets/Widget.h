@@ -45,3 +45,5 @@ public:
 	int		Width() { return mOrigin.mWidth; }
 	int		Height() { return mOrigin.mHeight; }
 };
+
+typedef std::shared_ptr<Widget> SharedWidget;

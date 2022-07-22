@@ -11,7 +11,8 @@ Button::Button(unsigned id, const PositionComponent& default_position, const Col
 	IInterfaceObject(id, default_position, default_size, default_collision), m_string(nullptr), m_bg(nullptr), m_pressed_anim(std::make_shared<Animation::AnimationsList>())
 {
 	isDrawCollision = true;
-	m_size_string = { m_size.getWidth() / 2 * GetSize().getScale(), m_size.getHeight() / 2 * GetSize().getScale(), m_size.getWidth() / 4 * GetSize().getScale(), m_size.getHeight() / 2 * GetSize().getScale(), false , 0.8f };
+	m_size_string = { m_size.getWidth() / 2 * GetSize().getScale(), m_size.getHeight() / 2 * GetSize().getScale(),
+		m_size.getWidth() / 4 * GetSize().getScale(), m_size.getHeight() / 2 * GetSize().getScale(), false , 0.8f };
 }
 
 Button::~Button()

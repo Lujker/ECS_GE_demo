@@ -87,7 +87,7 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 					if (collisionY)
 					{
 						if (collisionY->GetPosition().getPosition().mY > pointer->GetPosition().getPosition().mY + pointer->GetCollision().getHeight())
-							pos_y = collisionY->GetPosition().getPosition().mY;
+							pos_y = collisionY->GetPosition().getPosition().mY - pointer->GetCollision().getHeight();
 						else if (collisionY->GetPosition().getPosition().mY + collisionY->GetCollision().getHeight() < pointer->GetPosition().getPosition().mY)
 							pos_y = collisionY->GetPosition().getPosition().mY + collisionY->GetCollision().getHeight();
 					}

@@ -10,12 +10,12 @@ public:
 	~SandboxWindow() override = default;
 
 	void OriginRectSet() override;
-	void AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetContainer) override;
-	void RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetContainer) override;
+	void AddedToContainer(SharedWidgetContainer theWidgetContainer) override;
+	void RemovedFromContainer(SharedWidgetContainer theWidgetContainer) override;
 	void Draw() override;
 	void Update(float deltaTime) override;
 	void KeyPress(const int& key) override;
 	void KeyUnpress(const int& key) override;
 private:
-	std::list< std::shared_ptr<IGameObject>> m_objects;
+	GameObjectList m_objects;
 };

@@ -10,6 +10,11 @@ WidgetManager& WidgetManager::Instanse()
 	return widget_manager;
 }
 
+std::shared_ptr<Widget> WidgetManager::GetUI()
+{
+	return Instanse().m_UI_Widget;
+}
+
 bool WidgetManager::InitEngine(std::string execPath)
 {
 	m_pAppEngine = std::make_shared<Engine>();
@@ -32,6 +37,17 @@ void WidgetManager::Terminate()
 {
 	if (m_pAppEngine)
 		m_pAppEngine.reset();
+	exit(0);
+}
+
+void WidgetManager::Close()
+{
+	m_closed = true;
+}
+
+bool WidgetManager::SholdBeClosed()
+{
+	return m_closed;
 }
 
 //!Change global widget with anim
@@ -39,6 +55,8 @@ void WidgetManager::Terminate()
 //!After showed new widget old window closed and use removedFromContainer callback and removed without animation
 void WidgetManager::SetNextWidget(const std::shared_ptr<GlobalWidget>& nextWindow)
 {
+	if (m_pNextWidget)
+		return;
 	m_pNextWidget = nextWindow;
 	globalWindowsChangAnim = true;
 	auto setNextWidget = [&]()

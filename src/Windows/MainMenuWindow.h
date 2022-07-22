@@ -9,19 +9,20 @@ public:
 	MainMenuWindow();
 	~MainMenuWindow() override = default;
 
+	enum class eButton : unsigned
+	{
+		eToSandbox = 0,
+		eExit = 1
+	};
+
 	void OriginRectSet() override;
-	void AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetContainer) override;
-	void RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetContainer) override;
+	void AddedToContainer(SharedWidgetContainer theWidgetContainer) override;
+	void RemovedFromContainer(SharedWidgetContainer theWidgetContainer) override;
 	void Draw() override;
 	void Update(float deltaTime) override;
-	//void KeyPress(const int& key) override;
-	//void KeyUnpress(const int& key) override;
-	//void MouseMove(const FPoint& current_pos) override;
-	//void MousePress(const int& key) override;
-	//void MouseUnpress(const int& key) override;
 
 	void ButtonPressed(unsigned id, const int& key) override;
 	void ButtonUnpressed(unsigned id, const int& key) override;
 private:
-	std::list<std::shared_ptr<IInterfaceObject>> m_objects;
+	InterfaceObjectList m_objects;
 };

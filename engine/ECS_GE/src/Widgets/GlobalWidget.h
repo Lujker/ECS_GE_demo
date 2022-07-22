@@ -4,7 +4,7 @@
 class GlobalWidget : public Widget
 {
 public:
-	explicit GlobalWidget(const std::string& widgetName, const eWidgetPriority& priority, const std::shared_ptr<WidgetContainer>& parent = nullptr);
+	explicit GlobalWidget(const std::string& widgetName, const eWidgetPriority& priority, const SharedWidgetContainer& parent = nullptr);
 	~GlobalWidget() override = default;
 	void	OriginRectSet() override;
 
@@ -14,3 +14,4 @@ public:
 	//virtual void	AddedToContainer(std::shared_ptr<WidgetContainer> theWidgetManager) override;
 	//virtual void	RemovedFromContainer(std::shared_ptr<WidgetContainer> theWidgetManager) override;
 };
+typedef std::shared_ptr<GlobalWidget> SharedGlobalWidget;

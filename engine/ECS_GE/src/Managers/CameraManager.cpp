@@ -137,7 +137,7 @@ void CameraManager::SetCenterPoint(FPoint point)
 	next_rect.mWidth = (point.mX + width / 2);
 	next_rect.mHeight = (point.mY + height / 2);
 
-	if (next_rect.mX == projMatrix.mX || next_rect.mY == projMatrix.mY)
+	if (next_rect.mX == projMatrix.mX && next_rect.mY == projMatrix.mY)
 		return;
 
 	if (next_rect.mX < worldRect.mX || (next_rect.mWidth + next_rect.mX > worldRect.mWidth + worldRect.mX))
