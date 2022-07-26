@@ -98,6 +98,7 @@ include_directories(
 	src/Widgets
 	external/sabmodules/rapidjson/include
 	external/sabmodules/freetype/include
+	external/sabmodules/gles
 )
 
 target_compile_features(${PROJ_NAME} PUBLIC cxx_std_17)
