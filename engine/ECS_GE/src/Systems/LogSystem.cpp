@@ -80,10 +80,6 @@ bool Loger::createLogFile(const std::string& logFilePath)
         file.close();
         return true;
     }
-    else {
-        return false;
-    }
-
     return false;
 }
 
@@ -94,12 +90,8 @@ bool Loger::logFileIsValid(const std::string& logFilePath)
     if (!file) {
         return false;
     }
-    else {
-        file.close();
-        return true;
-    }
-
-    return false;
+	file.close();
+	return true;
 }
 
 std::string Loger::get_type(const LOG_TYPE& type)

@@ -5,6 +5,7 @@
 #include "CollisionSystem.h"
 #include "GameObject.h"
 #include "MoveSystem.h"
+#include "ThreadPool.h"
 
 PhysicsSystem& PhysicsSystem::Instance()
 {
@@ -26,6 +27,7 @@ void PhysicsSystem::Clear()
 
 void PhysicsSystem::MoveObjects(float delta_time) const
 {
+	Thread_pool t_p;
 	for (auto& it : m_objects)
 	{
 		//Calculate next move and next pos for obj
@@ -115,7 +117,8 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 			}
 		};
 		//! multithread
-		auto func = std::async(std::launch::async, chek_obj, it);
+		auto f = t_p.submit(std::bind(chek_obj, it));
+		//auto func = std::async(std::launch::async, chek_obj, it);
 		//! singlthread
 		//chek_obj(it);
 	}

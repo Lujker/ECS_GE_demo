@@ -72,7 +72,7 @@ void UpdateSystem::Resume()
 void UpdateSystem::Pause(long nMillis)
 {
 	const long long nStartTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-	long nDelta;
+	long nDelta = 0;
 	do {
 		const long long nCurTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 		nDelta = nCurTime - nStartTime;

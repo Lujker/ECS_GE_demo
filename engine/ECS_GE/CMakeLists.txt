@@ -33,7 +33,8 @@ set(ENGINE_SRC
 	src/Systems/UpdateSystem.cpp
 	src/Systems/CollisionSystem.cpp
 	src/Systems/MoveSystem.cpp
-	src/Systems/LogSystem.cpp
+	src/Systems/LogSystem.cpp 
+	src/Systems/ThreadPool.cpp 
 	src/Widgets/Widget.cpp
 	src/Widgets/GlobalWidget.cpp
 	src/Widgets/WidgetContainer.cpp
@@ -55,6 +56,7 @@ set(ENGINE_INCLUDE
 	src/Premitives/Rect.h  
 	src/Premitives/Shape.h
 	src/Premitives/Timer.h
+	src/Premitives/FunctionWrapper.h
 	src/Components/DisplayString.h
 	src/Premitives/Render/IndexBuffer.h  
 	src/Premitives/Render/VertexArray.h  
@@ -78,6 +80,7 @@ set(ENGINE_INCLUDE
 	src/Systems/CollisionSystem.h
 	src/Systems/MoveSystem.h
 	src/Systems/LogSystem.h
+	src/Systems/ThreadPool.h
 	src/Widgets/Widget.h
 	src/Widgets/GlobalWidget.h
 	src/Widgets/WidgetContainer.h
@@ -116,3 +119,7 @@ target_link_libraries(${PROJ_NAME} glad)
 
 add_subdirectory(external/sabmodules/glm)
 target_link_libraries(${PROJ_NAME} glm)
+
+
+add_subdirectory(external/sabmodules/assimp)
+target_link_libraries(${PROJ_NAME} assimp)
