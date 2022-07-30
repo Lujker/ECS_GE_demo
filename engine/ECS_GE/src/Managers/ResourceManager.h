@@ -61,6 +61,10 @@ public:
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> spriteMap;
 	typedef std::vector<std::vector<std::string>> levels;
 
+	ResourceManager(const ResourceManager&) = delete;
+	ResourceManager(ResourceManager&&) = delete;
+	ResourceManager& operator=(const ResourceManager&) = delete;
+	ResourceManager& operator=(ResourceManager&&) = delete;
 private:
 	std::shared_ptr<RenderEngine::SpriteAtlas> loadSpriteAtlas(std::shared_ptr<RenderEngine::SpriteAtlas> atlas, const rapidjson::Document& document);
 	std::shared_ptr<RenderEngine::FrameAtlas> loadFrameAtlas(std::shared_ptr<RenderEngine::FrameAtlas> atlas, const rapidjson::Document& document);
@@ -75,10 +79,6 @@ private:
 	ResourceManager() = default;
 	ResourceManager(const std::string& execPath);
 	~ResourceManager();
-	ResourceManager(const ResourceManager&) = delete;
-	ResourceManager(ResourceManager&&) = delete;
-	ResourceManager& operator=(const ResourceManager&) = delete;
-	ResourceManager& operator=(ResourceManager&&) = delete;
 	std::string getFileString(const std::string& path);
 
 	shaderProgramMap m_shaderPrograms;

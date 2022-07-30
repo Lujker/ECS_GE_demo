@@ -31,15 +31,15 @@ public:
 	static void ÑursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
 	static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	static FPoint GetLastCursorPos();
+
+	InputManager(const InputManager&) = delete;
+	InputManager(InputManager&&) = delete;
+	InputManager& operator=(const InputManager&) = delete;
+	InputManager& operator=(InputManager&&) = delete;
 private:
 	static std::map<int, bool> key_map;
 	static FPoint last_cursor_pos;
 	static std::vector<InputListener*> listeners;
 	InputManager() = default;
-	~InputManager() = default;
-	InputManager(const InputManager&) = delete;
-	InputManager(InputManager&&) = delete;
-	InputManager& operator=(const InputManager&) = delete;
-	InputManager& operator=(InputManager&&) = delete;
-	
+	~InputManager() = default;	
 };

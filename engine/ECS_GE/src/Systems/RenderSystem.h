@@ -79,6 +79,11 @@ public:
 	void ClearGlobalTransform();
 	std::optional<Transform2D> LastTransform();
 	float GetLastTransformAlpha();
+
+	RenderSystem(const RenderSystem&) = delete;
+	RenderSystem(RenderSystem&&) = delete;
+	RenderSystem& operator=(const RenderSystem&) = delete;
+	RenderSystem& operator=(RenderSystem&&) = delete;
 private:
 	void drawRect(const int x, const int y, const int width, const int height, ColorComponent = {1,0,0,1});
 	void drawForm(const std::vector<FPoint>& points, float scale, ColorComponent = { 1,0,0,1 });
@@ -87,8 +92,4 @@ private:
 	std::stack<Transform2D> m_accumTransfStack;
 	RenderSystem() = default;
 	~RenderSystem() = default;
-	RenderSystem(const RenderSystem&) = delete;
-	RenderSystem(RenderSystem&&) = delete;
-	RenderSystem& operator=(const RenderSystem&) = delete;
-	RenderSystem& operator=(RenderSystem&&) = delete;
 };

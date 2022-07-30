@@ -53,6 +53,11 @@ public:
 	static void glfwWindowsSizeCallback(GLFWwindow* pWindow, int width, int height);
 	static void glfwWindowsResize(GLFWwindow* pWindow, int width, int height);
 	static void glfwWindowFocusCallback(GLFWwindow* window, int focused);
+
+	CameraManager(const CameraManager&) = delete;
+	CameraManager(CameraManager&&) = delete;
+	CameraManager& operator=(const CameraManager&) = delete;
+	CameraManager& operator=(CameraManager&&) = delete;
 private:
 	std::shared_ptr<RenderEngine::ShaderProgram> m_shader;
 	std::deque<CameraListener*> m_listeners;
@@ -66,8 +71,4 @@ private:
 	bool drawDebugInfo = true;
 	CameraManager() = default;
 	~CameraManager() = default;
-	CameraManager(const CameraManager&) = delete;
-	CameraManager(CameraManager&&) = delete;
-	CameraManager& operator=(const CameraManager&) = delete;
-	CameraManager& operator=(CameraManager&&) = delete;
 };

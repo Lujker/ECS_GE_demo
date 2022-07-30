@@ -184,4 +184,18 @@ inline bool threadsafe_queue<T>::empty() const
     std::lock_guard head_lock(head_mutex);
     return (head.get() == get_tail());
 }
+
+#define ASYNC GlobalThreadPool::Instanse()
+class GlobalThreadPool : public Thread_pool
+{
+public:
+    static GlobalThreadPool& Instanse();
+    GlobalThreadPool(const GlobalThreadPool&) = delete;
+    GlobalThreadPool& operator=(const GlobalThreadPool&) = delete;
+    GlobalThreadPool(GlobalThreadPool&&) noexcept = delete;
+    GlobalThreadPool& operator=(GlobalThreadPool&&) noexcept = delete;
+private:
+    GlobalThreadPool() : Thread_pool() {}
+    ~GlobalThreadPool() = default;
+};
 #endif // THREAD_POOL_H

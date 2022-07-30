@@ -6,7 +6,7 @@
 #include "WidgetContainer.h"
 
 #define WIDGET	WidgetManager::Instanse()
-#define UI		WidgetManager::GetUI();
+#define UI		WidgetManager::GetUI()
 class GlobalWidget;
 
 class WidgetManager : public InputListener
@@ -27,7 +27,7 @@ public:
 	//Engine
 	bool					InitEngine(std::string	execPath);
 	bool					IsEngineInit() const;
-	std::shared_ptr<Engine> GetEngine() const;
+	[[nodiscard]] std::shared_ptr<Engine> GetEngine() const;
 	void					Terminate();
 	void					Close();
 	bool					SholdBeClosed();
@@ -35,11 +35,12 @@ public:
 	void	SetNextWidget(const std::shared_ptr<GlobalWidget>& nextWindow);
 	void	Update(float deltaTime);
 	void	Draw();
-private:
-	WidgetManager() = default;
-	~WidgetManager() = default;
+
 	WidgetManager(const WidgetManager&) = delete;
 	WidgetManager(WidgetManager&&) = delete;
 	WidgetManager& operator=(const WidgetManager&) = delete;
 	WidgetManager& operator=(WidgetManager&&) = delete;
+private:
+	WidgetManager() = default;
+	~WidgetManager() override = default;
 };

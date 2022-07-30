@@ -16,11 +16,12 @@ public:
 	bool include2D(const FRect& rect_left, const FRect& rect_right);
 	bool include2D(const FRect& rect_left, const FPoint& point_right);
 	bool include2D(const CollisionComponent& collision_left, float left_scale, const PositionComponent& position_left, const FPoint& point_right);
-private:
-	CollisionSystem() = default;
-	~CollisionSystem() = default;
+
 	CollisionSystem(const CollisionSystem&) = delete;
 	CollisionSystem(CollisionSystem&&) = delete;
 	CollisionSystem& operator=(const CollisionSystem&) = delete;
 	CollisionSystem& operator=(CollisionSystem&&) = delete;
+private:
+	CollisionSystem() = default;
+	~CollisionSystem() override = default;
 };

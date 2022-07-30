@@ -40,16 +40,18 @@ public:
 	void Pause();
 	void Resume();
 	void Pause(long nMillis);
-	unsigned GetFPS() const;
+	[[nodiscard]] unsigned GetFPS() const;
+
+	UpdateSystem(const UpdateSystem&) = delete;
+	UpdateSystem(UpdateSystem&&) = delete;
+	UpdateSystem& operator=(const UpdateSystem&) = delete;
+	UpdateSystem& operator=(UpdateSystem&&) = delete;
 private:
 	std::chrono::time_point<std::chrono::steady_clock> lastTime;
 	float last_duration = 0.f;
 	bool pause = false;
 	FPSCounter fps;
+
 	UpdateSystem();
-	~UpdateSystem() = default;
-	UpdateSystem(const UpdateSystem&) = delete;
-	UpdateSystem(UpdateSystem&&) = delete;
-	UpdateSystem& operator=(const UpdateSystem&) = delete;
-	UpdateSystem& operator=(UpdateSystem&&) = delete;
+	~UpdateSystem() override = default;
 };

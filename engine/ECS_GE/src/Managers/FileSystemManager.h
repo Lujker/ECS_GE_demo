@@ -55,6 +55,11 @@ public:
 	std::shared_ptr<Pixels> getPixelFile(std::string path = "");
 	typedef std::map<const std::string, std::shared_ptr<File>> filesMap;
 	typedef std::map<const std::string, std::shared_ptr<Pixels>> pixelsFileMap;
+
+	FileSystem(const FileSystem&) = delete;
+	FileSystem(FileSystem&&) = delete;
+	FileSystem& operator=(const FileSystem&) = delete;
+	FileSystem& operator=(FileSystem&&) = delete;
 private:
 	filesMap m_files;
 	pixelsFileMap m_pixels;

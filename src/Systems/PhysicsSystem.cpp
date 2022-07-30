@@ -27,11 +27,11 @@ void PhysicsSystem::Clear()
 
 void PhysicsSystem::MoveObjects(float delta_time) const
 {
-	Thread_pool t_p;
+	std::vector<std::future<void>> futures;
 	for (auto& it : m_objects)
 	{
 		//Calculate next move and next pos for obj
-		auto chek_obj = [&](const std::shared_ptr<IGameObject> pointer) {
+		auto chek_obj = [&](const std::shared_ptr<IGameObject>& pointer) {
 			auto next_move = pointer->GetMove();
 			if (pointer->gravityEnable())
 				next_move = MOVE.Gravity(next_move, delta_time);
@@ -117,10 +117,18 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 			}
 		};
 		//! multithread
-		auto f = t_p.submit(std::bind(chek_obj, it));
-		//auto func = std::async(std::launch::async, chek_obj, it);
+		futures.emplace_back(ASYNC.submit([chek_obj, it] { return chek_obj(it); }));
+		//!Thread_pool t_p; 
+		//! t_p.submit(...) or ->
+		//
+		//!auto func = std::async(std::launch::async, chek_obj, it);
+		//
 		//! singlthread
-		//chek_obj(it);
+		//!chek_obj(it);
+	}
+	for (const auto& future : futures)
+	{
+		future.wait();
 	}
 }
 

@@ -50,14 +50,14 @@ public:
         const GLchar* message,
         const void* userParam);
 
+    Loger(Loger&) = delete;
+    Loger& operator= (const Loger&) = delete;
 protected:
     virtual bool createLogFile(const std::string& logFilePath);
     virtual bool logFileIsValid(const std::string& logFilePath);
 
     virtual ~Loger();
     Loger();
-    Loger(Loger&) = delete;
-    Loger& operator= (const Loger&) = delete;
 
 private:
     std::string get_type(const LOG_TYPE& type);
