@@ -37,6 +37,10 @@ ICameraObject::~ICameraObject()
 {
 }
 
+IPlayerControlledObject::~IPlayerControlledObject()
+{
+}
+
 IGameObject::IGameObject(const std::string& name, 
                          const PositionComponent& default_position, 
                          const CollisionComponent& default_size, 

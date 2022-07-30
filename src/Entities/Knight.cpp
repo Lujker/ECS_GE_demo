@@ -32,6 +32,7 @@ void Knight::Init()
 	isDrawName = true;
 	isCameraObject = true;
 	isGravityEnable = true;
+	isPlayerControlledObject = true;
 	IGameObject::Init();
 }
 
@@ -53,7 +54,7 @@ void Knight::Update(const float& delta_time)
 
 void Knight::KeyPress(const int& key)
 {
-	if (!isInit)
+	if (!isInit || !isPlayerControlledObject)
 		return;
 	if (key == GLFW_KEY_LEFT)
 	{
@@ -71,7 +72,7 @@ void Knight::KeyPress(const int& key)
 
 void Knight::KeyUnpress(const int& key)
 {
-	if (!isInit)
+	if (!isInit || !isPlayerControlledObject)
 		return;
 	if (key == GLFW_KEY_LEFT)
 	{

@@ -47,14 +47,23 @@ protected:
 	bool isCameraObject = false;
 };
 
-class IGameObject: public IObject, public IGravityObject, public ICameraObject, public InputListener
+struct IPlayerControlledObject: InputListener
+{
+	~IPlayerControlledObject() override;
+	virtual bool PlayerControlledObject() { return isPlayerControlledObject; }
+	virtual void setIsPlayerControlledObject(bool enable) { isPlayerControlledObject = enable; }
+protected:
+	bool isPlayerControlledObject = false;
+};
+
+class IGameObject : public IObject, public IGravityObject, public ICameraObject, public IPlayerControlledObject
 {
 public:
 	IGameObject(const std::string& name, const PositionComponent& default_position, 
 		const CollisionComponent& default_size, const CollisionComponent& default_collision);
-	virtual ~IGameObject() override = 0;
+	~IGameObject() override = 0;
 	virtual bool operator==(const IGameObject& object) const;
-	virtual void Draw() override;
+	void Draw() override;
 
 	[[nodiscard]] virtual MoveComponent			GetMove() const { return m_move; }
 	[[nodiscard]] virtual CollisionComponent	GetCollision() const { return m_collision; }
