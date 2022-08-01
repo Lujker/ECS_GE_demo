@@ -31,6 +31,7 @@ bool Engine::Init(const std::string& init_path)
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    //glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef _DEBUG
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -49,6 +50,7 @@ bool Engine::Init(const std::string& init_path)
         return false;
     }
     /* Make the window's context current */
+
     glfwMakeContextCurrent(m_window);
 
 
