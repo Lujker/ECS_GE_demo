@@ -57,6 +57,7 @@ target_link_libraries(${PROJ_NAME} ECS_GE)
 
 set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 if(WIN32)
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
 	set(ENGINE_DLL
 		${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/freetype.dll
 		${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/libEGL.dll

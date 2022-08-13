@@ -119,7 +119,3 @@ target_link_libraries(${PROJ_NAME} glad)
 
 add_subdirectory(external/sabmodules/glm)
 target_link_libraries(${PROJ_NAME} glm)
-
-
-add_subdirectory(external/sabmodules/assimp)
-target_link_libraries(${PROJ_NAME} assimp)
