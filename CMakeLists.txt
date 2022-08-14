@@ -7,6 +7,7 @@ set (DEMO_SRC
 	src/main.cpp
 	src/Client.cpp
 	src/Systems/PhysicsSystem.cpp
+	src/Systems/DemoServiceLocator.cpp
 	src/Windows/SandboxWindow.cpp
 	src/Windows/MainMenuWindow.cpp
 	src/Entities/Knight.cpp
@@ -19,6 +20,7 @@ set (DEMO_SRC
 set (DEMO_INCLUDE
 	src/Client.h
 	src/Systems/PhysicsSystem.h
+	src/Systems/DemoServiceLocator.h
 	src/Windows/SandboxWindow.h
 	src/Windows/MainMenuWindow.h
 	src/Entities/Knight.h

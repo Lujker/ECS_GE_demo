@@ -185,11 +185,11 @@ inline bool threadsafe_queue<T>::empty() const
     return (head.get() == get_tail());
 }
 
-#define ASYNC GlobalThreadPool::Instanse()
+
 class GlobalThreadPool : public Thread_pool
 {
 public:
-    static GlobalThreadPool& Instanse();
+    friend class ServiceLocator;
     GlobalThreadPool(const GlobalThreadPool&) = delete;
     GlobalThreadPool& operator=(const GlobalThreadPool&) = delete;
     GlobalThreadPool(GlobalThreadPool&&) noexcept = delete;

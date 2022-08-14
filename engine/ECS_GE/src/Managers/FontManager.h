@@ -3,25 +3,26 @@
 #include <iostream>
 #include <map>
 #include <glm/vec2.hpp>
-
 #include "gl_Include.h"
 #include <glm/detail/type_vec3.hpp>
 #include <optional>
 #include FT_FREETYPE_H
 
-
-struct Character;
 namespace RenderEngine
 {
 	class Texture2D;
 }
 
+struct Character {
+	std::shared_ptr<RenderEngine::Texture2D> texture; // текстура глифа
+	glm::ivec2 Bearing;   // Смещение верхней левой точки глифа
+	FT_Pos     Advance;   // Горизонтальное смещение до начала следующего глифа
+};
 
-#define FONT FontManager::Instanse()
 class FontManager
 {
 public:
-	static FontManager& Instanse();
+	friend class ServiceLocator;
 	void freeFontRes();
 	bool setFont(const std::string& path);
 	bool init(std::string pathToExe);

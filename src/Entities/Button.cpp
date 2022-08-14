@@ -1,5 +1,5 @@
 #include "Button.h"
-
+#include "DemoServiceLocator.h"
 #include "CollisionSystem.h"
 #include "RenderSystem.h"
 
@@ -18,7 +18,7 @@ Button::Button(unsigned id, const PositionComponent& default_position, const Col
 Button::~Button()
 {
 	if (isAddedToInputManager)
-		INPUTS.ListenerRemove(this);
+		INPUTS->ListenerRemove(this);
 }
 
 void Button::addListener(ButtonListener* listener)
@@ -49,8 +49,8 @@ bool Button::isExistListener(ButtonListener* listener)
 void Button::Draw()
 {
 	IInterfaceObject::Draw();
-	RENDER.Render(m_bg, m_position, m_size);
-	RENDER.Render(m_string, m_position, m_size_string, m_string_color);
+	RENDER->Render(m_bg, m_position, m_size);
+	RENDER->Render(m_string, m_position, m_size_string, m_string_color);
 }
 
 void Button::Update(const float& delta_time)
@@ -75,12 +75,12 @@ void Button::setAutoInput(bool isAutoInput)
 	if (isAutoInput && !isAddedToInputManager)
 	{
 		isAddedToInputManager = true;
-		INPUTS.ListenerAdd(this);
+		INPUTS->ListenerAdd(this);
 	}
 	else if (!isAutoInput && isAddedToInputManager)
 	{
 		isAddedToInputManager = false;
-		INPUTS.ListenerRemove(this);
+		INPUTS->ListenerRemove(this);
 	}
 }
 
@@ -96,7 +96,7 @@ void Button::setStringColor(const ColorComponent& string_color)
 
 void Button::MouseMove(const FPoint& current_pos)
 {
-	if (m_collision.hasCollision() && COLLISION.include2D(m_collision, m_collision.getScale(), m_position, current_pos))
+	if (m_collision.hasCollision() && COLLISION->include2D(m_collision, m_collision.getScale(), m_position, current_pos))
 	{
 		isCursorOnButton = true;
 		for (const auto& it : m_listeners)

@@ -8,11 +8,10 @@
 
 class IGameObject;
 
-#define PHYSICS PhysicsSystem::Instance()
 class PhysicsSystem : public ISystem
 {
 public:
-	static PhysicsSystem& Instance();
+	friend class DemoServiceLocator;
 	void Update(float delta_time);
 	bool Registrate(const std::shared_ptr<IGameObject>&);
 	bool Unregistrate(const std::shared_ptr<IGameObject>&);

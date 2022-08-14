@@ -1,13 +1,13 @@
 #include "DisplayString.h"
-
+#include "Engine.h"
 #include <iostream>
 
 DisplayString::DisplayString(const std::string& string, unsigned int width, unsigned int height):
 	m_initString(string), width(width), height(height)
 {
-	if (FONT.isInit())
+	if (FONT->isInit())
 	{
-		FT_Set_Pixel_Sizes(FONT.getFace(), width, height);
+		FT_Set_Pixel_Sizes(FONT->getFace(), width, height);
 		init();
 		initial = true;
 	}
@@ -22,9 +22,9 @@ DisplayString::~DisplayString()
 
 void DisplayString::setString(const std::string& string, unsigned int width, unsigned int height)
 {
-	if (FONT.isInit())
+	if (FONT->isInit())
 	{
-		FT_Set_Pixel_Sizes(FONT.getFace(), width, height);
+		FT_Set_Pixel_Sizes(FONT->getFace(), width, height);
 		m_initString = string;
 		initChars();
 		initial = true;
@@ -33,7 +33,7 @@ void DisplayString::setString(const std::string& string, unsigned int width, uns
 
 void DisplayString::updateString(const std::string& string)
 {
-	if (FONT.isInit())
+	if (FONT->isInit())
 	{
 		m_initString = string;
 		initial = true;
@@ -50,7 +50,7 @@ void DisplayString::clearString()
 
 void DisplayString::resize(unsigned int width, unsigned int height)
 {
-	FT_Set_Pixel_Sizes(FONT.getFace(), width, height);
+	FT_Set_Pixel_Sizes(FONT->getFace(), width, height);
 	m_characters.clear();
 	initChars();
 }
@@ -115,7 +115,7 @@ void DisplayString::initChars(bool update)
 		m_characters.clear();
     for (const auto& c : m_initString)
     {
-		auto curr_char = FONT.getCharacter(c);
+		auto curr_char = FONT->getCharacter(c);
 		if(curr_char.has_value())
 			m_characters.insert(std::pair(c, *curr_char));
     }

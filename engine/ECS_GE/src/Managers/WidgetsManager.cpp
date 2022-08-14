@@ -4,40 +4,9 @@
 #include "LogSystem.h"
 #include "Widget.h"
 
-WidgetManager& WidgetManager::Instanse()
-{
-	static WidgetManager widget_manager;
-	return widget_manager;
-}
-
 std::shared_ptr<Widget> WidgetManager::GetUI()
 {
-	return Instanse().m_UI_Widget;
-}
-
-bool WidgetManager::InitEngine(std::string execPath)
-{
-	m_pAppEngine = std::make_shared<Engine>();
-	m_execPath = std::move(execPath);
-	m_isEngineInit = m_pAppEngine->Init(m_execPath);
-	return m_isEngineInit;
-}
-
-bool WidgetManager::IsEngineInit() const
-{
-	return m_isEngineInit;
-}
-
-std::shared_ptr<Engine> WidgetManager::GetEngine() const
-{
-	return m_pAppEngine;
-}
-
-void WidgetManager::Terminate()
-{
-	if (m_pAppEngine)
-		m_pAppEngine.reset();
-	exit(0);
+	return m_UI_Widget;
 }
 
 void WidgetManager::Close()

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "ServiceLocator.h"
 #include "gl_Include.h"
 
 class Engine
@@ -7,7 +8,8 @@ class Engine
 public:
 	Engine();
 	~Engine();
-	bool Init(const std::string& init_path);
+	static ServiceLocator* getServiceLocator();
+	bool Init(const std::string& init_path, ServiceLocator* service_locator = nullptr);
 	bool IsInit() { return initial; }
 	void Destroy() noexcept;
 	int DispatchEvents();
@@ -15,7 +17,7 @@ public:
 private:
 	Engine(const Engine&) = delete;
 	Engine& operator=(const Engine&) = delete;
-
+	static ServiceLocator* g_service_locator;
 	GLFWwindow* m_window;
 	bool initial = false;
 };

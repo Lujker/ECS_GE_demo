@@ -1,14 +1,7 @@
 #include "FileSystemManager.h"
-
+#include "Engine.h"
 #include "LogSystem.h"
 #include "stb_image.h"
-
-
-FileSystem& FileSystem::Instanse()
-{
-	static FileSystem fileSystem;
-	return fileSystem;
-}
 
 void FileSystem::setExecutablePath(const std::string& execPath)
 {

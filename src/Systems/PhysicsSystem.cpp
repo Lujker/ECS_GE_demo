@@ -1,17 +1,11 @@
 #include "PhysicsSystem.h"
 #include <future>
-
+#include "DemoServiceLocator.h"
 #include "CameraManager.h"
 #include "CollisionSystem.h"
 #include "GameObject.h"
 #include "MoveSystem.h"
 #include "ThreadPool.h"
-
-PhysicsSystem& PhysicsSystem::Instance()
-{
-	static PhysicsSystem physics_system;
-	return physics_system;
-}
 
 void PhysicsSystem::Update(float delta_time)
 {
@@ -34,9 +28,9 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 		auto chek_obj = [&](const std::shared_ptr<IGameObject>& pointer) {
 			auto next_move = pointer->GetMove();
 			if (pointer->gravityEnable())
-				next_move = MOVE.Gravity(next_move, delta_time);
-			next_move = MOVE.CalculateVelocity(next_move, delta_time);
-			auto next_pos = MOVE.Move(pointer->GetPosition(), next_move, delta_time);
+				next_move = MOVE->Gravity(next_move, delta_time);
+			next_move = MOVE->CalculateVelocity(next_move, delta_time);
+			auto next_pos = MOVE->Move(pointer->GetPosition(), next_move, delta_time);
 
 			std::shared_ptr<IGameObject> collisionX = nullptr, collisionY = nullptr;
 			// And check collision with other objects
@@ -51,7 +45,7 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 					//! Check intersect with other obj by x coord
 					if (!cantMoveX)
 					{
-						cantMoveX = COLLISION.intersect2D(pointer->GetCollision(), PositionComponent{ {next_pos.getPosition().mX, pointer->GetPosition().getPosition().mY}, pointer->GetPosition().getLayer() },
+						cantMoveX = COLLISION->intersect2D(pointer->GetCollision(), PositionComponent{ {next_pos.getPosition().mX, pointer->GetPosition().getPosition().mY}, pointer->GetPosition().getLayer() },
 							sec_it->GetCollision(), sec_it->GetPosition());
 						if (cantMoveX)
 							collisionX = sec_it;
@@ -59,7 +53,7 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 					//! And check by y
 					if (!cantMoveY)
 					{
-						cantMoveY = COLLISION.intersect2D(pointer->GetCollision(), PositionComponent{ {pointer->GetPosition().getPosition().mX,  next_pos.getPosition().mY}, pointer->GetPosition().getLayer() },
+						cantMoveY = COLLISION->intersect2D(pointer->GetCollision(), PositionComponent{ {pointer->GetPosition().getPosition().mX,  next_pos.getPosition().mY}, pointer->GetPosition().getLayer() },
 							sec_it->GetCollision(), sec_it->GetPosition());
 						if (cantMoveY)
 							collisionY = sec_it;
@@ -117,7 +111,7 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 			}
 		};
 		//! multithread
-		futures.emplace_back(ASYNC.submit([chek_obj, it] { return chek_obj(it); }));
+		futures.emplace_back(ASYNC->submit([chek_obj, it] { return chek_obj(it); }));
 		//!Thread_pool t_p; 
 		//! t_p.submit(...) or ->
 		//
@@ -134,12 +128,12 @@ void PhysicsSystem::MoveObjects(float delta_time) const
 
 void PhysicsSystem::MoveCamera(double x, double y) const
 {
-	CAMERA.Move(x, y);
+	CAMERA->Move(x, y);
 }
 
 void PhysicsSystem::MoveCameraTo(const PositionComponent& pos) const
 {
-	CAMERA.SetCenterPoint({ pos.getPosition().mX, pos.getPosition().mY });
+	CAMERA->SetCenterPoint({ pos.getPosition().mX, pos.getPosition().mY });
 }
 
 bool PhysicsSystem::Registrate(const std::shared_ptr<IGameObject>& object)

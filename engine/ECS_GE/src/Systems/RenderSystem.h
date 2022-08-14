@@ -10,8 +10,6 @@
 #include "gl_Include.h"
 #include "ISystem.h"
 
-#define RENDER RenderSystem::Instanse()
-
 class RenderSystem;
 class DisplayString;
 
@@ -56,6 +54,7 @@ private:
 class RenderSystem : public ISystem
 {
 public:
+	friend class ServiceLocator;
 	static RenderSystem& Instanse();
 	void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });

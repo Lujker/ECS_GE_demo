@@ -1,5 +1,5 @@
 #include "UpdateSystem.h"
-
+#include "Engine.h"
 #include "Animator.h"
 #include "CameraManager.h"
 #include "Sprite.h"
@@ -10,7 +10,7 @@ float UpdateSystem::GlobalUpdate(bool restart)
 	if(restart)
 		lastTime = std::chrono::high_resolution_clock::now();
 	const auto currentTime = std::chrono::high_resolution_clock::now();
-	if (!pause && CAMERA.windowOnFocus()) 
+	if (!pause && CAMERA->windowOnFocus()) 
 	{
 		last_duration = std::chrono::duration<float, std::milli>(currentTime - lastTime).count();
 	}
@@ -87,12 +87,6 @@ unsigned UpdateSystem::GetFPS() const
 UpdateSystem::UpdateSystem():
 	lastTime(std::chrono::high_resolution_clock::now())
 {
-}
-
-UpdateSystem& UpdateSystem::Instanse()
-{
-    static UpdateSystem update_system;
-    return update_system;
 }
 
 FPSCounter::FPSCounter() : timer(0.f), counter(0), lastFPS(0)

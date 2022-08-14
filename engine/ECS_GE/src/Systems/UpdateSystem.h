@@ -28,11 +28,11 @@ namespace Animation
 	class AnimationsList;
 }
 
-#define UPDATE UpdateSystem::Instanse()
+
 class UpdateSystem : public ISystem
 {
 public:
-	static UpdateSystem& Instanse();
+	friend class ServiceLocator;
 	float GlobalUpdate(bool restart = false);
 	void Update(std::shared_ptr<RenderEngine::Sprite> sprite);
 	void Update(Animation::AnimationsList& anim_list);

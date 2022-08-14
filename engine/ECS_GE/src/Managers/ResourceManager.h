@@ -26,11 +26,11 @@ namespace RenderEngine
 }
 
 
-#define RES ResourceManager::Instanse()
+
 class ResourceManager 
 {
 public:
-	static ResourceManager& Instanse();
+	friend class ServiceLocator;
 	void setExecutablePath(const std::string& execPath);
 	void unloadAllResources();
 	std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath);

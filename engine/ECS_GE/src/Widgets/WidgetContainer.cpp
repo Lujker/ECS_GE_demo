@@ -1,17 +1,17 @@
 #include "WidgetContainer.h"
-
+#include "Engine.h"
 #include "LogSystem.h"
 #include "Widget.h"
 
 WidgetContainer::WidgetContainer(const std::string& widgetName, const eWidgetPriority& priority, const std::shared_ptr<WidgetContainer>& parent):
 	mParent(parent), mName(widgetName), mPriority(priority), showedAnimList(std::make_unique<Animation::AnimationsList>())
 {
-	INPUTS.ListenerAdd(this);
+	INPUTS->ListenerAdd(this);
 }
 
 WidgetContainer::~WidgetContainer()
 {
-	INPUTS.ListenerRemove(this);
+	INPUTS->ListenerRemove(this);
 }
 
 eWidgetPriority WidgetContainer::GetPriority() const

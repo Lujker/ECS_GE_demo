@@ -1,5 +1,5 @@
 #include "Board.h"
-
+#include "DemoServiceLocator.h"
 #include "RenderSystem.h"
 #include "ResourceManager.h"
 
@@ -9,7 +9,7 @@ Board::Board(const std::string& name, const PositionComponent& default_position,
 {
 	if (!image_name.empty())
 	{
-		m_image = RES.getSharedImage(image_name);
+		m_image = RES->getSharedImage(image_name);
 	}
 }
 
@@ -24,7 +24,7 @@ void Board::Init()
 void Board::Draw()
 {
 	if (m_image)
-		RENDER.Render(m_image, m_position, m_size);
+		RENDER->Render(m_image, m_position, m_size);
 	IGameObject::Draw();
 }
 

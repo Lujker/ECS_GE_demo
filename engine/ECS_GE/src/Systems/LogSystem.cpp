@@ -1,5 +1,5 @@
 #include "LogSystem.h"
-
+#include "Engine.h"
 #include <dinput.h>
 
 
@@ -33,12 +33,6 @@ bool Loger::init(const std::string& execPath)
         std::cout << exp.what();
         return m_isInit = false;
     }
-}
-
-Loger& Loger::getInstanse()
-{
-    static Loger log;
-    return log;
 }
 
 bool Loger::writeMessage(const char* mes, LOG_TYPE type)
@@ -167,5 +161,5 @@ void APIENTRY Loger::glDebugOutput(GLenum source,
     };
     char ErrorString[512];
     sprintf_s(ErrorString, "[OpenGL %s] - SEVERITY: %s, SOURCE: %s, ID: %d: %s\n", Types[type], Severities[severity], Sources[source], id, message);
-    LOGER.writeMessage(ErrorString);
+    LOGER->writeMessage(ErrorString);
 }

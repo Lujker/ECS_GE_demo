@@ -1,11 +1,5 @@
 #include "CollisionSystem.h"
 
-CollisionSystem& CollisionSystem::Instanse()
-{
-	static CollisionSystem col_system;
-	return col_system;
-}
-
 bool CollisionSystem::intersect2D(const CollisionComponent& collision_left, const PositionComponent& position_left, const CollisionComponent& collision_right, const PositionComponent& position_right)
 {
 	if (!collision_left.isValid() || !collision_right.isValid())

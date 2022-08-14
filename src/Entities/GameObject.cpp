@@ -1,5 +1,5 @@
 #include "GameObject.h"
-
+#include "DemoServiceLocator.h"
 #include "RenderSystem.h"
 
 
@@ -22,7 +22,7 @@ void IObject::Draw()
 	if (!isInit)
 		return;
 	if (isDrawSize)
-		RENDER.Render(m_size, m_position);
+		RENDER->Render(m_size, m_position);
 }
 
 void IObject::Update(const float& delta_time)
@@ -60,14 +60,14 @@ void IGameObject::Draw()
 {
 	IObject::Draw();
 	if (isDrawCollision)
-		RENDER.Render(m_collision, m_position);
+		RENDER->Render(m_collision, m_position);
 	if (isDrawName)
 	{
-		RENDER.Render(m_name, m_position + FPoint{ 0.f, m_collision.getHeight() }, 0.5);
+		RENDER->Render(m_name, m_position + FPoint{ 0.f, m_collision.getHeight() }, 0.5);
 		auto r = m_name->getRect(0.5f);
 		r.mX += m_position.getPosition().mX;
 		r.mY += m_position.getPosition().mY + m_collision.getHeight();
-		RENDER.Render(r);
+		RENDER->Render(r);
 	}
 }
 
@@ -83,5 +83,5 @@ void IInterfaceObject::Draw()
 {
 	IObject::Draw();
 	if (isDrawCollision)
-		RENDER.Render(m_collision, m_position);
+		RENDER->Render(m_collision, m_position);
 }

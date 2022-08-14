@@ -3,8 +3,6 @@
 #include "gl_Include.h"
 #include <deque>
 #include <map>
-
-#define INPUTS InputManager::Instanse()
 #include <vector>
 
 #include "Point.h"
@@ -24,7 +22,7 @@ public:
 class InputManager
 {
 public:
-	static InputManager& Instanse();
+	friend class ServiceLocator;
 	static void ListenerAdd(InputListener*);
 	static void ListenerRemove(InputListener*);
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

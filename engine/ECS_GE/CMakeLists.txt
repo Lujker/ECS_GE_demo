@@ -11,6 +11,7 @@ set(ENGINE_SRC
 	src/Managers/FontManager.cpp
 	src/Managers/InputManager.cpp
 	src/Managers/WidgetsManager.cpp
+	src/Managers/ServiceLocator.cpp
 	src/Premitives/Animator.cpp
 	src/Premitives/Shape.cpp  
 	src/Premitives/Timer.cpp
@@ -49,6 +50,7 @@ set(ENGINE_INCLUDE
 	src/Managers/FontManager.h
 	src/Managers/InputManager.h
 	src/Managers/WidgetsManager.h
+	src/Managers/ServiceLocator.h
 	src/Managers/stb_image.h
 	src/Premitives/Animator.h
 	src/Premitives/Point.h

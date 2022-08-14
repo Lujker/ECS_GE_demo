@@ -7,7 +7,6 @@
 #include <map>
 
 
-#define FILES FileSystem::Instanse()
 class FileSystem
 {
 public:
@@ -45,7 +44,7 @@ public:
 		bool isLoad = false;
 	};
 
-	static FileSystem& Instanse();
+	friend class ServiceLocator;
 	void setExecutablePath(const std::string& execPath);
 	void unloadAllFiles();
 	std::string getFormatedPath(const std::string& path);

@@ -2,6 +2,7 @@
 
 #include "Board.h"
 #include "CameraManager.h"
+#include "DemoServiceLocator.h"
 #include "CollisionSystem.h"
 #include "Knight.h"
 #include "LogSystem.h"
@@ -22,7 +23,7 @@ SandboxWindow::SandboxWindow():
 void SandboxWindow::OriginRectSet()
 {
 	GlobalWidget::OriginRectSet();
-    CAMERA.SetWorldRect({ 0,0,3000, 2000 });
+    CAMERA->SetWorldRect({ 0,0,3000, 2000 });
 }
 
 void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
@@ -31,27 +32,27 @@ void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
     m_objects.push_back(std::make_shared<Knight>("player", PositionComponent{ 350., 100., 0., 0. }, 
         CollisionComponent{ 120., 80., 0., 0., false }, CollisionComponent{ 120., 80., 0., 0.,  true }));
 
-	m_objects.push_back(std::make_shared<Board>("board", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
+	m_objects.push_back(std::make_shared<Board>("board", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA->getNearLayer() + 1) },
 		       CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(mOrigin.mHeight) }, CollisionComponent{ static_cast<float>(mOrigin.mWidth), static_cast<float>(60) }, "res/images/Layer_0001_8.png"));
 
-	m_objects.push_back(std::make_shared<Board>("board_1", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
+	m_objects.push_back(std::make_shared<Board>("board_1", PositionComponent{ mOrigin.mX, mOrigin.mY, static_cast<float>(CAMERA->getNearLayer() + 1) },
                CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }));
 
-    m_objects.push_back(std::make_shared<Board>("board_2", PositionComponent{ mOrigin.mX + mOrigin.mWidth/2, mOrigin.mY, static_cast<float>(CAMERA.getNearLayer() + 1) },
+    m_objects.push_back(std::make_shared<Board>("board_2", PositionComponent{ mOrigin.mX + mOrigin.mWidth/2, mOrigin.mY, static_cast<float>(CAMERA->getNearLayer() + 1) },
         CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(100), static_cast<float>(200) }));
 
-    m_objects.push_back(std::make_shared<Board>("board_3", PositionComponent{ mOrigin.mX, mOrigin.mY + mOrigin.mHeight/2, static_cast<float>(CAMERA.getNearLayer() + 1) },
+    m_objects.push_back(std::make_shared<Board>("board_3", PositionComponent{ mOrigin.mX, mOrigin.mY + mOrigin.mHeight/2, static_cast<float>(CAMERA->getNearLayer() + 1) },
         CollisionComponent{ static_cast<float>(1000), static_cast<float>(200) }, CollisionComponent{ static_cast<float>(1000), static_cast<float>(200) }));
     for (const auto& it : m_objects)
     {
         it->Init();
-        PHYSICS.Registrate(it);
+        PHYSICS->Registrate(it);
     }
 }
 
 void SandboxWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContainer)
 {
-    PHYSICS.Clear();
+    PHYSICS->Clear();
 }
 
 void SandboxWindow::Draw()
@@ -82,7 +83,7 @@ void SandboxWindow::KeyUnpress(const int& key)
 {
     if (key == GLFW_KEY_ESCAPE)
     {
-        WIDGET.SetNextWidget(MainMenuWindow::Create());
+        WIDGET->SetNextWidget(MainMenuWindow::Create());
     }
     for (const auto& it : m_objects)
     {

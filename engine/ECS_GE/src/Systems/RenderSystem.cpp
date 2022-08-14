@@ -1,5 +1,5 @@
 #include "RenderSystem.h"
-
+#include "Engine.h"
 #include "CameraManager.h"
 #include "DisplayString.h"
 #include "FontManager.h"
@@ -19,7 +19,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Sprite> sprite, const Po
 {
     if (!sprite)
         return;
-    const auto shader = RES.getShader("image_shader");
+    const auto shader = RES->getShader("image_shader");
     if (!shader || !sprite->isValid())
     {
         return;
@@ -30,8 +30,8 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Sprite> sprite, const Po
         size = collision.getSize();
     }
 
-    CAMERA.UseShader(shader);
-    shader->setMatrix4("modelMatrix", RENDER.getTransformModel(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
+    CAMERA->UseShader(shader);
+    shader->setMatrix4("modelMatrix", getTransformModel(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
     shader->setFloat("layer", position.getLayer());
     shader->setInt("tex", sprite->getTexture2D()->getSlot());
     shader->setFloat("alpha", GetLastTransformAlpha());
@@ -44,7 +44,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
 {
     if(!image)
         return;
-	const auto shader = RES.getShader("image_shader");
+	const auto shader = RES->getShader("image_shader");
     if(!shader || !image->isValid())
     {
         return;
@@ -55,8 +55,8 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
         size = collision.getSize();
     }
 
-    CAMERA.UseShader(shader);
-	shader->setMatrix4("modelMatrix", RENDER.getTransformModel(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
+    CAMERA->UseShader(shader);
+	shader->setMatrix4("modelMatrix", getTransformModel(position.getPosition().mX, position.getPosition().mY, size.mX * collision.getScale(), size.mY * collision.getScale(), position.getRotation()));
 	shader->setFloat("layer", position.getLayer());
     shader->setInt("tex", image->getTexture2D()->getSlot());
     shader->setFloat("alpha", GetLastTransformAlpha());
@@ -69,8 +69,8 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
 {
     if (!string || string->isEmpty())
         return;
-    const auto shader = RES.getShader("freetype");
-    CAMERA.UseShader(shader);
+    const auto shader = RES->getShader("freetype");
+    CAMERA->UseShader(shader);
     shader->setVec3("textColor", { collor.getR(), collor.getG(), collor.getB() });
     shader->setFloat("layer", position.getLayer() + 1);
     shader->setFloat("alpha", collor.getAlpha() * GetLastTransformAlpha());
@@ -101,8 +101,8 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
 {
     if (!string || string->isEmpty())
         return;
-    const auto shader = RES.getShader("freetype");
-    CAMERA.UseShader(shader);
+    const auto shader = RES->getShader("freetype");
+    CAMERA->UseShader(shader);
     shader->setVec3("textColor", { collor.getR(), collor.getG(), collor.getB() });
     shader->setFloat("layer", position.getLayer() + 1);
     shader->setFloat("alpha", collor.getAlpha() * GetLastTransformAlpha());
@@ -274,7 +274,7 @@ float RenderSystem::GetLastTransformAlpha()
 
 void RenderSystem::drawRect(const int x, const int y, const int width, const int height, ColorComponent collor)
 {
-    const auto shader_program = RES.getShader("default");
+    const auto shader_program = RES->getShader("default");
     if (!shader_program)
         return;
     static const GLfloat vertexes[] =
@@ -292,7 +292,7 @@ void RenderSystem::drawRect(const int x, const int y, const int width, const int
         collor.getR(), collor.getG(), collor.getB(),  collor.getAlpha()
     };
 
-    CAMERA.UseShader(shader_program);
+    CAMERA->UseShader(shader_program);
     static RenderEngine::VertexArray vertexArray;
     static RenderEngine::VertexBuffer vertexBuffer;
     static RenderEngine::VertexBuffer colorsBuffer;
@@ -324,7 +324,7 @@ void RenderSystem::drawRect(const int x, const int y, const int width, const int
 
 void RenderSystem::drawForm(const std::vector<FPoint>& points, float scale, ColorComponent color)
 {
-    const auto shader_program = RES.getShader("default");
+    const auto shader_program = RES->getShader("default");
     if (!shader_program)
         return;
 
@@ -354,7 +354,7 @@ void RenderSystem::drawForm(const std::vector<FPoint>& points, float scale, Colo
         colors.push_back(color.getR()); colors.push_back(color.getG()); colors.push_back(color.getB()); colors.push_back(color.getAlpha());
     }
 
-    CAMERA.UseShader(shader_program);
+    CAMERA->UseShader(shader_program);
     static RenderEngine::VertexArray vertexArray;
     static RenderEngine::VertexBuffer vertexBuffer;
     static RenderEngine::VertexBuffer colorsBuffer;
@@ -469,10 +469,10 @@ Transform2D Transform2D::operator-(const Transform2D& transform)
 
 Transform2DGuard::Transform2DGuard(const Transform2D& transform)
 {
-    RENDER.PushGlobalTransform(transform);
+    RENDER->PushGlobalTransform(transform);
 }
 
 Transform2DGuard::~Transform2DGuard()
 {
-    RENDER.PopGlobalTransform();
+    RENDER->PopGlobalTransform();
 }

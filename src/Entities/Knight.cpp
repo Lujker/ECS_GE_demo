@@ -1,5 +1,5 @@
 #include "Knight.h"
-
+#include "DemoServiceLocator.h"
 #include "CameraManager.h"
 #include "LogSystem.h"
 #include "MoveSystem.h"
@@ -20,7 +20,7 @@ Knight::~Knight()
 
 void Knight::Init()
 {
-	m_sprite = RES.getSprite("res/sprites/Humans/Kinght");
+	m_sprite = RES->getSprite("res/sprites/Humans/Kinght");
 	if (m_sprite)
 	{
 		m_sprite->setAnimation("idle");
@@ -40,7 +40,7 @@ void Knight::Draw()
 {
 	if (!isInit)
 		return;
-	RENDER.Render(m_sprite, m_position, m_size);
+	RENDER->Render(m_sprite, m_position, m_size);
 	IGameObject::Draw();
 }
 
@@ -48,7 +48,7 @@ void Knight::Update(const float& delta_time)
 {
 	if (!isInit)
 		return;
-	UPDATE.Update(m_sprite);
+	UPDATE->Update(m_sprite);
 	IGameObject::Update(delta_time);
 }
 

@@ -34,9 +34,3 @@ void Thread_pool::run_pending_task()
     else 
         std::this_thread::yield();
 }
-
-GlobalThreadPool& GlobalThreadPool::Instanse()
-{
-    static GlobalThreadPool thread_pool;
-    return thread_pool;
-}

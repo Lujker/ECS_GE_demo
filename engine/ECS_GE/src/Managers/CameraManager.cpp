@@ -1,4 +1,5 @@
 #include "CameraManager.h"
+#include "Engine.h"
 #include "ShaderProgram.h"
 #include "UpdateSystem.h"
 
@@ -6,49 +7,43 @@ using namespace std;
 
 CameraListener::CameraListener()
 {
-	CAMERA.AddListener(this);
+	CAMERA->AddListener(this);
 }
 
 CameraListener::~CameraListener()
 {
-	CAMERA.RemoveListener(this);
-}
-
-CameraManager& CameraManager::Instanse()
-{
-	static CameraManager camera;
-	return camera;
+	CAMERA->RemoveListener(this);
 }
 
 void CameraManager::glfwWindowsSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
-	CAMERA.setActiveWindowSize(width, height);
-    RENDER.setViewport(CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight);
-	for(const auto& it : CAMERA.m_listeners)
+	CAMERA->setActiveWindowSize(width, height);
+    RENDER->setViewport(CAMERA->getActiveWindowRect().mWidth, CAMERA->getActiveWindowRect().mHeight);
+	for(const auto& it : CAMERA->m_listeners)
 	{
 		if (it)
-			it->WindowResizeCallback(CAMERA.getActiveWindowRect());
+			it->WindowResizeCallback(CAMERA->getActiveWindowRect());
 	}
 }
 
 void CameraManager::glfwWindowsResize(GLFWwindow* pWindow, int width, int height)
 {
-	CAMERA.setActiveWindowSize(width, height);
-	glfwSetWindowSize(pWindow, CAMERA.getActiveWindowRect().mWidth, CAMERA.getActiveWindowRect().mHeight);
-	for (const auto& it : CAMERA.m_listeners)
+	CAMERA->setActiveWindowSize(width, height);
+	glfwSetWindowSize(pWindow, CAMERA->getActiveWindowRect().mWidth, CAMERA->getActiveWindowRect().mHeight);
+	for (const auto& it : CAMERA->m_listeners)
 	{
 		if (it)
-			it->WindowResizeCallback(CAMERA.getActiveWindowRect());
+			it->WindowResizeCallback(CAMERA->getActiveWindowRect());
 	}
 }
 
 void CameraManager::glfwWindowFocusCallback(GLFWwindow* window, int focused)
 {
-	CAMERA.fockused = focused;
-	for (const auto& it : CAMERA.m_listeners)
+	CAMERA->fockused = focused;
+	for (const auto& it : CAMERA->m_listeners)
 	{
 		if (it)
-			it->WindowFocusCallback(CAMERA.fockused);
+			it->WindowFocusCallback(CAMERA->fockused);
 	}
 }
 
@@ -69,6 +64,14 @@ void CameraManager::SetWorldRect(const FRect& rect)
 		this->worldRect = rect;
 	else
 		this->worldRect = activeWindowSize;
+}
+
+void CameraManager::UpdateCameraPos(const FRect& rect)
+{
+	if ((rect.mWidth - rect.mX) >= activeWindowSize.mWidth && (rect.mHeight - rect.mY) >= activeWindowSize.mHeight)
+		this->projMatrix = rect;
+	else
+		this->projMatrix = activeWindowSize;
 }
 
 void CameraManager::ReleaseShader()
@@ -120,7 +123,7 @@ void CameraManager::Move(double x, double y)
 		next_rect.mHeight -= y;
 	}
 	projMatrix = next_rect;
-	for (const auto& it : CAMERA.m_listeners)
+	for (const auto& it : m_listeners)
 	{
 		if (it)
 			it->CameraMoveCallback(projMatrix);
@@ -151,7 +154,7 @@ void CameraManager::SetCenterPoint(FPoint point)
 		next_rect.mHeight = projMatrix.mHeight;
 	}
 	projMatrix = next_rect;
-	for (const auto& it : CAMERA.m_listeners)
+	for (const auto& it : m_listeners)
 	{
 		if (it)
 			it->CameraMoveCallback(projMatrix);

@@ -3,14 +3,14 @@
 #include "ISystem.h"
 #include "Vector.h"
 
-#define MOVE MoveSystem::Instance()
+
 class MoveComponent;
 class PositionComponent;
 
 class MoveSystem : public ISystem
 {
 public:
-	static MoveSystem& Instance();
+	friend class ServiceLocator;
 	PositionComponent Move(const PositionComponent& position, const MoveComponent& move, float delta_time);
 	MoveComponent CalculateVelocity(const MoveComponent& move, float delta_time);
 	MoveComponent Gravity(const MoveComponent& move, float delta_time);

@@ -1,16 +1,10 @@
 #include "InputManager.h"
-
+#include "Engine.h"
 #include "CameraManager.h"
 
 std::map<int, bool> InputManager::key_map;
 FPoint InputManager::last_cursor_pos;
 std::vector<InputListener*> InputManager::listeners;
-
-InputManager& InputManager::Instanse()
-{
-	static InputManager input_manager;
-	return input_manager;
-}
 
 void InputManager::ListenerAdd(InputListener* listener)
 {
@@ -49,7 +43,7 @@ void InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int ac
 
 void InputManager::ÑursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	last_cursor_pos = { xpos,CAMERA.getActiveWindowRect().mHeight - ypos };
+	last_cursor_pos = { xpos,CAMERA->getActiveWindowRect().mHeight - ypos };
 	for(const auto& it : listeners)
 	{
 		it->MouseMove(last_cursor_pos);

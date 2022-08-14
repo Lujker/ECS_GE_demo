@@ -3,13 +3,6 @@
 #include "Move.h"
 #include "Position.h"
 
-
-MoveSystem& MoveSystem::Instance()
-{
-	static MoveSystem move_system;
-	return move_system;
-}
-
 //! Calculate next position by velocity, acceleratin and time on milisecond
 PositionComponent MoveSystem::Move(const PositionComponent& position, const MoveComponent& move, float delta_time)
 {

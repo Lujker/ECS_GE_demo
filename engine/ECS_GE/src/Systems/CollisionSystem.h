@@ -3,11 +3,10 @@
 #include "ISystem.h"
 #include "Position.h"
 
-#define COLLISION CollisionSystem::Instanse()
 class CollisionSystem: public ISystem
 {
 public:
-	static CollisionSystem& Instanse();
+	friend class ServiceLocator;
 	//Collision component it is rect without position
 	bool intersect2D(const CollisionComponent& collision_left, const PositionComponent& position_left, const CollisionComponent& collision_right, const PositionComponent& position_right);
 	bool intersect2D(const FRect& rect_left, float left_scale, const PositionComponent& position_left, const FRect& rect_right, float right_scale, const PositionComponent& position_right);

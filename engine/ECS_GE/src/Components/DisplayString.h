@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-
 #include "Atlas2D.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
@@ -8,16 +7,12 @@
 #include "FontManager.h"
 #include "Rect.h"
 
-struct Character {
-	std::shared_ptr<RenderEngine::Texture2D> texture; // текстура глифа
-	glm::ivec2 Bearing;   // Смещение верхней левой точки глифа
-	FT_Pos     Advance;   // Горизонтальное смещение до начала следующего глифа
-};
+
 class DisplayString
 {
 public:
 	DisplayString(const std::string& string, unsigned int width = 0, unsigned int height = 48);
-	~DisplayString();
+	virtual ~DisplayString();
 	void setString(const std::string& string, unsigned int width = 0, unsigned int height = 48);
 	void updateString(const std::string& string);
 	void clearString();

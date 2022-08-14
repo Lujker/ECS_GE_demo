@@ -1,3 +1,4 @@
+#include "Engine.h"
 #include "ResourceManager.h"
 #include "ShaderProgram.h"
 #include "texture2D.h"
@@ -204,7 +205,7 @@ void ResourceManager::loadShader(const rapidjson::Document::MemberIterator& shad
 			continue;
 		}
 		else
-			RES.loadShaders(name, file_path_vertex, file_path_fragment);
+			loadShaders(name, file_path_vertex, file_path_fragment);
 	}
 }
 
@@ -221,9 +222,9 @@ void ResourceManager::loadTexture2D(const rapidjson::Document::MemberIterator& t
 		else continue;
 
 		if (!name.empty())
-			RES.loadTexture(name, path);
+			loadTexture(name, path);
 		else if (!path.empty())
-			RES.loadTexture(path, path);
+			loadTexture(path, path);
 		else
 			LOG("Incorrect texture2D obj in parsed json", LOG_TYPE::WAR);
 	}
@@ -243,9 +244,9 @@ void ResourceManager::loadAtlas(const rapidjson::Document::MemberIterator& atlas
 			continue;
 
 		if (!name.empty())
-			RES.loadAtlas(name, path);
+			loadAtlas(name, path);
 		else if (!path.empty())
-			RES.loadAtlas(path, path);
+			loadAtlas(path, path);
 		else
 			LOG( "Incorrect atlas obj in parsed json", LOG_TYPE::WAR);
 	}
@@ -262,9 +263,9 @@ void ResourceManager::loadImage(const rapidjson::Document::MemberIterator& image
 		if (current_image.HasMember("path") && !current_image["path"].IsNull())
 			path = current_image["path"].GetString();
 		if (!name.empty() && !path.empty())
-			RES.loadImage(name, path, path);
+			loadImage(name, path, path);
 		else if (!path.empty())
-			RES.getSharedImage(path);
+			getSharedImage(path);
 		else
 			LOG("Incorrect image obj in parsed json", LOG_TYPE::WAR);
 	}
@@ -281,9 +282,9 @@ void ResourceManager::loadSprite(const rapidjson::Document::MemberIterator& spri
 		if (current_sprite.HasMember("path") && !current_sprite["path"].IsNull())
 			path = current_sprite["path"].GetString();
 		if (!name.empty() && !path.empty())
-			RES.loadSprite(name, path);
+			loadSprite(name, path);
 		else if (!path.empty())
-			RES.loadSprite(path, path);
+			loadSprite(path, path);
 		else
 			LOG( "Incorrect sprite obj in parsed json", LOG_TYPE::WAR);
 	}
@@ -326,12 +327,6 @@ ResourceManager::ResourceManager(const std::string& execPath)
 ResourceManager::~ResourceManager()
 {
 	unloadAllResources();
-}
-
-ResourceManager& ResourceManager::Instanse()
-{
-	static ResourceManager manager;
-	return manager;
 }
 
 void ResourceManager::setExecutablePath(const std::string& execPath)
@@ -388,7 +383,7 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::getShader(const st
 std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath)
 {
 	///Загрузка пикселей в массив байт из файла текстуры
-	const auto& pixels = FILES.getPixelFile(texturePath);
+	const auto& pixels = FILES->getPixelFile(texturePath);
 	if (!pixels->isLoaded() && !pixels->getData())
 	{
 		LOG("Can't load image: " + texturePath, LOG_TYPE::WAR);
@@ -560,7 +555,7 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::loadSprite(const std::str
 std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> ResourceManager::loadAtlas(const std::string& name, const std::string& path)
 {
 	///Загрузка пикселей в массив байт из файла текстуры
-	const auto& pixels = FILES.getPixelFile(path + ".png");
+	const auto& pixels = FILES->getPixelFile(path + ".png");
 	if (!pixels->isLoaded() && !pixels->getData())
 	{
 		LOG("Can't load atlas: " + path, LOG_TYPE::WAR);
@@ -674,7 +669,7 @@ bool ResourceManager::loadResJSON(const std::string& path)
 	if (levelsIt != document.MemberEnd())
 		loadLevel(levelsIt);
 
-	FILES.unloadAllFiles();
+	FILES->unloadAllFiles();
 	return true;
 }
 
@@ -690,7 +685,7 @@ const std::vector<std::string>& ResourceManager::atLevelDiscription(const unsign
 
 std::string ResourceManager::getFileString(const std::string& path)
 {
-	if(const auto& ptr = FILES.getFile(path); ptr)
+	if(const auto& ptr = FILES->getFile(path); ptr)
 		return ptr->getData();
 	return "";
 }

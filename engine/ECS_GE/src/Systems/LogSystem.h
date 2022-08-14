@@ -32,12 +32,11 @@ enum LOG_TYPE {
     Перед использованием необхоидмо вызвать метод init
     передав путь к лог файлу приложения.
 */
-#define LOGER Loger::getInstanse()
-#define LOG LOGER.writeMessage
+
 class Loger
 {
 public:
-    static Loger& getInstanse();
+    friend class ServiceLocator;
     virtual bool init(const std::string& exePath);
     virtual bool writeMessage(const char* mes, LOG_TYPE type = DEB);
     virtual bool writeMessage(const std::string& mes, LOG_TYPE type = DEB);
