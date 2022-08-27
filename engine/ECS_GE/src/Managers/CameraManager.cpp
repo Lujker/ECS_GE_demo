@@ -47,6 +47,11 @@ void CameraManager::glfwWindowFocusCallback(GLFWwindow* window, int focused)
 	}
 }
 
+CameraManager::~CameraManager()
+{
+	INPUTS->ListenerRemove(this);
+}
+
 void CameraManager::Init(const FRect& rect, const FRect& worldRect, double d_near, double d_far)
 {
 	if ((worldRect.mWidth - worldRect.mX) >= activeWindowSize.mWidth && (worldRect.mHeight - worldRect.mY) >= activeWindowSize.mHeight)
@@ -56,6 +61,9 @@ void CameraManager::Init(const FRect& rect, const FRect& worldRect, double d_nea
 	projMatrix = rect;
 	m_near = d_near;
 	m_far = d_far;
+	camPos.lastX = activeWindowSize.mWidth / 2.;
+	camPos.lastY = activeWindowSize.mHeight / 2.;
+	INPUTS->ListenerAdd(this);
 }
 
 void CameraManager::SetWorldRect(const FRect& rect)
@@ -90,18 +98,36 @@ void CameraManager::Update()
 {
 	if (!m_shader)
 		return;
-	const glm::mat4 projectionMatrix = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, m_near, m_far);
+	glm::mat4 proj;
+	glm::mat4 view;
+
+	if(camPos.isPerspective)
+		proj = glm::perspective(camPos.fov, activeWindowSize.mWidth / activeWindowSize.mHeight, m_near, m_far );
+	else
+		proj = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, -m_far, m_far);
+
+	view = glm::lookAt(camPos.cameraPos, camPos.cameraPos + camPos.cameraFront, camPos.cameraUp);
 	m_shader->use();
-	m_shader->setMatrix4("projectionMatrix", projectionMatrix);
+	m_shader->setMatrix4("projectionMatrix", proj);
+	m_shader->setMatrix4("viewMatrix", view);
 }
 
 void CameraManager::UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader)
 {
 	if(!shader)
 		return;
-	const glm::mat4 projectionMatrix = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, m_near, m_far);
+	glm::mat4 proj;
+	glm::mat4 view;
+
+	if (camPos.isPerspective)
+		proj = glm::perspective(camPos.fov, activeWindowSize.mWidth / activeWindowSize.mHeight, m_near, m_far );
+	else
+		proj = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, -m_far, m_far);
+
+	view = glm::lookAt(camPos.cameraPos, camPos.cameraPos + camPos.cameraFront, camPos.cameraUp);
 	shader->use();
-	shader->setMatrix4("projectionMatrix", projectionMatrix);
+	shader->setMatrix4("projectionMatrix", proj);
+	shader->setMatrix4("viewMatrix", view);
 }
 
 void CameraManager::Move(double x, double y)
@@ -165,6 +191,69 @@ void CameraManager::Resize(int width, int height)
 {
 	projMatrix.mWidth = width;
 	projMatrix.mHeight += height;
+}
+
+void CameraManager::UpdateMoveCamera(float delta_time)
+{
+	auto speed = camPos.cameraSpeed * delta_time;
+	auto& keys = INPUTS->GetKeyMap();
+	if (keys[GLFW_KEY_UP])
+		camPos.cameraPos += speed * camPos.cameraFront;
+	if (keys[GLFW_KEY_DOWN])
+		camPos.cameraPos -= speed * camPos.cameraFront;
+	if (keys[GLFW_KEY_LEFT])
+		camPos.cameraPos -= glm::normalize(glm::cross(camPos.cameraFront, camPos.cameraUp)) * speed;
+	if (keys[GLFW_KEY_RIGHT])
+		camPos.cameraPos += glm::normalize(glm::cross(camPos.cameraFront, camPos.cameraUp)) * speed;
+}
+
+void CameraManager::KeyPress(const int& key)
+{
+	if (key >= 262 && key <= 265)
+		camPos.cameraSpeed += 0.1f;
+}
+
+void CameraManager::KeyUnpress(const int& key)
+{
+	if (key >= 262 && key <= 265)
+		camPos.cameraSpeed -= 0.1f;
+}
+
+void CameraManager::MouseMove(const FPoint& current_pos)
+{
+	if (!camPos.isPerspective)
+		return;
+	GLfloat xoffset = current_pos.mX - camPos.lastX;
+	GLfloat yoffset = camPos.lastY - current_pos.mY; // Обратный порядок вычитания потому что оконные Y-координаты возрастают с верху вниз 
+	camPos.lastX = current_pos.mX;
+	camPos.lastY = current_pos.mY;
+	xoffset *= camPos.sensitivity;
+	yoffset *= camPos.sensitivity;
+
+	camPos.yaw += xoffset;
+	camPos.pitch -= yoffset;
+	if (camPos.pitch > 89.0f)
+		camPos.pitch = 89.0f;
+	if (camPos.pitch < -89.0f)
+		camPos.pitch = -89.0f;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(camPos.yaw)) * cos(glm::radians(camPos.pitch));
+	front.y = sin(glm::radians(camPos.pitch));
+	front.z = sin(glm::radians(camPos.yaw)) * cos(glm::radians(camPos.pitch));
+	camPos.cameraFront = glm::normalize(front);
+}
+
+void CameraManager::MouseScroll(const float& fov)
+{
+	if (!camPos.isPerspective)
+		return;
+	if (camPos.fov >= 1.0f && camPos.fov <= 45.0f)
+		camPos.fov -= fov / 10;
+	if (camPos.fov <= 1.0f)
+		camPos.fov = 1.0f;
+	if (camPos.fov >= 45.0f)
+		camPos.fov = 45.0f;
 }
 
 bool CameraManager::AddListener(CameraListener* listener)

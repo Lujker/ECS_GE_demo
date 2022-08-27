@@ -1,15 +1,14 @@
 #pragma once
-#include <string>
 #include "ServiceLocator.h"
 #include "Engine.h"
 
 class PhysicsSystem;
 
 #define PHYSICS static_cast<DemoServiceLocator*>(Engine::getServiceLocator())->getPhysicsSystem()
-class DemoServiceLocator : public ServiceLocator
+class DemoServiceLocator : private ServiceLocator
 {
 public:
-	DemoServiceLocator() = default;
+	friend class Client;
 	~DemoServiceLocator() override;
 	void init(const std::string& init_path) override;
 	[[nodiscard]] PhysicsSystem* getPhysicsSystem() const { return p_physics_system; }
@@ -21,6 +20,7 @@ public:
 	DemoServiceLocator& operator=(const DemoServiceLocator&) = delete;
 	DemoServiceLocator& operator=(DemoServiceLocator&&) = delete;
 private:
+	DemoServiceLocator() = default;
 	void destroyDemoServiceLocator();
 	PhysicsSystem* p_physics_system = nullptr;
 };

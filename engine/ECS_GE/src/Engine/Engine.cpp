@@ -85,6 +85,7 @@ bool Engine::Init(const std::string& init_path, ServiceLocator* service_locator)
     RENDER->setClearColor(1, 1, 1, 1);
     RENDER->setBlendMode(true);
     RENDER->setDepthTest(true);
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     if (!RES->loadResJSON("res/res.json"))
     {
         glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
@@ -97,6 +98,7 @@ bool Engine::Init(const std::string& init_path, ServiceLocator* service_locator)
     glfwSetCursorPosCallback(m_window, INPUTS->ÑursorPositionCallback);
     glfwSetKeyCallback(m_window, INPUTS->KeyCallback);
     glfwSetMouseButtonCallback(m_window, INPUTS->MouseButtonCallback);
+    glfwSetScrollCallback(m_window, INPUTS->ScrollCallback);
     glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
         GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Init engine is ok");
     g_service_locator->postInit();

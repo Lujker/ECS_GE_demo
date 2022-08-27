@@ -62,12 +62,12 @@ void Button::Update(const float& delta_time)
 
 void Button::setImage(std::shared_ptr<RenderEngine::Image2D> image)
 {
-	m_bg = image;
+	m_bg = std::move(image);
 }
 
 void Button::setString(std::shared_ptr<DisplayString> string)
 {
-	m_string = string;
+	m_string = std::move(string);
 }
 
 void Button::setAutoInput(bool isAutoInput)
@@ -116,9 +116,15 @@ void Button::MousePress(const int& key)
 		const auto next_y = m_position.getPosition().mY + ((m_size.getHeight() * GetSize().getScale()) - m_size.getHeight() * (GetSize().getScale() - 0.2f)) / 2.;
 		isPressed = true;
 		m_pressed_anim->push_back(new Animation::Wait(0), [&]() {});
-		m_pressed_anim->push_back(new Animation::Diff(100.f, m_position.getPosition().mX, next_x, &(m_position.getPositionPtr()->mX),Animation::eAnimType::LINEAR,[&]()
+		m_pressed_anim->push_back(new Animation::Diff(100.f, m_position.getPosition().mX, next_x,
+			&(m_position.getPositionPtr()->mX),Animation::eAnimType::LINEAR,[&]()
 		{
-				m_size_string = { m_size.getWidth() / 2 * GetSize().getScale(), m_size.getHeight() / 2 * GetSize().getScale(), m_size.getWidth() / 4 * GetSize().getScale(), m_size.getHeight() / 2 * GetSize().getScale(), false , 0.8f };
+				m_size_string = {
+					m_size.getWidth() / 2 * GetSize().getScale(),
+					m_size.getHeight() / 2 * GetSize().getScale(),
+					m_size.getWidth() / 4 * GetSize().getScale(),
+					m_size.getHeight() / 2 * GetSize().getScale(),
+					false , 0.8f };
 		}));
 		m_pressed_anim->push_back(new Animation::Diff(100.f, m_position.getPosition().mY, next_y, &(m_position.getPositionPtr()->mY)));
 		m_pressed_anim->push_back(new Animation::Diff(100.f, m_size.getScale(), m_size.getScale() - 0.2f, m_size.getScalePtr()));
@@ -143,9 +149,15 @@ void Button::MouseUnpress(const int& key)
 			auto next_x = m_position.getPosition().mX - (m_size.getWidth() * (GetSize().getScale() + 0.2f) - (m_size.getWidth() * GetSize().getScale())) / 2.;
 			auto next_y = m_position.getPosition().mY - (m_size.getHeight() * (GetSize().getScale() + 0.2f) - (m_size.getHeight() * GetSize().getScale())) / 2.;
 			isUnpressed = true;
-			m_pressed_anim->push_back(new Animation::Diff(100.f, m_position.getPosition().mX, next_x, &(m_position.getPositionPtr()->mX), Animation::eAnimType::LINEAR, [&]()
+			m_pressed_anim->push_back(new Animation::Diff(100.f, m_position.getPosition().mX, next_x,
+				&(m_position.getPositionPtr()->mX), Animation::eAnimType::LINEAR, [&]()
 				{
-					m_size_string = { m_size.getWidth() / 2 * GetSize().getScale(), m_size.getHeight() / 2 * GetSize().getScale(), m_size.getWidth() / 4 * GetSize().getScale(), m_size.getHeight() / 2 * GetSize().getScale(), false , 0.8f };
+					m_size_string = {
+						m_size.getWidth() / 2 * GetSize().getScale(),
+						m_size.getHeight() / 2 * GetSize().getScale(),
+						m_size.getWidth() / 4 * GetSize().getScale(),
+						m_size.getHeight() / 2 * GetSize().getScale(),
+						false , 0.8f };
 				}));
 			m_pressed_anim->push_back(new Animation::Diff(100.f, m_position.getPosition().mY, next_y, &(m_position.getPositionPtr()->mY)));
 			m_pressed_anim->push_back(new Animation::Diff(100.f, m_collision.getScale(), m_collision.getScale() + 0.2f, m_collision.getScalePtr()));

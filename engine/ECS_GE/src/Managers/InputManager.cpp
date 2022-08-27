@@ -70,9 +70,22 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int key, int action, 
 	}
 }
 
+void InputManager::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	for (const auto& it : listeners)
+	{
+		it->MouseScroll(yoffset);
+	}
+}
+
 FPoint InputManager::GetLastCursorPos()
 {
 	return last_cursor_pos;
+}
+
+std::map<int, bool>& InputManager::GetKeyMap()
+{
+	return key_map;
 }
 
 InputListener::~InputListener()
@@ -91,4 +104,7 @@ void InputListener::MouseUnpress(const int& key)
 {}
 
 void InputListener::MouseMove(const FPoint& current_pos)
+{}
+
+void InputListener::MouseScroll(const float& fov)
 {}

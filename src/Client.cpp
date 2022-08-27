@@ -14,6 +14,7 @@
 #include "Sprite.h"
 #include "UpdateSystem.h"
 #include "WidgetsManager.h"
+#include <Windows/SandboxWindow.h>
 
 Client::Client(const char* argv):
 	m_exec_path(argv)
@@ -46,7 +47,7 @@ bool Client::init()
 	if (!InitEngine())
 		return false;
     m_isInit = true;
-    WIDGET->SetNextWidget(MainMenuWindow::Create());
+    WIDGET->SetNextWidget(SandboxWindow::Create());
     return true;
 }
 
@@ -87,6 +88,7 @@ bool Client::deltaLoop()
         if (delta_time > 0.f)
         {
             PHYSICS->Update(delta_time);
+            CAMERA->UpdateMoveCamera(delta_time);
             WIDGET->Update(delta_time);
             /* Render here */
             RENDER->clear();

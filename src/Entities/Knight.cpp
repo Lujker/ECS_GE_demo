@@ -56,15 +56,15 @@ void Knight::KeyPress(const int& key)
 {
 	if (!isInit || !isPlayerControlledObject)
 		return;
-	if (key == GLFW_KEY_LEFT)
+	if (key == GLFW_KEY_A)
 	{
 		m_move.SetVelocity(m_move.getVelocity().x - 150.f, m_move.getVelocity().y);
 	}
-	if (key == GLFW_KEY_RIGHT)
+	if (key == GLFW_KEY_D)
 	{
 		m_move.SetVelocity(m_move.getVelocity().x + 150.f, m_move.getVelocity().y);
 	}
-	if (key == GLFW_KEY_UP)
+	if (key == GLFW_KEY_W)
 	{
 		m_move.SetVelocity(m_move.getVelocity().x, m_move.getVelocity().y + 300.f);
 	}
@@ -74,11 +74,11 @@ void Knight::KeyUnpress(const int& key)
 {
 	if (!isInit || !isPlayerControlledObject)
 		return;
-	if (key == GLFW_KEY_LEFT)
+	if (key == GLFW_KEY_A)
 	{
 		m_move.SetVelocity(m_move.getVelocity().x + 150.f, m_move.getVelocity().y);
 	}
-	if (key == GLFW_KEY_RIGHT)
+	if (key == GLFW_KEY_D)
 	{
 		m_move.SetVelocity(m_move.getVelocity().x - 150.f, m_move.getVelocity().y); 
 	}

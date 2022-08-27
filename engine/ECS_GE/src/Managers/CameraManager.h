@@ -4,6 +4,7 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include "Rect.h"
 #include "Systems/RenderSystem.h"
+#include "InputManager.h"
 
 namespace RenderEngine
 {
@@ -20,11 +21,28 @@ public:
 	virtual void WindowFocusCallback(bool) {}
 };
 
-class CameraManager
+class CameraManager : public InputListener
 {
 public:
+
+	struct CameraPosition
+	{
+		bool isPerspective = true;
+		float cameraSpeed = 0.1f;
+		glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 1.0f);
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+		GLfloat lastX = 0, lastY = 0;
+		float sensitivity = 0.05f;
+		GLfloat yaw = -90.0f;
+		GLfloat pitch = 0.0f;
+		double fov = 45.f;
+	};
+
 	friend class ServiceLocator;
-	void Init(const FRect& rect, const FRect& worldRect = { 0,0,0,0}, double near = -100., double far = 100.);
+	~CameraManager() override;
+	void Init(const FRect& rect, const FRect& worldRect = { 0,0,0,0}, double near = 0.1, double far = 1000.);
 	void SetWorldRect(const FRect& rect);
 	void UpdateCameraPos(const FRect& rect);
 	void ReleaseShader();
@@ -34,6 +52,11 @@ public:
 	void Move(double x, double y);
 	void SetCenterPoint(FPoint point);
 	void Resize(int width, int height);
+	void UpdateMoveCamera(float delta_time);
+	void KeyPress(const int& key) override;
+	void KeyUnpress(const int& key) override;
+	void MouseMove(const FPoint& current_pos) override;
+	void MouseScroll(const float& fov) override;
 
 	bool AddListener(CameraListener*);
 	bool RemoveListener(CameraListener*);
@@ -44,9 +67,9 @@ public:
 	FRect getWorldRect();
 	const glm::mat4 getOrthMatrix();
 	bool windowOnFocus();
-	[[nodiscard]] double getNearLayer() const { return m_near; }
-	[[nodiscard]] double getFarLayer() const { return m_far; }
-	[[nodiscard]] bool isDrawDebugInfo() const { return drawDebugInfo; }
+	[[nodiscard]] double	getNearLayer() const { return m_near; }
+	[[nodiscard]] double	getFarLayer() const { return m_far; }
+	[[nodiscard]] bool		isDrawDebugInfo() const { return drawDebugInfo; }
 	void setDrawDebugInfo(bool need_draw) { drawDebugInfo = need_draw; }
 	void setActiveWindowSize(int width, int height);
 
@@ -64,11 +87,12 @@ private:
 	FRect projMatrix;
 	FRect activeWindowSize;
 	FRect worldRect;
-	double m_near = -100.;
-	double m_far = 100.;
+	double m_near = 0.1;
+	double m_far = 10000.;
 	Point mainWindowSize;
 	bool fockused = true;
 	bool drawDebugInfo = true;
+	CameraPosition camPos;
+
 	CameraManager() = default;
-	~CameraManager() = default;
 };
