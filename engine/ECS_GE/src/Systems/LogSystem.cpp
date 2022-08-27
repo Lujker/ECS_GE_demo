@@ -159,7 +159,7 @@ void APIENTRY Loger::glDebugOutput(GLenum source,
         {GL_DEBUG_TYPE_POP_GROUP, "POP_GROUP"},
         {GL_DEBUG_TYPE_OTHER, "OTHER"}
     };
-    char ErrorString[512];
+    char ErrorString[1024];
     sprintf_s(ErrorString, "[OpenGL %s] - SEVERITY: %s, SOURCE: %s, ID: %d: %s\n", Types[type], Severities[severity], Sources[source], id, message);
     LOGER->writeMessage(ErrorString);
 }

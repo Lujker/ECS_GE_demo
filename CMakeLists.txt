@@ -62,12 +62,8 @@ if(WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
 	set(ENGINE_DLL
 		${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/freetype.dll
-		${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/libEGL.dll
-		${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/libGLESv2.dll
 	)
 	target_link_libraries(${PROJ_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/freetype.lib)
-	target_link_libraries(${PROJ_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/libEGL.lib)
-	target_link_libraries(${PROJ_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/libGLESv2.lib)
 	foreach(file_i ${ENGINE_DLL})
 		add_custom_command(TARGET ${PROJ_NAME} POST_BUILD
 			COMMAND ${CMAKE_COMMAND}
