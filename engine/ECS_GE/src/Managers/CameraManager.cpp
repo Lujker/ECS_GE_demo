@@ -52,7 +52,7 @@ CameraManager::~CameraManager()
 	INPUTS->ListenerRemove(this);
 }
 
-void CameraManager::Init(const FRect& rect, const FRect& worldRect, double d_near, double d_far)
+void CameraManager::Init(GLFWwindow* pWindow, const FRect& rect, const FRect& worldRect, double d_near, double d_far)
 {
 	if ((worldRect.mWidth - worldRect.mX) >= activeWindowSize.mWidth && (worldRect.mHeight - worldRect.mY) >= activeWindowSize.mHeight)
 		this->worldRect = worldRect;
@@ -63,6 +63,7 @@ void CameraManager::Init(const FRect& rect, const FRect& worldRect, double d_nea
 	m_far = d_far;
 	camPos.lastX = activeWindowSize.mWidth / 2.;
 	camPos.lastY = activeWindowSize.mHeight / 2.;
+	pMainWindow = pWindow;
 	INPUTS->ListenerAdd(this);
 }
 
@@ -128,6 +129,32 @@ void CameraManager::UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>
 	shader->use();
 	shader->setMatrix4("projectionMatrix", proj);
 	shader->setMatrix4("viewMatrix", view);
+}
+
+void CameraManager::SetPerspectiveProj()
+{
+	if(pMainWindow)
+		glfwSetInputMode(pMainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	camPos.isPerspective = true;
+}
+
+void CameraManager::SetOrthProj()
+{
+	if (pMainWindow)
+		glfwSetInputMode(pMainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	camPos.isPerspective = false;
+}
+
+void CameraManager::ClearCamPos()
+{
+	camPos.cameraPos = glm::vec3(0.0f, 0.0f, 1.0f);
+	camPos.cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	camPos.cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	camPos.lastX = 0; camPos.lastY = 0;
+	camPos.yaw = -90.0f;
+	camPos.pitch = 0.0f;
+	camPos.fov = 45.f;
 }
 
 void CameraManager::Move(double x, double y)
@@ -249,7 +276,7 @@ void CameraManager::MouseScroll(const float& fov)
 	if (!camPos.isPerspective)
 		return;
 	if (camPos.fov >= 1.0f && camPos.fov <= 45.0f)
-		camPos.fov -= fov / 10;
+		camPos.fov -= fov * camPos.sensitivity;
 	if (camPos.fov <= 1.0f)
 		camPos.fov = 1.0f;
 	if (camPos.fov >= 45.0f)

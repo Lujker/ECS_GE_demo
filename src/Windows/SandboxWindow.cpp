@@ -57,6 +57,7 @@ void SandboxWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContaine
 
 void SandboxWindow::Draw()
 {
+    CAMERA->SetPerspectiveProj();
     for (const auto& it : m_objects)
     {
         it->Draw();
@@ -83,8 +84,8 @@ void SandboxWindow::KeyUnpress(const int& key)
 {
     if (key == GLFW_KEY_ESCAPE)
     {
-        //WIDGET->SetNextWidget(MainMenuWindow::Create());
-        WIDGET->Close();
+        WIDGET->SetNextWidget(MainMenuWindow::Create());
+        //WIDGET->Close();
     }
     for (const auto& it : m_objects)
     {

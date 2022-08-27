@@ -93,7 +93,7 @@ bool Engine::Init(const std::string& init_path, ServiceLocator* service_locator)
         glfwTerminate();
         return false;
     }
-    CAMERA->Init({ 0., 0., CAMERA->getActiveWindowRect().mWidth, CAMERA->getActiveWindowRect().mHeight });
+    CAMERA->Init(m_window, { 0., 0., CAMERA->getActiveWindowRect().mWidth, CAMERA->getActiveWindowRect().mHeight });
     glfwSetWindowFocusCallback(m_window, CAMERA->glfwWindowFocusCallback);
     glfwSetCursorPosCallback(m_window, INPUTS->ÑursorPositionCallback);
     glfwSetKeyCallback(m_window, INPUTS->KeyCallback);

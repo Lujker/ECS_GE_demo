@@ -42,13 +42,16 @@ public:
 
 	friend class ServiceLocator;
 	~CameraManager() override;
-	void Init(const FRect& rect, const FRect& worldRect = { 0,0,0,0}, double near = 0.1, double far = 1000.);
+	void Init(GLFWwindow* pWindow, const FRect& rect, const FRect& worldRect = { 0,0,0,0}, double near = 0.1, double far = 1000.);
 	void SetWorldRect(const FRect& rect);
 	void UpdateCameraPos(const FRect& rect);
 	void ReleaseShader();
 	void SetShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader);
 	void Update();
 	void UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>& shader);
+	void SetPerspectiveProj();
+	void SetOrthProj();
+	void ClearCamPos();
 	void Move(double x, double y);
 	void SetCenterPoint(FPoint point);
 	void Resize(int width, int height);
@@ -93,6 +96,6 @@ private:
 	bool fockused = true;
 	bool drawDebugInfo = true;
 	CameraPosition camPos;
-
+	GLFWwindow* pMainWindow = nullptr;
 	CameraManager() = default;
 };

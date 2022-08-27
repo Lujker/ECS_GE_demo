@@ -23,6 +23,7 @@ void MainMenuWindow::OriginRectSet()
 	GlobalWidget::OriginRectSet();
 	CAMERA->SetWorldRect(CAMERA->getActiveWindowRect());
 	CAMERA->UpdateCameraPos(CAMERA->getActiveWindowRect());
+	CAMERA->ClearCamPos();
 }
 
 void MainMenuWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
@@ -53,6 +54,7 @@ void MainMenuWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContain
 
 void MainMenuWindow::Draw()
 {
+	CAMERA->SetOrthProj();
 	for (const auto& it : m_objects)
 	{
 		it->Draw();
