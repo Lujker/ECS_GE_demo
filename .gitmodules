@@ -10,3 +10,9 @@
 [submodule "engine/ECS_GE/external/sabmodules/freetype"]
 	path = engine/ECS_GE/external/sabmodules/freetype
 	url = https://gitlab.freedesktop.org/freetype/freetype.git
+[submodule "engine/ECS_GE/external/sabmodules/assimp"]
+	path = engine/ECS_GE/external/sabmodules/assimp
+	url = https://github.com/assimp/assimp.git
+[submodule "engine/ECS_GE/external/sabmodules/imgui"]
+	path = engine/ECS_GE/external/sabmodules/imgui
+	url = https://github.com/ocornut/imgui.git
