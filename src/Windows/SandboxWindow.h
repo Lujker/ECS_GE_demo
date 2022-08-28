@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "GlobalWidget.h"
+#include <Components/Cube.h>
 
 class SandboxWindow : public GlobalWidget
 {
@@ -18,4 +19,7 @@ public:
 	void KeyUnpress(const int& key) override;
 private:
 	GameObjectList m_objects;
+	std::shared_ptr<RenderEngine::Cube> cub;
+	PositionComponent cub_pos{ 0,0, 2,0 };
+	CollisionComponent cub_size{ 50.f, 50.f, 0.f, 0.f };
 };

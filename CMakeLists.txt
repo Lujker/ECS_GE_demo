@@ -14,7 +14,6 @@ set (DEMO_SRC
 	src/Entities/Board.cpp
 	src/Entities/GameObject.cpp
 	src/Entities/Button.cpp
-
 )
 
 set (DEMO_INCLUDE

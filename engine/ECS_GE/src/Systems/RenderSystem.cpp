@@ -7,6 +7,7 @@
 #include "ShaderProgram.h"
 #include <algorithm>
 #include "Sprite.h"
+#include "Cube.h"
 
 RenderSystem& RenderSystem::Instanse()
 {
@@ -63,6 +64,37 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
     image->getTexture2D()->bind();
 
 	draw(image->getVertexArray(), image->getIndexCoordsBuffer(), *shader);
+}
+
+void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent& position, const CollisionComponent& collision)
+{
+    if (!cube)
+        return;
+    const auto shader = RES->getShader("default_3D");
+    if (!shader || !cube->isValid())
+    {
+        return;
+    }
+    auto size = cube->getTextureSize();
+    if (collision.isValid())
+    {
+        size = collision.getSize();
+    }
+
+    CAMERA->UseShader(shader);
+
+    glm::mat4 model(1.f);
+    model = glm::translate(model, glm::vec3(position.getPosition().mX, position.getPosition().mY, 50.f / 2.f));
+    model = glm::translate(model, glm::vec3(0.5f * (size.mX * collision.getScale()), 0.5f * (size.mY * collision.getScale()), 50.f/2.f));
+    model = glm::rotate(model, glm::radians(position.getRotation()), glm::vec3(0.f, 0.f, 1.f));
+    model = glm::translate(model, glm::vec3(-0.5f * +(size.mX * collision.getScale()), -0.5f * (size.mY * collision.getScale()), 50.f / 2.f));
+    model = glm::scale(model, glm::vec3(size.mX * collision.getScale(), size.mY * collision.getScale(), 50.f));
+
+    shader->setMatrix4("modelMatrix", model);
+    shader->setInt("tex", cube->getTexture2D()->getSlot());
+    cube->getTexture2D()->bind();
+
+    draw(cube->getVertexArray(), *shader);
 }
 
 void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale, const ColorComponent& collor)
@@ -390,6 +422,14 @@ void RenderSystem::draw(const RenderEngine::VertexArray& vertexArray, const Rend
     indexBuffer.bind();
 
     glDrawElements(GL_TRIANGLES, indexBuffer.getCountElements(), GL_UNSIGNED_INT, nullptr);
+}
+
+void RenderSystem::draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::ShaderProgram& shader)
+{
+    shader.use();
+    vertexArray.bind();
+
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 Transform2D::Transform2D(float transX, float transY, float scaleX, float scaleY, float rotate, float alpha):

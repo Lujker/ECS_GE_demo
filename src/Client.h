@@ -20,6 +20,5 @@ private:
 	bool								m_isInit = false;
 	bool								m_isEngineInit = false;
 	std::string							m_exec_path;
-	std::shared_ptr<DisplayString>		fps;
 	std::shared_ptr<Engine>				m_pAppEngine = nullptr;
 };

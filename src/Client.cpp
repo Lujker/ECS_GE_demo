@@ -16,6 +16,10 @@
 #include "WidgetsManager.h"
 #include <Windows/SandboxWindow.h>
 
+#include "imgui.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_glfw.h"
+
 Client::Client(const char* argv):
 	m_exec_path(argv)
 {
@@ -106,15 +110,26 @@ void Client::drawFPS()
 {
     if(CAMERA->isDrawDebugInfo())
     {
-        if (!fps)
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplaySize.x = CAMERA->getActiveWindowRect().mWidth;
+        io.DisplaySize.y = CAMERA->getActiveWindowRect().mHeight;
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        if (!ImGui::Begin("Dear ImGui Metrics/Debugger"))
         {
-            fps = std::make_shared<DisplayString>("");
+            ImGui::End();
+            return;
         }
-        const auto str = std::to_string(UPDATE->GetFPS()) + " fps";
-    	fps->updateString(str);
-        constexpr float scale = 0.5f;
-    	const auto rect = fps->getRect(scale);
-    	const PositionComponent pos = { CAMERA->getProjRect().mWidth - rect.mWidth, CAMERA->getProjRect().mHeight - rect.mHeight + rect.mY, static_cast<float>(CAMERA->getNearLayer() + 1.) };
-    	RENDER->Render(fps, pos, scale);
+
+        // Basic info
+        ImGui::Text("Dear ImGui %s", ImGui::GetVersion());
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::End();
+        //ImGui::ShowDemoWindow();
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 }

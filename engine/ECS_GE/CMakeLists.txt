@@ -25,6 +25,7 @@ set(ENGINE_SRC
 	src/Components/Collision.cpp
 	src/Components/Health.cpp
 	src/Components/Image.cpp
+	src/Components/Cube.cpp
 	src/Components/Move.cpp
 	src/Components/Position.cpp
 	src/Components/Collor.cpp
@@ -38,7 +39,7 @@ set(ENGINE_SRC
 	src/Systems/ThreadPool.cpp 
 	src/Widgets/Widget.cpp
 	src/Widgets/GlobalWidget.cpp
-	src/Widgets/WidgetContainer.cpp
+	src/Widgets/WidgetContainer.cpp	
 )
 
 set(ENGINE_INCLUDE
@@ -71,6 +72,7 @@ set(ENGINE_INCLUDE
 	src/Components/Collision.h 
 	src/Components/Health.h  
 	src/Components/Image.h 
+	src/Components/Cube.h
 	src/Components/Move.h
 	src/Components/Position.h 
 	src/Components/Collor.h 
@@ -88,6 +90,22 @@ set(ENGINE_INCLUDE
 	src/Widgets/WidgetContainer.h
 )
 
+set(IMGUI_SRC
+	external/sabmodules/imgui/imgui.cpp
+	external/sabmodules/imgui/backends/imgui_impl_opengl3.cpp 
+	external/sabmodules/imgui/backends/imgui_impl_glfw.cpp
+	external/sabmodules/imgui/imgui_demo.cpp
+	external/sabmodules/imgui/imgui_draw.cpp
+	external/sabmodules/imgui/imgui_tables.cpp
+	external/sabmodules/imgui/imgui_widgets.cpp
+)
+
+set(IMGUI_INCLUDES
+	external/sabmodules/imgui/imgui.h
+	external/sabmodules/imgui/backends/imgui_impl_opengl3.h 
+	external/sabmodules/imgui/backends/imgui_impl_glfw.h
+)
+
 add_library(${PROJ_NAME} STATIC 	
 		${ENGINE_SRC}
 		${ENGINE_INCLUDE})
@@ -103,6 +121,7 @@ include_directories(
 	src/Widgets
 	external/sabmodules/rapidjson/include
 	external/sabmodules/freetype/include
+	external/sabmodules/assimp/include/assimp
 )
 
 target_compile_features(${PROJ_NAME} PUBLIC cxx_std_17)
@@ -120,3 +139,16 @@ target_link_libraries(${PROJ_NAME} glad)
 
 add_subdirectory(external/sabmodules/glm)
 target_link_libraries(${PROJ_NAME} glm)
+
+add_subdirectory(external/sabmodules/assimp)
+target_link_libraries(${PROJ_NAME} assimp)
+
+add_library(
+	ImGUI STATIC
+	${IMGUI_INCLUDES} 
+	${IMGUI_SRC}
+)
+
+target_include_directories(ImGUI PUBLIC external/sabmodules/imgui)
+target_link_libraries(ImGUI PRIVATE glad glfw)
+target_link_libraries(${PROJ_NAME} ImGUI)

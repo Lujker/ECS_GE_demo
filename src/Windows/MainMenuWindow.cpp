@@ -46,6 +46,8 @@ void MainMenuWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
 	{
 		it->Init();
 	}
+
+	CAMERA->SetOrthProj();
 }
 
 void MainMenuWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContainer)
@@ -54,7 +56,6 @@ void MainMenuWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContain
 
 void MainMenuWindow::Draw()
 {
-	CAMERA->SetOrthProj();
 	for (const auto& it : m_objects)
 	{
 		it->Draw();

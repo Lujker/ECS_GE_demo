@@ -8,6 +8,10 @@
 #include "DisplayString.h"
 #include "InputManager.h"
 
+#include "imgui.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_glfw.h"
+
 #include "RenderSystem.h"
 #include "LogSystem.h"
 #include "ServiceLocator.h"
@@ -101,6 +105,13 @@ bool Engine::Init(const std::string& init_path, ServiceLocator* service_locator)
     glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
         GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Init engine is ok");
     g_service_locator->postInit();
+
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplOpenGL3_Init();
+    ImGui_ImplGlfw_InitForOpenGL(m_window, true); //prev callback not reset, and save for call before imgui callbacks
+
     initial = true;
     return true;
 }
@@ -109,6 +120,9 @@ void Engine::Destroy() noexcept
 {
     delete g_service_locator;
     g_service_locator = nullptr;
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
 }
 

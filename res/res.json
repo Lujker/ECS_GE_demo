@@ -15,6 +15,11 @@
       "name" :  "freetype",
       "fragment_path" :  "res/shaders/fFreeType.txt",
       "vertex_path" :  "res/shaders/vFreeType.txt"
+    },
+    {
+      "name" :  "default_3D",
+      "fragment_path" :  "res/shaders/fDefault3D.txt",
+      "vertex_path" :  "res/shaders/vDefault3D.txt"
     }
   ]
 }

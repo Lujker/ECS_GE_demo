@@ -64,7 +64,7 @@ namespace RenderEngine
 	
 	void Image2D::SetSubTexture(const SubTexture2D& sub_texture)
 	{
-		if (m_subTexture== sub_texture)
+		if (m_subTexture == sub_texture)
 			return;
 		m_subTexture = sub_texture;
 		const GLfloat texture_coords[] =

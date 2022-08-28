@@ -5,10 +5,10 @@
 
 #include "Collor.h"
 #include "Position.h"
-#include "Image.h"
 #include "Collision.h"
 #include "gl_Include.h"
 #include "ISystem.h"
+#include "Image.h"
 
 class RenderSystem;
 class DisplayString;
@@ -17,6 +17,7 @@ namespace RenderEngine
 {
 	class Sprite;
 	class ShaderProgram;
+	class Cube;
 }
 
 struct Transform2D
@@ -58,6 +59,7 @@ public:
 	static RenderSystem& Instanse();
 	void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
+	void Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const ColorComponent& collor = ColorComponent{0.5f,0.5f,0.5f});
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& size = { false }, const ColorComponent& collor = ColorComponent{ 0.5f,0.5f,0.5f });
 	void Render(const FRect& rect);
@@ -87,6 +89,7 @@ private:
 	void drawRect(const int x, const int y, const int width, const int height, ColorComponent = {1,0,0,1});
 	void drawForm(const std::vector<FPoint>& points, float scale, ColorComponent = { 1,0,0,1 });
 	void draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::IndexBuffer& indexBuffer, const RenderEngine::ShaderProgram& shader);
+	void draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::ShaderProgram& shader);
 
 	std::stack<Transform2D> m_accumTransfStack;
 	RenderSystem() = default;

@@ -17,7 +17,8 @@ std::shared_ptr<SandboxWindow> SandboxWindow::Create()
 }
 
 SandboxWindow::SandboxWindow():
-	GlobalWidget("SandboxWindow", eWidgetPriority::DEFAULT, nullptr)
+	GlobalWidget("SandboxWindow", eWidgetPriority::DEFAULT, nullptr), 
+    cub(std::make_shared<RenderEngine::Cube>(RES->loadTexture("res/images/Layer_0010_1.png", "res/images/Layer_0010_1.png")))
 {}
 
 void SandboxWindow::OriginRectSet()
@@ -48,6 +49,8 @@ void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
         it->Init();
         PHYSICS->Registrate(it);
     }
+
+    CAMERA->SetPerspectiveProj();
 }
 
 void SandboxWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContainer)
@@ -57,11 +60,11 @@ void SandboxWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContaine
 
 void SandboxWindow::Draw()
 {
-    CAMERA->SetPerspectiveProj();
     for (const auto& it : m_objects)
     {
         it->Draw();
     }
+    RENDER->Render(cub, cub_pos, cub_size);
 }
 
 void SandboxWindow::Update(float deltaTime)
