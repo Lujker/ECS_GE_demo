@@ -35,7 +35,7 @@ void ProjectPolygon(const Vector2& axis, const Form& polygon, float& min, float&
 }
 
 	Form::Form(const Form& figure) :
-		m_points(figure.m_points)
+		m_points(figure.m_points), m_edges(figure.m_edges)
 	{
 	}
 	Form::Form(std::initializer_list<FPoint> in_list)
@@ -162,7 +162,7 @@ void ProjectPolygon(const Vector2& axis, const Form& polygon, float& min, float&
 
 	void Form::setPoints(std::vector<FPoint>&& points)
 	{
-		m_points = points;
+		m_points = std::move(points);
 	}
 
 	const std::vector<FPoint>& Form::getPoints() const
@@ -247,4 +247,84 @@ void ProjectPolygon(const Vector2& axis, const Form& polygon, float& min, float&
 				m_points.at(2).mX - m_points.at(0).mX,
 				m_points.at(2).mY - m_points.at(0).mY };
 		return rect;
+	}
+
+	Form3::Form3(const Form3& figure):
+		m_points(figure.m_points), m_edges(figure.m_edges)
+	{
+	}
+
+	Form3::Form3(std::initializer_list<FPoint3> in_list)
+	{
+		for (const auto& it : in_list)
+			m_points.emplace_back(it);
+	}
+
+	Form3::Form3(const std::vector<FPoint3>& points):
+		m_points(points)
+	{
+	}
+
+	Form3& Form3::operator=(const Form3& figure)
+	{
+		m_points = figure.m_points;
+		return *this;
+	}
+
+	Form3& Form3::operator=(std::initializer_list<FPoint3> in_list)
+	{
+		m_points = in_list;
+		return *this;
+	}
+
+	Form3 Form3::operator+(const Vector3& point) const
+	{
+		Form3 next(*this);
+		for (auto& it : next.m_points)
+			it += {point.x, point.y, point.z};
+		return next;
+	}
+
+	Vector3 Form3::getCenter()
+	{
+		return Vector3();
+	}
+
+	void Form3::BuildEdges()
+	{
+	}
+
+	bool Form3::intersect3D(const Form3& left_figure, const FPoint3& left_position, const Form3& right_figure, const FPoint3& right_position)
+	{
+		return false;
+	}
+
+	bool Form3::include3D(const Form3& left_figure, const FPoint3& left_position, const Form3& right_figure, const FPoint3& right_position)
+	{
+		return false;
+	}
+
+	bool Form3::include3D(const Form3& figure, const FPoint3& position, const FPoint3& point)
+	{
+		return false;
+	}
+
+	void Form3::setPoints(const std::vector<FPoint3>& points)
+	{
+		m_points = points;
+	}
+
+	void Form3::setPoints(std::vector<FPoint3>&& points)
+	{
+		m_points = std::move(points);
+	}
+
+	const std::vector<FPoint3>& Form3::getPoints() const
+	{
+		return m_points;
+	}
+
+	std::vector<FPoint3> Form3::getEdges() const
+	{
+		return  m_edges;
 	}

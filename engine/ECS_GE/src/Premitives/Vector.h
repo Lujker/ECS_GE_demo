@@ -54,6 +54,7 @@ public:
 public:
 	Vector3() : x(0), y(0), z(0) { }
 	Vector3(float theX, float theY, float theZ) : x(theX), y(theY), z(theZ) { }
+	Vector3(const FPoint3& point) : x(point.mX), y(point.mY), z(point.mZ) { }
 
 	float Dot(const Vector3& v) const { return x * v.x + y * v.y + z * v.z; }
 	Vector3 Cross(const Vector3& v) const { return Vector3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x); }

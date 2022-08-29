@@ -12,6 +12,7 @@
 #include "FontManager.h"
 #include "CollisionSystem.h"
 #include "CameraManager.h"
+#include "ImGuiController.h"
 
 ServiceLocator::~ServiceLocator()
 {
@@ -33,6 +34,7 @@ void ServiceLocator::init(const std::string& init_path)
 	p_file_system = new FileSystem;
 	p_collision_system = new CollisionSystem;
 	p_camera_manager = new CameraManager;
+	p_gui_controller = new ImGuiController;
 
 	p_camera_manager->setActiveWindowSize(1310, 768);
 	p_loger->init(init_path);
@@ -41,8 +43,10 @@ void ServiceLocator::init(const std::string& init_path)
 	p_font_manager->init(init_path);
 }
 
-void ServiceLocator::postInit()
+void ServiceLocator::postInit(GLFWwindow* main_window)
 {
+	if (p_gui_controller)
+		p_gui_controller->init(main_window);
 }
 
 void ServiceLocator::destroyServiceLocator()
@@ -60,4 +64,5 @@ void ServiceLocator::destroyServiceLocator()
 	delete p_file_system;
 	delete p_collision_system;
 	delete p_camera_manager;
+	delete p_gui_controller;
 }

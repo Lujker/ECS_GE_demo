@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include "gl_Include.h"
+
 class RenderSystem;
 class CameraManager;
 class CollisionSystem;
@@ -12,6 +14,7 @@ class ResourceManager;
 class GlobalThreadPool;
 class UpdateSystem;
 class WidgetManager;
+class ImGuiController;
 
 #define WIDGET			Engine::getServiceLocator()->getWidgetManager()
 #define UPDATE			Engine::getServiceLocator()->getUpdateSystem()
@@ -26,6 +29,7 @@ class WidgetManager;
 #define FILES			Engine::getServiceLocator()->getFileSystem()
 #define COLLISION		Engine::getServiceLocator()->getCollisionSystem()
 #define CAMERA			Engine::getServiceLocator()->getCameraManager()
+#define UI				Engine::getServiceLocator()->getGuiController()
 
 class ServiceLocator
 {
@@ -33,7 +37,7 @@ public:
 	ServiceLocator() = default;
 	virtual ~ServiceLocator();
 	virtual void init(const std::string& init_path);
-	virtual void postInit();
+	virtual void postInit(GLFWwindow* main_window);
 	[[nodiscard]] WidgetManager*		getWidgetManager() const { return p_widget_manager; }
 	[[nodiscard]] UpdateSystem*			getUpdateSystem() const { return p_update_system; }
 	[[nodiscard]] GlobalThreadPool*		getGlobalThreadPool() const { return p_global_thread_pool; }
@@ -46,6 +50,7 @@ public:
 	[[nodiscard]] FileSystem*			getFileSystem() const { return p_file_system; }
 	[[nodiscard]] CollisionSystem*		getCollisionSystem() const { return p_collision_system; }
 	[[nodiscard]] CameraManager*		getCameraManager() const { return p_camera_manager; }
+	[[nodiscard]] ImGuiController*		getGuiController() const { return p_gui_controller; }
 
 	void				setWidgetManager(WidgetManager* widget_manager) { p_widget_manager = widget_manager; }
 	void				setUpdateSystem(UpdateSystem* update_system) { p_update_system = update_system; }
@@ -59,6 +64,7 @@ public:
 	void				setFileSystem(FileSystem* file_system) { p_file_system = file_system; }
 	void				setCollisionSystem(CollisionSystem* collision_system) { p_collision_system = collision_system; }
 	void				setCameraManager(CameraManager* camera_manager) { p_camera_manager = camera_manager; }
+	void				setGuiController(ImGuiController* gui_controller) { p_gui_controller = gui_controller; }
 
 	ServiceLocator(const ServiceLocator&) = delete;
 	ServiceLocator(ServiceLocator&&) = delete;
@@ -79,4 +85,5 @@ protected:
 	FileSystem*			p_file_system = nullptr;
 	CollisionSystem*	p_collision_system = nullptr;
 	CameraManager*		p_camera_manager = nullptr;
+	ImGuiController*	p_gui_controller = nullptr;
 };

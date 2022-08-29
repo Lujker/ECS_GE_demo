@@ -14,11 +14,8 @@
 #include "Sprite.h"
 #include "UpdateSystem.h"
 #include "WidgetsManager.h"
-#include <Windows/SandboxWindow.h>
-
-#include "imgui.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "backends/imgui_impl_glfw.h"
+#include "Windows/SandboxWindow.h"
+#include "ImGuiController.h"
 
 Client::Client(const char* argv):
 	m_exec_path(argv)
@@ -97,7 +94,7 @@ bool Client::deltaLoop()
             /* Render here */
             RENDER->clear();
             WIDGET->Draw();
-            drawFPS();
+            drawDebug();
             m_pAppEngine->SwapBuffers();
         }
         const unsigned long endMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() - startMS;
@@ -106,30 +103,10 @@ bool Client::deltaLoop()
     return true;
 }
 
-void Client::drawFPS()
+void Client::drawDebug()
 {
     if(CAMERA->isDrawDebugInfo())
     {
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize.x = CAMERA->getActiveWindowRect().mWidth;
-        io.DisplaySize.y = CAMERA->getActiveWindowRect().mHeight;
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        if (!ImGui::Begin("Dear ImGui Metrics/Debugger"))
-        {
-            ImGui::End();
-            return;
-        }
-
-        // Basic info
-        ImGui::Text("Dear ImGui %s", ImGui::GetVersion());
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-        ImGui::End();
-        //ImGui::ShowDemoWindow();
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        UI->DrawController();
     }
 }

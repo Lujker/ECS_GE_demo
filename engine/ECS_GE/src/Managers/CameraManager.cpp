@@ -131,17 +131,23 @@ void CameraManager::UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>
 	shader->setMatrix4("viewMatrix", view);
 }
 
+void CameraManager::ChangeCursorInputMode(CursorInputMode mode)
+{
+	glfwSetInputMode(pMainWindow, GLFW_CURSOR, static_cast<int>(mode));
+	camPos.cursorInputeMode = mode;
+}
+
 void CameraManager::SetPerspectiveProj()
 {
-	if(pMainWindow)
-		glfwSetInputMode(pMainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	if (pMainWindow)
+		ChangeCursorInputMode(CursorInputMode::eDisable);
 	camPos.isPerspective = true;
 }
 
 void CameraManager::SetOrthProj()
 {
 	if (pMainWindow)
-		glfwSetInputMode(pMainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		ChangeCursorInputMode(CursorInputMode::eNormal);
 	camPos.isPerspective = false;
 }
 
@@ -244,11 +250,26 @@ void CameraManager::KeyUnpress(const int& key)
 {
 	if (key >= 262 && key <= 265)
 		camPos.cameraSpeed -= 0.1f;
+	else if (key == GLFW_KEY_F1)
+	{
+		switch (camPos.cursorInputeMode)
+		{
+		case CursorInputMode::eNormal:
+			ChangeCursorInputMode(CursorInputMode::eHiden);
+			break;
+		case CursorInputMode::eHiden:
+			ChangeCursorInputMode(CursorInputMode::eDisable);
+			break;
+		default:
+			ChangeCursorInputMode(CursorInputMode::eNormal);
+			break;
+		}
+	}
 }
 
 void CameraManager::MouseMove(const FPoint& current_pos)
 {
-	if (!camPos.isPerspective)
+	if (!camPos.isPerspective || camPos.cursorInputeMode == CursorInputMode::eNormal)
 		return;
 	GLfloat xoffset = current_pos.mX - camPos.lastX;
 	GLfloat yoffset = camPos.lastY - current_pos.mY; // Обратный порядок вычитания потому что оконные Y-координаты возрастают с верху вниз 
@@ -273,7 +294,7 @@ void CameraManager::MouseMove(const FPoint& current_pos)
 
 void CameraManager::MouseScroll(const float& fov)
 {
-	if (!camPos.isPerspective)
+	if (!camPos.isPerspective || camPos.cursorInputeMode == CursorInputMode::eNormal)
 		return;
 	if (camPos.fov >= 1.0f && camPos.fov <= 45.0f)
 		camPos.fov -= fov * camPos.sensitivity;

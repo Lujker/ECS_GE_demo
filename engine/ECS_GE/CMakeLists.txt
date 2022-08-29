@@ -37,6 +37,7 @@ set(ENGINE_SRC
 	src/Systems/MoveSystem.cpp
 	src/Systems/LogSystem.cpp 
 	src/Systems/ThreadPool.cpp 
+	src/Systems/ImGuiController.cpp
 	src/Widgets/Widget.cpp
 	src/Widgets/GlobalWidget.cpp
 	src/Widgets/WidgetContainer.cpp	
@@ -85,6 +86,7 @@ set(ENGINE_INCLUDE
 	src/Systems/MoveSystem.h
 	src/Systems/LogSystem.h
 	src/Systems/ThreadPool.h
+	src/Systems/ImGuiController.h
 	src/Widgets/Widget.h
 	src/Widgets/GlobalWidget.h
 	src/Widgets/WidgetContainer.h

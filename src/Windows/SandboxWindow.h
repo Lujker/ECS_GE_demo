@@ -20,6 +20,6 @@ public:
 private:
 	GameObjectList m_objects;
 	std::shared_ptr<RenderEngine::Cube> cub;
-	PositionComponent cub_pos{ 0,0, 2,0 };
-	CollisionComponent cub_size{ 50.f, 50.f, 0.f, 0.f };
+	PositionComponent3 cub_pos{ 0,0, 80};
+	CollisionComponent3 cub_size{ 50.f, 50.f, 100.f};
 };

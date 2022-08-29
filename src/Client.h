@@ -15,7 +15,7 @@ public:
 	[[nodiscard]] std::shared_ptr<Engine> GetEngine() const;
 	void					Terminate();
 	bool					deltaLoop();
-	void					drawFPS();
+	void					drawDebug();
 private:
 	bool								m_isInit = false;
 	bool								m_isEngineInit = false;

@@ -66,7 +66,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
 	draw(image->getVertexArray(), image->getIndexCoordsBuffer(), *shader);
 }
 
-void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent& position, const CollisionComponent& collision)
+void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision)
 {
     if (!cube)
         return;
@@ -75,22 +75,8 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const Positi
     {
         return;
     }
-    auto size = cube->getTextureSize();
-    if (collision.isValid())
-    {
-        size = collision.getSize();
-    }
-
     CAMERA->UseShader(shader);
-
-    glm::mat4 model(1.f);
-    model = glm::translate(model, glm::vec3(position.getPosition().mX, position.getPosition().mY, 50.f / 2.f));
-    model = glm::translate(model, glm::vec3(0.5f * (size.mX * collision.getScale()), 0.5f * (size.mY * collision.getScale()), 50.f/2.f));
-    model = glm::rotate(model, glm::radians(position.getRotation()), glm::vec3(0.f, 0.f, 1.f));
-    model = glm::translate(model, glm::vec3(-0.5f * +(size.mX * collision.getScale()), -0.5f * (size.mY * collision.getScale()), 50.f / 2.f));
-    model = glm::scale(model, glm::vec3(size.mX * collision.getScale(), size.mY * collision.getScale(), 50.f));
-
-    shader->setMatrix4("modelMatrix", model);
+    shader->setMatrix4("modelMatrix", getTransformModel(position, collision));
     shader->setInt("tex", cube->getTexture2D()->getSlot());
     cube->getTexture2D()->bind();
 
@@ -257,6 +243,52 @@ glm::mat4 RenderSystem::getTransformModel(const float x, const float y, const fl
     model = glm::rotate(model, glm::radians(rotation + def_Tr.rotate), glm::vec3(0.f, 0.f, 1.f));
     model = glm::translate(model, glm::vec3(-0.5f * + (width * def_Tr.scaleX), -0.5f * (height * def_Tr.scaleY), 0.f));
     model = glm::scale(model, glm::vec3(width * def_Tr.scaleX, height * def_Tr.scaleY, 1.f));
+
+    return model;
+}
+
+glm::mat4 RenderSystem::getTransformModel(const PositionComponent& position, const CollisionComponent& collision)
+{
+    Transform2D def_Tr;
+    if (!m_accumTransfStack.empty())
+        def_Tr = m_accumTransfStack.top();
+    auto pos = position.getPosition();
+    auto rotation = position.getRotation();
+    auto width = collision.getWidth() * collision.getScale();
+    auto height = collision.getHeight() * collision.getScale();
+
+    glm::mat4 model(1.f);
+    model = glm::translate(model, glm::vec3(pos.mX + def_Tr.transX, pos.mY + def_Tr.transY, 0.f));
+    model = glm::translate(model, glm::vec3(0.5f * (width * def_Tr.scaleX), 0.5f * (height * def_Tr.scaleY), 0.f));
+    model = glm::rotate(model, glm::radians(rotation + def_Tr.rotate), glm::vec3(0.f, 0.f, 1.f));
+    model = glm::translate(model, glm::vec3(-0.5f * +(width * def_Tr.scaleX), -0.5f * (height * def_Tr.scaleY), 0.f));
+    model = glm::scale(model, glm::vec3(width * def_Tr.scaleX, height * def_Tr.scaleY, 1.f));
+
+    return model;
+}
+
+glm::mat4 RenderSystem::getTransformModel(const PositionComponent3& pos, const CollisionComponent3& coll)
+{
+    auto position = pos.getPosition();
+    auto rotation = pos.getRotation();
+    auto scale = coll.getScale();
+    auto width = coll.getWidth();
+    auto height = coll.getHeight();
+    auto depth = coll.getDepth();
+    auto x_offset = coll.getXOffset();
+    auto y_offset = coll.getYOffset();
+    auto z_offset = coll.getZOffset();
+
+    glm::mat4 model(1.f);
+    model = glm::translate(model, glm::vec3(position.mX, position.mY, position.mZ));
+    model = glm::translate(model, glm::vec3(0.5f * (width * scale), 0.5f * (height * scale), 0.5f * (depth * scale)));
+
+    model = glm::rotate(model, glm::radians(static_cast<float>(rotation.mX)), glm::vec3(1.f, 0.f, 0.f));
+    model = glm::rotate(model, glm::radians(static_cast<float>(rotation.mY)), glm::vec3(0.f, 1.f, 0.f));
+    model = glm::rotate(model, glm::radians(static_cast<float>(rotation.mZ)), glm::vec3(0.f, 0.f, 1.f));
+
+    model = glm::translate(model, glm::vec3(-0.5f * (width * scale), -0.5f * (height * scale), -0.5f * (depth * scale)));
+    model = glm::scale(model, glm::vec3(width * scale, height * scale, depth * scale));
 
     return model;
 }

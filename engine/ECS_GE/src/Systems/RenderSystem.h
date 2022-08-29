@@ -59,7 +59,7 @@ public:
 	static RenderSystem& Instanse();
 	void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
-	void Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent& position, const CollisionComponent& collision = { false });
+	void Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision = { false });
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const ColorComponent& collor = ColorComponent{0.5f,0.5f,0.5f});
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& size = { false }, const ColorComponent& collor = ColorComponent{ 0.5f,0.5f,0.5f });
 	void Render(const FRect& rect);
@@ -72,6 +72,8 @@ public:
 	void setViewport(unsigned int width, unsigned int height, unsigned int leftOffset = 0, unsigned int bottomOffset = 0);
 	glm::mat4 getTransformMatrix(const float x, const float y, const float width, const float height, float rotation = 0);
 	glm::mat4 getTransformModel(const float x, const float y, const float width, const float height, float rotation = 0);
+	glm::mat4 RenderSystem::getTransformModel(const PositionComponent& position, const CollisionComponent& collision);
+	glm::mat4 RenderSystem::getTransformModel(const PositionComponent3& position, const CollisionComponent3& collision);
 	std::string getRendererStr();
 	std::string getVersionStr();
 
