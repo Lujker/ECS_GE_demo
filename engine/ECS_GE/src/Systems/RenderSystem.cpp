@@ -3,6 +3,7 @@
 #include "CameraManager.h"
 #include "DisplayString.h"
 #include "FontManager.h"
+#include "LightManager.h"
 #include "ResourceManager.h"
 #include "ShaderProgram.h"
 #include <algorithm>
@@ -66,15 +67,12 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
 	draw(image->getVertexArray(), image->getIndexCoordsBuffer(), *shader);
 }
 
-void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision)
+void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision, const RenderEngine::Material& material)
 {
     if (!cube)
         return;
     const auto shader = RES->getShader("default_3D");
-    PositionComponent3 l_pos{ position.getPosition().mX, position.getPosition().mY * 2, position.getPosition().mZ };
-    if (light_pos != PositionComponent3{1.f, 1.f, 1.f})
-        l_pos = light_pos;
-    
+    auto light = LIGHT->getLight("first");
     if (!shader || !cube->isValid())
     {
         return;
@@ -83,30 +81,28 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const Positi
     CAMERA->UseShader(shader);
     shader->setMatrix4("modelMatrix", getTransformModel(position, collision));
     shader->setInt("TextureID", cube->getTexture2D()->getSlot());
-    shader->setVec4("LightColor", { light.getR(), light.getG(), light.getB(), light.getAlpha() });
-    shader->setVec3("LightPosition", { l_pos.getPosition().mX, l_pos.getPosition().mY, l_pos.getPosition().mZ });
     shader->setVec3("CameraPos", cam_pos.cameraPos);
+    setMaterial(shader, material);
+    setLight(shader, light);
     cube->getTexture2D()->bind();
 
     draw(cube->getVertexArray(), *shader);
 }
 
-void RenderSystem::Render(std::shared_ptr<RenderEngine::LightCube> lightCube, const PositionComponent3& position, const CollisionComponent3& collision)
+void RenderSystem::Render(std::shared_ptr<RenderEngine::Light> light)
 {
-    if (!lightCube)
+    if (!light)
         return;
-    light = lightCube->getColor();
-    light_pos = position;
     const auto shader = RES->getShader("light_3D");
     if (!shader)
     {
         return;
     }
     CAMERA->UseShader(shader);
-    shader->setMatrix4("modelMatrix", getTransformModel(position, collision));
-    shader->setVec4("LightColor", { lightCube->getColor().getR(), lightCube->getColor().getG(), lightCube->getColor().getB(), lightCube->getColor().getAlpha() });
+    shader->setMatrix4("modelMatrix", getTransformModel(light->position, light->size));
+    shader->setVec4("LightColor", { light->lightCube.getColor().getR(), light->lightCube.getColor().getG(), light->lightCube.getColor().getB(), light->lightCube.getColor().getAlpha() });
 
-    draw(lightCube->getVertexArray(), *shader);
+    draw(light->lightCube.getVertexArray(), *shader);
 }
 
 void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale, const ColorComponent& collor)
@@ -239,6 +235,39 @@ void RenderSystem::setDepthTest(bool on)
 void RenderSystem::clear()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void RenderSystem::setMaterial(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::Material& material)
+{
+    shader->setVec3("material.ambient", { material.ambient.x, material.ambient.y, material.ambient.z });
+    shader->setVec3("material.diffuse", { material.diffuse.x, material.diffuse.y, material.diffuse.z });
+    shader->setVec3("material.specular", { material.specular.x, material.specular.y, material.specular.z });
+    shader->setFloat("material.shininess", material.shininess);
+}
+
+void RenderSystem::setLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light)
+{
+    PositionComponent3  l_pos{ 1.f,1.f,1.f };
+    ColorComponent      l_col{ 1.f,1.f,1.f,1.f };
+    Vector3             l_ambient{ 1.f, 1.f, 1.f };
+    Vector3             l_diffuse{ 1.f, 1.f, 1.f };
+    Vector3             l_specular{ 1.f, 1.f, 1.f };
+    float               shininess = 16.f;
+    if (light)
+    {
+        l_col = light->lightCube.getColor();
+        l_pos = light->position;
+        l_ambient = light->ambient;
+        l_diffuse = light->diffuse;
+        l_specular = light->specular;
+        shininess = light->shininess;
+    }
+    shader->setVec4("light.LightColor", { l_col.getR(), l_col.getG(), l_col.getB(), l_col.getAlpha() });
+    shader->setVec3("light.LightPosition", { l_pos.getPosition().mX, l_pos.getPosition().mY, l_pos.getPosition().mZ });
+    shader->setVec3("light.ambient", { l_ambient.x, l_ambient.y, l_ambient.z });
+    shader->setVec3("light.diffuse", { l_diffuse.x, l_diffuse.y, l_diffuse.z });
+    shader->setVec3("light.specular", { l_specular.x, l_specular.y, l_specular.z });
+    shader->setFloat("light.shininess", shininess);
 }
 
 void RenderSystem::setViewport(unsigned int width, unsigned int height, unsigned int leftOffset, unsigned int bottomOffset)

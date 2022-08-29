@@ -65,6 +65,13 @@ PositionComponent3::PositionComponent3(double x, double y, double z, double rota
 	m_position(x, y, z), m_rotation(rotation_x, rotation_y, rotation_z)
 {}
 
+PositionComponent3& PositionComponent3::operator=(const PositionComponent3& position_component)
+{
+	m_position = position_component.m_position;
+	m_rotation = position_component.m_rotation;
+	return *this;
+}
+
 PositionComponent3 PositionComponent3::operator+(const FPoint3& point) const
 {
 	return PositionComponent3(this->m_position, this->m_rotation) += point;

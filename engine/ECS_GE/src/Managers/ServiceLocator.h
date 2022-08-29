@@ -15,6 +15,10 @@ class GlobalThreadPool;
 class UpdateSystem;
 class WidgetManager;
 class ImGuiController;
+namespace RenderEngine 
+{
+	class LightManager;
+}
 
 #define WIDGET			Engine::getServiceLocator()->getWidgetManager()
 #define UPDATE			Engine::getServiceLocator()->getUpdateSystem()
@@ -30,6 +34,7 @@ class ImGuiController;
 #define COLLISION		Engine::getServiceLocator()->getCollisionSystem()
 #define CAMERA			Engine::getServiceLocator()->getCameraManager()
 #define UI				Engine::getServiceLocator()->getGuiController()
+#define LIGHT			Engine::getServiceLocator()->getLightManager()
 
 class ServiceLocator
 {
@@ -51,6 +56,7 @@ public:
 	[[nodiscard]] CollisionSystem*		getCollisionSystem() const { return p_collision_system; }
 	[[nodiscard]] CameraManager*		getCameraManager() const { return p_camera_manager; }
 	[[nodiscard]] ImGuiController*		getGuiController() const { return p_gui_controller; }
+	[[nodiscard]] RenderEngine::LightManager*			getLightManager() const { return p_light_manager; }
 
 	void				setWidgetManager(WidgetManager* widget_manager) { p_widget_manager = widget_manager; }
 	void				setUpdateSystem(UpdateSystem* update_system) { p_update_system = update_system; }
@@ -65,6 +71,7 @@ public:
 	void				setCollisionSystem(CollisionSystem* collision_system) { p_collision_system = collision_system; }
 	void				setCameraManager(CameraManager* camera_manager) { p_camera_manager = camera_manager; }
 	void				setGuiController(ImGuiController* gui_controller) { p_gui_controller = gui_controller; }
+	void				setLightManager(RenderEngine::LightManager* light_manager) { p_light_manager = light_manager; }
 
 	ServiceLocator(const ServiceLocator&) = delete;
 	ServiceLocator(ServiceLocator&&) = delete;
@@ -86,4 +93,5 @@ protected:
 	CollisionSystem*	p_collision_system = nullptr;
 	CameraManager*		p_camera_manager = nullptr;
 	ImGuiController*	p_gui_controller = nullptr;
+	RenderEngine::LightManager*		p_light_manager = nullptr;
 };

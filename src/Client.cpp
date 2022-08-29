@@ -16,6 +16,7 @@
 #include "WidgetsManager.h"
 #include "Windows/SandboxWindow.h"
 #include "ImGuiController.h"
+#include "LightManager.h"
 
 Client::Client(const char* argv):
 	m_exec_path(argv)
@@ -94,6 +95,7 @@ bool Client::deltaLoop()
             /* Render here */
             RENDER->clear();
             WIDGET->Draw();
+            LIGHT->Draw();
             drawDebug();
             m_pAppEngine->SwapBuffers();
         }

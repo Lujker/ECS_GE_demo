@@ -20,9 +20,7 @@ public:
 private:
 	GameObjectList m_objects;
 	std::shared_ptr<RenderEngine::Cube> cub;
-	std::shared_ptr<RenderEngine::LightCube> light;
-	PositionComponent3 light_pos{ 100, 100, 200 };
-	CollisionComponent3 light_size{ 10.f, 10.f, 10.f };
+	RenderEngine::Material cub_material; /*{ {1.0f, 0.5f, 0.31f}, {1.0f, 0.5f, 0.31f}, {0.5f, 0.5f, 0.5f}, 32.0f };*/
 	PositionComponent3 cub_pos{ 0,0, 80};
 	CollisionComponent3 cub_size{ 50.f, 50.f, 100.f};
 };

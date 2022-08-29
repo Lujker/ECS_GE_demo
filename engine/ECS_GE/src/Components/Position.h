@@ -54,7 +54,7 @@ public:
 	PositionComponent3(const PositionComponent3& position_component) = default;
 	~PositionComponent3() = default;
 
-	PositionComponent3& operator=(const PositionComponent3& position_component) = default;
+	PositionComponent3& operator=(const PositionComponent3& position_component);
 	PositionComponent3 operator+(const FPoint3 & point) const;
 	PositionComponent3 operator+(const PositionComponent3& position_component) const;
 	PositionComponent3& operator+=(const FPoint3 & point);

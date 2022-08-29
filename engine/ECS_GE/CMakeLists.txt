@@ -12,6 +12,7 @@ set(ENGINE_SRC
 	src/Managers/InputManager.cpp
 	src/Managers/WidgetsManager.cpp
 	src/Managers/ServiceLocator.cpp
+	src/Managers/LightManager.cpp
 	src/Premitives/Animator.cpp
 	src/Premitives/Shape.cpp  
 	src/Premitives/Timer.cpp
@@ -21,6 +22,7 @@ set(ENGINE_SRC
 	src/Premitives/Render/ShaderProgram.cpp 
 	src/Premitives/Render/VertexBuffer.cpp  
 	src/Premitives/Render/texture2D.cpp
+	src/Premitives/Render/Material.cpp
 	src/Components/Atlas2D.cpp
 	src/Components/Collision.cpp
 	src/Components/Health.cpp
@@ -53,6 +55,7 @@ set(ENGINE_INCLUDE
 	src/Managers/InputManager.h
 	src/Managers/WidgetsManager.h
 	src/Managers/ServiceLocator.h
+	src/Managers/LightManager.h
 	src/Managers/stb_image.h
 	src/Premitives/Animator.h
 	src/Premitives/Point.h
@@ -68,6 +71,7 @@ set(ENGINE_INCLUDE
 	src/Premitives/Render/ShaderProgram.h 
 	src/Premitives/Render/VertexBuffer.h    
 	src/Premitives/Render/texture2D.h
+	src/Premitives/Render/Material.h
 	src/Components/IComponent.h
 	src/Components/Atlas2D.h
 	src/Components/Collision.h 

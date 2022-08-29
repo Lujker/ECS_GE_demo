@@ -10,6 +10,7 @@
 #include "PhysicsSystem.h"
 #include "ResourceManager.h"
 #include "WidgetsManager.h"
+#include "LightManager.h"
 
 std::shared_ptr<SandboxWindow> SandboxWindow::Create()
 {
@@ -18,8 +19,7 @@ std::shared_ptr<SandboxWindow> SandboxWindow::Create()
 
 SandboxWindow::SandboxWindow() :
     GlobalWidget("SandboxWindow", eWidgetPriority::DEFAULT, nullptr),
-    cub(std::make_shared<RenderEngine::Cube>(RES->loadTexture("res/images/Layer_0010_1.png", "res/images/Layer_0010_1.png"))),
-    light(std::make_shared<RenderEngine::LightCube>(ColorComponent(1.0f, 1.0f, 1.0f )))
+    cub(std::make_shared<RenderEngine::Cube>(RES->loadTexture("res/images/Layer_0010_1.png", "res/images/Layer_0010_1.png")))
 {}
 
 void SandboxWindow::OriginRectSet()
@@ -51,12 +51,23 @@ void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
         PHYSICS->Registrate(it);
     }
 
+
+    auto light = std::make_shared< RenderEngine::Light>();
+    light->position = { 100, 100, 200 };
+    light->size = { 10.f, 10.f, 10.f };
+    light->ambient = { 0.2f, 0.2f, 0.2f };
+    light->diffuse = { 0.5f, 0.5f, 0.5f };
+    light->specular = { 1.0f, 1.0f, 1.0f };
+
+    LIGHT->pushLight("first", light);
+
     CAMERA->SetPerspectiveProj();
 }
 
 void SandboxWindow::RemovedFromContainer(SharedWidgetContainer theWidgetContainer)
 {
     PHYSICS->Clear();
+    LIGHT->clearLights();
 }
 
 void SandboxWindow::Draw()
@@ -65,8 +76,7 @@ void SandboxWindow::Draw()
     {
         it->Draw();
     }
-    RENDER->Render(cub, cub_pos, cub_size);
-    RENDER->Render(light, light_pos , light_size);
+    RENDER->Render(cub, cub_pos, cub_size, cub_material);
 }
 
 void SandboxWindow::Update(float deltaTime)

@@ -9,6 +9,7 @@
 #include "gl_Include.h"
 #include "ISystem.h"
 #include "Image.h"
+#include "Material.h"
 #include <unordered_set>
 
 class RenderSystem;
@@ -20,6 +21,7 @@ namespace RenderEngine
 	class ShaderProgram;
 	class Cube;
 	class LightCube;
+	struct Light;
 }
 
 struct Transform2D
@@ -61,8 +63,8 @@ public:
 	static RenderSystem& Instanse();
 	void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
-	void Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision = { false });
-	void Render(std::shared_ptr<RenderEngine::LightCube> lightCube, const PositionComponent3& position, const CollisionComponent3& collision = { false });
+	void Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision = { false }, const RenderEngine::Material& material = {});
+	void Render(std::shared_ptr<RenderEngine::Light> light);
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const ColorComponent& collor = ColorComponent{0.5f,0.5f,0.5f});
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& size = { false }, const ColorComponent& collor = ColorComponent{ 0.5f,0.5f,0.5f });
 	void Render(const FRect& rect);
@@ -72,6 +74,8 @@ public:
 	void setBlendMode(bool on);
 	void setDepthTest(bool on);
 	void clear();
+	void setMaterial(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::Material& material);
+	void setLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light);
 	void setViewport(unsigned int width, unsigned int height, unsigned int leftOffset = 0, unsigned int bottomOffset = 0);
 	glm::mat4 getTransformMatrix(const float x, const float y, const float width, const float height, float rotation = 0);
 	glm::mat4 getTransformModel(const float x, const float y, const float width, const float height, float rotation = 0);
@@ -97,8 +101,6 @@ private:
 	void draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::ShaderProgram& shader);
 
 	std::stack<Transform2D> m_accumTransfStack;
-	ColorComponent light{ 1.f,1.f,1.f };
-	PositionComponent3 light_pos{ 1.f, 1.f, 1.f };
 	RenderSystem() = default;
 	~RenderSystem() = default;
 };
