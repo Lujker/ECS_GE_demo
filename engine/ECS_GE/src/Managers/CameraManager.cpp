@@ -331,6 +331,11 @@ void CameraManager::ClearListeners()
 	m_listeners.clear();
 }
 
+CameraManager::CameraPosition CameraManager::getCameraPosition()
+{
+	return camPos;
+}
+
 FRect CameraManager::getProjRect()
 {
 	return projMatrix;

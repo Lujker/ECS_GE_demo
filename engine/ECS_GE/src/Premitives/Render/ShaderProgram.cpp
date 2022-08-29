@@ -5,7 +5,7 @@ RenderEngine::ShaderProgram::ShaderProgram(const std::string& vertexShader, cons
 	GLuint vertexShaderID;
 	if (!createShader(vertexShader, GL_VERTEX_SHADER, vertexShaderID))
 	{
-		std::cerr<<"VERTEX SHADER compile-time error"<<std::endl;
+		std::cerr<<"VERTEX SHADER compile-time error"<< std::endl;
 		return;
 	}
 
@@ -91,6 +91,11 @@ void RenderEngine::ShaderProgram::setMatrix4(const std::string& name, const glm:
 void RenderEngine::ShaderProgram::setVec3(const std::string& name, const glm::vec3 vec)
 {
 	glUniform3f(glGetUniformLocation(m_ID, name.c_str()), vec.x, vec.y, vec.z);
+}
+
+void RenderEngine::ShaderProgram::setVec4(const std::string& name, const glm::vec4 vec)
+{
+	glUniform4f(glGetUniformLocation(m_ID, name.c_str()), vec.x, vec.y, vec.z, vec.w);
 }
 
 bool RenderEngine::ShaderProgram::createShader(const std::string& source, const GLenum shaderType, GLuint& shaderID)

@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "Image.h"
+#include "Collor.h"
 
 namespace RenderEngine {
 	class Cube : public Image2D
@@ -28,5 +29,26 @@ namespace RenderEngine {
 
 	private:
 		void init() override;
+	};
+
+	class LightCube
+	{
+	public:
+		LightCube(const ColorComponent& color = ColorComponent{});
+		~LightCube() = default;
+		LightCube(const LightCube&) = delete;
+		LightCube& operator=(const LightCube&) = delete;
+		LightCube(LightCube&&) noexcept;
+		LightCube& operator=(LightCube&&) noexcept;
+
+		const VertexArray& getVertexArray() const { return m_vertexArray; }
+		const VertexBuffer& getVertexCoordsBuffer() const { return m_vertexCoordsBuffer; }
+		ColorComponent getColor() const { return m_color; }
+		ColorComponent setColor(const ColorComponent& color);
+	private:
+		void init();
+		ColorComponent	m_color;
+		VertexArray		m_vertexArray;
+		VertexBuffer	m_vertexCoordsBuffer;
 	};
 }

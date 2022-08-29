@@ -75,6 +75,7 @@ public:
 	bool RemoveListener(CameraListener*);
 	void ClearListeners();
 
+	CameraPosition getCameraPosition();
 	FRect getProjRect();
 	FRect getActiveWindowRect();
 	FRect getWorldRect();

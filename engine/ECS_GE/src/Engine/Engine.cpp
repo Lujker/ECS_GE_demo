@@ -81,7 +81,7 @@ bool Engine::Init(const std::string& init_path, ServiceLocator* service_locator)
     }
 
     FONT->setFont("arial");
-    RENDER->setClearColor(1, 1, 1, 1);
+    RENDER->setClearColor(0, 0, 0, 1);
     RENDER->setBlendMode(true);
     RENDER->setDepthTest(true);
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

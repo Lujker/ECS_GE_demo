@@ -21,6 +21,7 @@ namespace RenderEngine
 		void setFloat(const std::string& name, const GLfloat value);
 		void setMatrix4(const std::string& name, const glm::mat4);
 		void setVec3(const std::string& name, const glm::vec3);
+		void setVec4(const std::string& name, const glm::vec4);
 
 	private:
 		ShaderProgram() = delete;

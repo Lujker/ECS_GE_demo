@@ -3,105 +3,57 @@ namespace RenderEngine
 {
 	void Cube::init()
 	{
+		//0-2 vertex coord, 3-5 normal coords, 6-7 texture coords
 		constexpr GLfloat vertex_coords[] = {
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
 
-		-0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
 
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
 
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
 
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
 
-		-0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f
 		};
-
-		constexpr GLfloat texture_coords[] =
-		{
-			 0.0f, 0.0f,
-			 1.0f, 0.0f,
-			 1.0f, 1.0f,
-			 1.0f, 1.0f,
-			 0.0f, 1.0f,
-			 0.0f, 0.0f,
-
-			 0.0f, 0.0f,
-			 1.0f, 0.0f,
-			 1.0f, 1.0f,
-			 1.0f, 1.0f,
-			 0.0f, 1.0f,
-			 0.0f, 0.0f,
-
-			 1.0f, 0.0f,
-			 1.0f, 1.0f,
-			 0.0f, 1.0f,
-			 0.0f, 1.0f,
-			 0.0f, 0.0f,
-			 1.0f, 0.0f,
-
-			 1.0f, 0.0f,
-			 1.0f, 1.0f,
-			 0.0f, 1.0f,
-			 0.0f, 1.0f,
-			 0.0f, 0.0f,
-			 1.0f, 0.0f,
-
-			 0.0f, 1.0f,
-			 1.0f, 1.0f,
-			 1.0f, 0.0f,
-			 1.0f, 0.0f,
-			 0.0f, 0.0f,
-			 0.0f, 1.0f,
-
-			 0.0f, 1.0f,
-			 1.0f, 1.0f,
-			 1.0f, 0.0f,
-			 1.0f, 0.0f,
-			 0.0f, 0.0f,
-			 0.0f, 1.0f
-		};
-
 
 		m_vertexCoordsBuffer.init(&vertex_coords, sizeof(vertex_coords));
 		VertexBufferLayout vertexCoordsLayout;
 		vertexCoordsLayout.addElementLayoutFloat(3, false);
+		vertexCoordsLayout.addElementLayoutFloat(3, false);
+		vertexCoordsLayout.addElementLayoutFloat(2, false);
 		m_vertexArray.addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
-
-		m_textureCoordsBuffer.init(&texture_coords, sizeof(texture_coords));
-		VertexBufferLayout vertexTextureCoordsLayout;
-		vertexTextureCoordsLayout.addElementLayoutFloat(2, false);
-		m_vertexArray.addBuffer(m_textureCoordsBuffer, vertexTextureCoordsLayout);
 	}
 
 	Cube::Cube(const std::shared_ptr<Texture2D>& pTexture)
@@ -163,5 +115,79 @@ namespace RenderEngine
 	void Cube::updateVertex(const void* data, const unsigned int data_size)
 	{
 		m_vertexCoordsBuffer.update(data, data_size);
+	}
+
+	LightCube::LightCube(const ColorComponent& color):
+		m_color(color)
+	{
+		init();
+	}
+
+	LightCube::LightCube(LightCube&& cube) noexcept :
+		m_vertexArray(std::move(cube.m_vertexArray)), m_vertexCoordsBuffer(std::move(cube.m_vertexCoordsBuffer)), m_color(std::move(cube.m_color))
+	{}
+
+	LightCube& LightCube::operator=(LightCube&& cube) noexcept
+	{
+		m_vertexArray = std::move(cube.m_vertexArray);
+		m_vertexCoordsBuffer = std::move(cube.m_vertexCoordsBuffer);
+		return *this;
+	}
+	ColorComponent LightCube::setColor(const ColorComponent& color)
+	{
+		auto before = m_color;
+		m_color = color;
+		return before;
+	}
+	void LightCube::init()
+	{
+		constexpr GLfloat vertex_coords[] = {
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f
+		};
+
+		m_vertexCoordsBuffer.init(&vertex_coords, sizeof(vertex_coords));
+		VertexBufferLayout vertexCoordsLayout;
+		vertexCoordsLayout.addElementLayoutFloat(3, false);
+		m_vertexArray.addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
 	}
 }

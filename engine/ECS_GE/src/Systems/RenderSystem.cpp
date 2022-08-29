@@ -71,16 +71,42 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const Positi
     if (!cube)
         return;
     const auto shader = RES->getShader("default_3D");
+    PositionComponent3 l_pos{ position.getPosition().mX, position.getPosition().mY * 2, position.getPosition().mZ };
+    if (light_pos != PositionComponent3{1.f, 1.f, 1.f})
+        l_pos = light_pos;
+    
     if (!shader || !cube->isValid())
+    {
+        return;
+    }
+    auto cam_pos = CAMERA->getCameraPosition();
+    CAMERA->UseShader(shader);
+    shader->setMatrix4("modelMatrix", getTransformModel(position, collision));
+    shader->setInt("TextureID", cube->getTexture2D()->getSlot());
+    shader->setVec4("LightColor", { light.getR(), light.getG(), light.getB(), light.getAlpha() });
+    shader->setVec3("LightPosition", { l_pos.getPosition().mX, l_pos.getPosition().mY, l_pos.getPosition().mZ });
+    shader->setVec3("CameraPos", cam_pos.cameraPos);
+    cube->getTexture2D()->bind();
+
+    draw(cube->getVertexArray(), *shader);
+}
+
+void RenderSystem::Render(std::shared_ptr<RenderEngine::LightCube> lightCube, const PositionComponent3& position, const CollisionComponent3& collision)
+{
+    if (!lightCube)
+        return;
+    light = lightCube->getColor();
+    light_pos = position;
+    const auto shader = RES->getShader("light_3D");
+    if (!shader)
     {
         return;
     }
     CAMERA->UseShader(shader);
     shader->setMatrix4("modelMatrix", getTransformModel(position, collision));
-    shader->setInt("tex", cube->getTexture2D()->getSlot());
-    cube->getTexture2D()->bind();
+    shader->setVec4("LightColor", { lightCube->getColor().getR(), lightCube->getColor().getG(), lightCube->getColor().getB(), lightCube->getColor().getAlpha() });
 
-    draw(cube->getVertexArray(), *shader);
+    draw(lightCube->getVertexArray(), *shader);
 }
 
 void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale, const ColorComponent& collor)

@@ -47,6 +47,7 @@ namespace RenderEngine
 		SubTexture2D m_subTexture;
 		VertexArray  m_vertexArray;
 		VertexBuffer m_vertexCoordsBuffer;
+		VertexBuffer m_normalCoordsBuffer;
 		VertexBuffer m_textureCoordsBuffer;
 		IndexBuffer  m_indexBuffer;
 		bool		 is_mirrored = false;

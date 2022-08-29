@@ -16,9 +16,10 @@ std::shared_ptr<SandboxWindow> SandboxWindow::Create()
 	return std::make_shared<SandboxWindow>();
 }
 
-SandboxWindow::SandboxWindow():
-	GlobalWidget("SandboxWindow", eWidgetPriority::DEFAULT, nullptr), 
-    cub(std::make_shared<RenderEngine::Cube>(RES->loadTexture("res/images/Layer_0010_1.png", "res/images/Layer_0010_1.png")))
+SandboxWindow::SandboxWindow() :
+    GlobalWidget("SandboxWindow", eWidgetPriority::DEFAULT, nullptr),
+    cub(std::make_shared<RenderEngine::Cube>(RES->loadTexture("res/images/Layer_0010_1.png", "res/images/Layer_0010_1.png"))),
+    light(std::make_shared<RenderEngine::LightCube>(ColorComponent(1.0f, 1.0f, 1.0f )))
 {}
 
 void SandboxWindow::OriginRectSet()
@@ -65,6 +66,7 @@ void SandboxWindow::Draw()
         it->Draw();
     }
     RENDER->Render(cub, cub_pos, cub_size);
+    RENDER->Render(light, light_pos , light_size);
 }
 
 void SandboxWindow::Update(float deltaTime)

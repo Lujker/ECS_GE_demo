@@ -9,6 +9,7 @@
 #include "gl_Include.h"
 #include "ISystem.h"
 #include "Image.h"
+#include <unordered_set>
 
 class RenderSystem;
 class DisplayString;
@@ -18,6 +19,7 @@ namespace RenderEngine
 	class Sprite;
 	class ShaderProgram;
 	class Cube;
+	class LightCube;
 }
 
 struct Transform2D
@@ -60,6 +62,7 @@ public:
 	void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision = { false });
+	void Render(std::shared_ptr<RenderEngine::LightCube> lightCube, const PositionComponent3& position, const CollisionComponent3& collision = { false });
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const ColorComponent& collor = ColorComponent{0.5f,0.5f,0.5f});
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& size = { false }, const ColorComponent& collor = ColorComponent{ 0.5f,0.5f,0.5f });
 	void Render(const FRect& rect);
@@ -94,6 +97,8 @@ private:
 	void draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::ShaderProgram& shader);
 
 	std::stack<Transform2D> m_accumTransfStack;
+	ColorComponent light{ 1.f,1.f,1.f };
+	PositionComponent3 light_pos{ 1.f, 1.f, 1.f };
 	RenderSystem() = default;
 	~RenderSystem() = default;
 };

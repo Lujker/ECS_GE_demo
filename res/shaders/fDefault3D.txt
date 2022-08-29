@@ -1,9 +1,34 @@
 #version 430
 in vec2 textureCoord;
+in vec3 Normal;
+in vec3 FragPos;
+
 out vec4 frag_color;
 
-uniform sampler2D tex;
+uniform sampler2D TextureID;
+uniform vec4 LightColor;
+uniform vec3 LightPosition;
+uniform vec3 CameraPos;
 
 void main() {
-   frag_color = texture(tex, textureCoord);
+
+    float specularStrength = 0.5f;
+    float ambientStrength = 0.1f;
+    vec4 ambient = ambientStrength * LightColor;
+    ambient = vec4(ambient.x, ambient.y, ambient.z, LightColor.w);
+
+    // Diffuse 
+    vec3 norm = normalize(Normal);
+    vec3 lightDir = normalize(LightPosition - FragPos);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec4 diffuse = diff * LightColor;
+    diffuse = vec4(diffuse.x, diffuse.y, diffuse.z, LightColor.w);
+
+    vec3 viewDir = normalize(CameraPos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec4 specular = specularStrength * spec * LightColor;
+    specular = vec4(specular.x, specular.y, specular.z, LightColor.w);
+
+   frag_color = (ambient + diffuse + specular) * texture(TextureID, textureCoord);
 }
