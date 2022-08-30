@@ -80,8 +80,8 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const Positi
     auto& cub_material = cube->getMaterial();
     CAMERA->UseShader(shader);
     shader->setMatrix4("modelMatrix", getTransformModel(position, collision));
-    shader->setVec3("CameraPos", cam_pos.cameraPos);
-    shader->setInt("pointsLightsCount", LIGHT->getPointsLightsCount());
+    shader->setVec3("camera_position", cam_pos.cameraPos);
+    shader->setInt("points_lights_count", LIGHT->getPointsLightsCount());
     if (cub_material.m_pTexture)
     {
         shader->setInt("material.diffuse", cub_material.m_pTexture->getSlot());
@@ -289,16 +289,16 @@ void RenderSystem::setPointLight(const std::shared_ptr<RenderEngine::ShaderProgr
         l_specular = light->specular;
     }
 
-    shader->setVec4(std::string{ "pointLights[" } + std::to_string(index) + "].LightColor", { l_col.getR(), l_col.getG(), l_col.getB(), l_col.getAlpha() });
-    shader->setVec3(std::string{ "pointLights[" } + std::to_string(index) + "].LightPosition", { l_pos.getPosition().mX, l_pos.getPosition().mY, l_pos.getPosition().mZ });
+    shader->setVec4(std::string{ "point_lights[" } + std::to_string(index) + "].color", { l_col.getR(), l_col.getG(), l_col.getB(), l_col.getAlpha() });
+    shader->setVec3(std::string{ "point_lights[" } + std::to_string(index) + "].position", { l_pos.getPosition().mX, l_pos.getPosition().mY, l_pos.getPosition().mZ });
     //!Свечение
-    shader->setVec3(std::string{ "pointLights[" } + std::to_string(index) + "].ambient", { l_ambient.x, l_ambient.y, l_ambient.z });
-    shader->setVec3(std::string{ "pointLights[" } + std::to_string(index) + "].diffuse", { l_diffuse.x, l_diffuse.y, l_diffuse.z });
-    shader->setVec3(std::string{ "pointLights[" } + std::to_string(index) + "].specular", { l_specular.x, l_specular.y, l_specular.z });
+    shader->setVec3(std::string{ "point_lights[" } + std::to_string(index) + "].ambient", { l_ambient.x, l_ambient.y, l_ambient.z });
+    shader->setVec3(std::string{ "point_lights[" } + std::to_string(index) + "].diffuse", { l_diffuse.x, l_diffuse.y, l_diffuse.z });
+    shader->setVec3(std::string{ "point_lights[" } + std::to_string(index) + "].specular", { l_specular.x, l_specular.y, l_specular.z });
     //!Затухание
-    shader->setFloat(std::string{ "pointLights[" } + std::to_string(index) + "].constant", constant);
-    shader->setFloat(std::string{ "pointLights[" } + std::to_string(index) + "].linear", linear);
-    shader->setFloat(std::string{ "pointLights[" } + std::to_string(index) + "].quadratic", quadratic);
+    shader->setFloat(std::string{ "point_lights[" } + std::to_string(index) + "].constant", constant);
+    shader->setFloat(std::string{ "point_lights[" } + std::to_string(index) + "].linear", linear);
+    shader->setFloat(std::string{ "point_lights[" } + std::to_string(index) + "].quadratic", quadratic);
 }
 
 void RenderSystem::setDirectionLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light)
@@ -322,7 +322,7 @@ void RenderSystem::setDirectionLight(const std::shared_ptr<RenderEngine::ShaderP
         }
     }
 
-    shader->setVec4("dirLight.LightColor", { l_col.getR(), l_col.getG(), l_col.getB(), l_col.getAlpha() });
+    shader->setVec4("dirLight.color", { l_col.getR(), l_col.getG(), l_col.getB(), l_col.getAlpha() });
     shader->setVec3("dirLight.direction", { l_direc.x, l_direc.y, l_direc.z });
     shader->setVec3("dirLight.ambient", { l_ambient.x, l_ambient.y, l_ambient.z });
     shader->setVec3("dirLight.diffuse", { l_diffuse.x, l_diffuse.y, l_diffuse.z });

@@ -57,13 +57,23 @@ void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
     m_cubs.emplace_back(CubeObject{ cube, {-100, 0, 200} });
 
     auto light = std::make_shared<RenderEngine::PointLight>();
+    light->lightCube.setColor({ 1.0f, 0.1f, 0.5f });
     light->position = { 0, 0, 230 };
     light->size = { 10.f, 10.f, 10.f };
     light->ambient = { 0.2f, 0.2f, 0.2f };
     light->diffuse = { 0.5f, 0.5f, 0.5f };
     light->specular = { 1.0f, 1.0f, 1.0f };
 
+    auto light_1 = std::make_shared<RenderEngine::PointLight>();
+    light_1->lightCube.setColor({ 0.5f, 0.1f, 1.0f });
+    light_1->position = { 50, 20, 100 };
+    light_1->size = { 10.f, 10.f, 10.f };
+    light_1->ambient = { 0.2f, 0.2f, 0.2f };
+    light_1->diffuse = { 0.5f, 0.5f, 0.5f };
+    light_1->specular = { 1.0f, 1.0f, 1.0f };
+
     auto worldLight = std::make_shared<RenderEngine::DirectionLight>();
+    worldLight->lightCube.setColor({ 0.2f, 0.2f, 1.0f });
     worldLight->direction = {1.0f, -1.0f, -0.2f };
     worldLight->size = { 10.f, 10.f, 10.f };
     worldLight->ambient = { 0.2f, 0.2f, 0.2f };
@@ -71,6 +81,7 @@ void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
     worldLight->specular = { 1.0f, 1.0f, 1.0f };
 
     LIGHT->pushLight("first", light);
+    LIGHT->pushLight("second", light_1);
     LIGHT->pushLight("world", worldLight);
 
     CAMERA->SetPerspectiveProj();

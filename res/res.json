@@ -3,28 +3,28 @@
   [
     {
       "name" :  "image_shader",
-      "fragment_path" :  "res/shaders/fImage.txt",
-      "vertex_path" :  "res/shaders/vImage.txt"
+      "fragment_path" :  "res/shaders/fImage.glsl",
+      "vertex_path" :  "res/shaders/vImage.glsl"
     },
     {
       "name" :  "default",
-      "fragment_path" :  "res/shaders/fragment.txt",
-      "vertex_path" :  "res/shaders/vertex.txt"
+      "fragment_path" :  "res/shaders/fragment.glsl",
+      "vertex_path" :  "res/shaders/vertex.glsl"
     },
     {
       "name" :  "freetype",
-      "fragment_path" :  "res/shaders/fFreeType.txt",
-      "vertex_path" :  "res/shaders/vFreeType.txt"
+      "fragment_path" :  "res/shaders/fFreeType.glsl",
+      "vertex_path" :  "res/shaders/vFreeType.glsl"
     },
     {
       "name" :  "default_3D",
-      "fragment_path" :  "res/shaders/fDefault3D.txt",
-      "vertex_path" :  "res/shaders/vDefault3D.txt"
+      "fragment_path" :  "res/shaders/fDefault3D.glsl",
+      "vertex_path" :  "res/shaders/vDefault3D.glsl"
     },
     {
       "name" :  "light_3D",
-      "fragment_path" :  "res/shaders/fLight3D.txt",
-      "vertex_path" :  "res/shaders/vLight3D.txt"
+      "fragment_path" :  "res/shaders/fLight3D.glsl",
+      "vertex_path" :  "res/shaders/vLight3D.glsl"
     }
   ]
 }
