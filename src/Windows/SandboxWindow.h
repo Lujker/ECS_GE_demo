@@ -3,6 +3,13 @@
 #include "GlobalWidget.h"
 #include <Components/Cube.h>
 
+struct CubeObject
+{
+	std::shared_ptr<RenderEngine::Cube> cub = nullptr;
+	PositionComponent3 cub_pos{ 0,0, 80 };
+	CollisionComponent3 cub_size{ 50.f, 50.f, 100.f };
+};
+
 class SandboxWindow : public GlobalWidget
 {
 public:
@@ -19,8 +26,5 @@ public:
 	void KeyUnpress(const int& key) override;
 private:
 	GameObjectList m_objects;
-	std::shared_ptr<RenderEngine::Cube> cub;
-	RenderEngine::Material cub_material; /*{ {1.0f, 0.5f, 0.31f}, {1.0f, 0.5f, 0.31f}, {0.5f, 0.5f, 0.5f}, 32.0f };*/
-	PositionComponent3 cub_pos{ 0,0, 80};
-	CollisionComponent3 cub_size{ 50.f, 50.f, 100.f};
+	std::list<CubeObject> m_cubs;
 };

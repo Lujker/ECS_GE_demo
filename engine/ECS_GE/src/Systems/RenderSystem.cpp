@@ -67,24 +67,35 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
 	draw(image->getVertexArray(), image->getIndexCoordsBuffer(), *shader);
 }
 
-void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision, const RenderEngine::Material& material)
+void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision)
 {
     if (!cube)
         return;
     const auto shader = RES->getShader("default_3D");
     auto light = LIGHT->getLight("first");
-    if (!shader || !cube->isValid())
+    if (!shader)
     {
         return;
     }
     auto cam_pos = CAMERA->getCameraPosition();
+    auto& cub_material = cube->getMaterial();
     CAMERA->UseShader(shader);
     shader->setMatrix4("modelMatrix", getTransformModel(position, collision));
-    shader->setInt("TextureID", cube->getTexture2D()->getSlot());
     shader->setVec3("CameraPos", cam_pos.cameraPos);
-    setMaterial(shader, material);
-    setLight(shader, light);
-    cube->getTexture2D()->bind();
+    if (cub_material.m_pTexture)
+    {
+        shader->setInt("material.diffuse", cub_material.m_pTexture->getSlot());
+        cub_material.m_pTexture->bind();
+    }
+    if (cub_material.m_specularMap)
+    {
+        shader->setInt("material.specular", cub_material.m_specularMap->getSlot());
+        cub_material.m_specularMap->bind();
+    }
+    shader->setFloat("material.shininess", cub_material.shininess);
+    //setMaterial(shader, material);
+    if (light)
+        setLight(shader, light);
 
     draw(cube->getVertexArray(), *shader);
 }
@@ -239,10 +250,10 @@ void RenderSystem::clear()
 
 void RenderSystem::setMaterial(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::Material& material)
 {
-    shader->setVec3("material.ambient", { material.ambient.x, material.ambient.y, material.ambient.z });
-    shader->setVec3("material.diffuse", { material.diffuse.x, material.diffuse.y, material.diffuse.z });
-    shader->setVec3("material.specular", { material.specular.x, material.specular.y, material.specular.z });
-    shader->setFloat("material.shininess", material.shininess);
+    //shader->setVec3("material.ambient", { material.ambient.x, material.ambient.y, material.ambient.z });
+    //shader->setVec3("material.diffuse", { material.diffuse.x, material.diffuse.y, material.diffuse.z });
+    //shader->setVec3("material.specular", { material.specular.x, material.specular.y, material.specular.z });
+    //shader->setFloat("material.shininess", material.shininess);
 }
 
 void RenderSystem::setLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light)

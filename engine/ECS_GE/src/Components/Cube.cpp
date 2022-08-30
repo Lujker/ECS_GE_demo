@@ -56,63 +56,57 @@ namespace RenderEngine
 		m_vertexArray.addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
 	}
 
-	Cube::Cube(const std::shared_ptr<Texture2D>& pTexture)
+	Cube::Cube(const std::shared_ptr<Texture2D>& pTexture, std::shared_ptr<Texture2D> specularMap)
 	{
-		m_pTexture = pTexture;
-		m_subTexture = SubTexture2D();
+		m_material.m_pTexture = pTexture;
+		m_material.m_pTexture->setSlot(0);
+		m_material.m_specularMap = specularMap;
+		m_material.m_specularMap->setSlot(1);
 		init();
 	}
-	Cube::Cube(const std::shared_ptr<SpriteAtlas>& pAtlas, const SubTexture2D& sub_texture)
+
+	Cube::Cube(const Cube& cube) : m_material(cube.m_material)
 	{
-		m_pTexture = pAtlas;
-		m_subTexture = sub_texture;
 		init();
 	}
-	Cube::Cube(const Cube& cube) : Image2D(cube)
-	{}
+
 	Cube& Cube::operator=(const Cube& cube)
 	{
-		m_pTexture = cube.m_pTexture;
-		m_subTexture = cube.m_subTexture;
+		m_material = cube.m_material;
 		init();
 		return *this;
 	}
-	Cube::Cube(Cube&& cube) noexcept : Image2D(std::move(cube))
+
+	Cube::Cube(Cube&& cube) noexcept : 
+		m_material(std::move(cube.m_material)), 
+		m_vertexArray(std::move(cube.m_vertexArray)), 
+		m_vertexCoordsBuffer(std::move(cube.m_vertexCoordsBuffer))
 	{}
+
 	Cube& Cube::operator=(Cube&& cube) noexcept
 	{
-		m_pTexture = std::move(cube.m_pTexture);
-		m_subTexture = cube.m_subTexture;
+		m_material = std::move(cube.m_material);
 		m_vertexArray = std::move(cube.m_vertexArray);
 		m_vertexCoordsBuffer = std::move(cube.m_vertexCoordsBuffer);
-		m_textureCoordsBuffer = std::move(cube.m_textureCoordsBuffer);
-		m_indexBuffer = std::move(cube.m_indexBuffer);
 		return *this;
 	}
-	void Cube::SetSubTexture(const SubTexture2D& sub_texture)
-	{
-		if (m_subTexture == sub_texture)
-			return;
-		m_subTexture = sub_texture;
-		//const GLfloat texture_coords[] =
-		//{
-		//	//! U and V
-		//	m_subTexture.leftBottomUV.x, m_subTexture.leftBottomUV.y,
-		//	m_subTexture.leftBottomUV.x, m_subTexture.rightTopUV.y,
-		//	m_subTexture.rightTopUV.x, m_subTexture.rightTopUV.y,
-		//	m_subTexture.rightTopUV.x, m_subTexture.leftBottomUV.y,
-		//};
-		//m_textureCoordsBuffer.update(&texture_coords, sizeof(texture_coords));
+
+	void Cube::SetSpecularMap(const std::shared_ptr<Texture2D>& specularMap)
+	{	
+		m_material.m_specularMap = specularMap;
 	}
-	bool Cube::isMirrored() const
+
+	void Cube::SetDiffuseTexture(const std::shared_ptr<Texture2D>& diffuseTexture)
 	{
-		return false;
+		m_material.m_specularMap = diffuseTexture;
 	}
-	void Cube::mirror(bool vertical, bool horizontal)
+
+	void Cube::SetShininess(float shininess)
 	{
-		return;
+		m_material.shininess = shininess;
 	}
-	void Cube::updateVertex(const void* data, const unsigned int data_size)
+
+	void Cube::updateBuffer(const void* data, const unsigned int data_size)
 	{
 		m_vertexCoordsBuffer.update(data, data_size);
 	}
@@ -133,12 +127,14 @@ namespace RenderEngine
 		m_vertexCoordsBuffer = std::move(cube.m_vertexCoordsBuffer);
 		return *this;
 	}
+
 	ColorComponent LightCube::setColor(const ColorComponent& color)
 	{
 		auto before = m_color;
 		m_color = color;
 		return before;
 	}
+
 	void LightCube::init()
 	{
 		constexpr GLfloat vertex_coords[] = {

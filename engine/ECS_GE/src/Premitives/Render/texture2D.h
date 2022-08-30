@@ -21,6 +21,7 @@ namespace RenderEngine
 		Texture2D(Texture2D&& texture2D) noexcept;
 		Texture2D& operator = (Texture2D&& texture2D) noexcept;
 		void bind() const;
+		void setSlot(unsigned slot);
 		const unsigned getWidth()
 		{
 			return m_width;

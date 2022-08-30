@@ -31,6 +31,7 @@ namespace RenderEngine
 		std::shared_ptr<Texture2D> getTexture2D() const { return m_pTexture; }
 		const VertexArray& getVertexArray() const { return m_vertexArray; }
 		const VertexBuffer& getVertexCoordsBuffer() const { return m_vertexCoordsBuffer; }
+		const VertexBuffer& getNormalCoordsBuffer() const { return m_normalCoordsBuffer; }
 		const VertexBuffer& getTextureCoordsBuffer() const { return m_textureCoordsBuffer; }
 		const IndexBuffer& getIndexCoordsBuffer() const { return m_indexBuffer; }
 		virtual void SetSubTexture(const SubTexture2D& sub_texture);

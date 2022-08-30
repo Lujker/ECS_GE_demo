@@ -63,7 +63,7 @@ public:
 	static RenderSystem& Instanse();
 	void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
-	void Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision = { false }, const RenderEngine::Material& material = {});
+	void Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Light> light);
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const ColorComponent& collor = ColorComponent{0.5f,0.5f,0.5f});
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& size = { false }, const ColorComponent& collor = ColorComponent{ 0.5f,0.5f,0.5f });

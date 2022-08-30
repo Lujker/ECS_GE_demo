@@ -71,6 +71,11 @@ void RenderEngine::Texture2D::bind() const
 	glBindTexture(GL_TEXTURE_2D, m_ID); //! установка текстуры под данным id как текущую текстуру в движке
 }
 
+void RenderEngine::Texture2D::setSlot(unsigned slot)
+{
+	m_slot = GL_TEXTURE0 + slot;
+}
+
 RenderEngine::Texture2D::~Texture2D()
 {
 	glDeleteTextures(1, &m_ID);
