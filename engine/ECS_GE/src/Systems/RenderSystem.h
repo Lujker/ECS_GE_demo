@@ -75,7 +75,8 @@ public:
 	void setDepthTest(bool on);
 	void clear();
 	void setMaterial(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::Material& material);
-	void setLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light);
+	void setPointLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light, unsigned index);
+	void setDirectionLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light);
 	void setViewport(unsigned int width, unsigned int height, unsigned int leftOffset = 0, unsigned int bottomOffset = 0);
 	glm::mat4 getTransformMatrix(const float x, const float y, const float width, const float height, float rotation = 0);
 	glm::mat4 getTransformModel(const float x, const float y, const float width, const float height, float rotation = 0);

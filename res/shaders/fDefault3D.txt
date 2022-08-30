@@ -6,36 +6,88 @@ struct Material {
     float shininess;
 }; 
 
-struct Light {
+struct PointLight {
     vec4 LightColor;
     vec3 LightPosition;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+    float constant;
+    float linear;
+    float quadratic;
 };
 
-uniform Light light; 
-uniform Material material;
-uniform vec3 CameraPos;
+struct DirectionLight
+{
+    vec4 LightColor;
+    vec3 direction;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
 
-in vec2 textureCoord;
-in vec3 Normal;
-in vec3 FragPos;
+#define NR_POINT_LIGHTS 16 
+uniform PointLight      pointLights[NR_POINT_LIGHTS];
+uniform DirectionLight  dirLight;
+uniform Material        material;
+uniform vec3            CameraPos;
+uniform int           pointsLightsCount;
 
-out vec4 frag_color;
+in vec2                 textureCoord;
+in vec3                 Normal;
+in vec3                 FragPos;
+
+out vec4                frag_color;
+
+vec3 CalcDirLight(DirectionLight light, vec3 normal, vec3 viewDir)
+{
+    vec3 lightDir = normalize(-light.direction);
+    // диффузное освещение
+    float diff = max(dot(normal, lightDir), 0.0);
+    // освещение зеркальных бликов
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // комбинируем результаты
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, textureCoord));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, textureCoord));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, textureCoord));
+    return (ambient + diffuse + specular);
+}
+
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.LightPosition - fragPos);
+    // диффузное освещение
+    float diff = max(dot(normal, lightDir), 0.0);
+    // освещение зеркальных бликов
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // затухание
+    float distance    = length(light.LightPosition - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + 
+  			     light.quadratic * (distance * distance));    
+    // комбинируем результаты
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, textureCoord));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, textureCoord));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, textureCoord));
+    ambient  *= attenuation;
+    diffuse  *= attenuation;
+    specular *= attenuation;
+    return (ambient + diffuse + specular);
+} 
 
 void main() {
-    // Diffuse 
+        // свойства
     vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(light.LightPosition - FragPos);
-    float diff = max(dot(norm, lightDir), 0.0);
-    // Specul
     vec3 viewDir = normalize(CameraPos - FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, textureCoord));
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, textureCoord));  
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, textureCoord));
-    frag_color = vec4(ambient + diffuse + specular, 1.0);
+    // фаза 1: Направленный источник освещения
+    vec3 result = CalcDirLight(dirLight, norm, viewDir);
+    // фаза 2: Точечные источники
+    for(int i = 0; i < pointsLightsCount; i++)
+        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
+    // фаза 3: фонарик
+    //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
+    
+    frag_color = vec4(result, 1.0);
 }

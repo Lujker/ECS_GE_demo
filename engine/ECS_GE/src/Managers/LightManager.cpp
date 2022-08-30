@@ -7,10 +7,23 @@ namespace RenderEngine {
 	void LightManager::clearLights()
 	{
 		light_objects.clear();
+		m_point_lights_count = 0;
+		m_directions_lights_count = 0;
 	}
 
 	void LightManager::pushLight(const std::string& name, const std::shared_ptr<Light>& light)
 	{
+		switch (light->type)
+		{
+		case RenderEngine::LightType::eDirection:
+			++m_directions_lights_count;
+			break;
+		case RenderEngine::LightType::ePoint:
+			++m_point_lights_count;
+			break;
+		default:
+			break;
+		}
 		light_objects.insert({ name, light });
 	}
 
@@ -32,6 +45,7 @@ namespace RenderEngine {
 	void LightManager::destroy()
 	{
 		clearLights();
+
 	}
 
 	const LightManager::light_map& LightManager::getLights()
@@ -46,4 +60,42 @@ namespace RenderEngine {
 			RENDER->Render(it.second);
 		}
 	}
+	Light::~Light()
+	{}
+
+	PointLight::PointLight(
+		PositionComponent3 position, 
+		CollisionComponent3 size, 
+		Vector3 ambient, 
+		Vector3 diffuse, 
+		Vector3 specular, 
+		float shininess,
+		float constant,
+		float linear,
+		float quadratic) :
+		position(position), constant(constant), linear(linear), quadratic(quadratic)
+	{
+		Light::type = LightType::ePoint;
+		Light::ambient = ambient;
+		Light::diffuse = diffuse;
+		Light::specular = specular;
+		Light::size = size;
+	}
+
+	DirectionLight::DirectionLight(
+		Vector3 direction, 
+		CollisionComponent3 size, 
+		Vector3 ambient, 
+		Vector3 diffuse,
+		Vector3 specular, 
+		float shininess):
+		direction(direction)
+	{
+		Light::type = LightType::eDirection;
+		Light::ambient = ambient;
+		Light::diffuse = diffuse;
+		Light::specular = specular;
+		Light::size = size;
+	}
+
 }

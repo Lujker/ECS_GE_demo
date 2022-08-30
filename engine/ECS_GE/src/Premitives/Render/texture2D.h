@@ -32,7 +32,7 @@ namespace RenderEngine
 		}
 		const int getSlot()
 		{
-			return GL_TEXTURE0 - m_slot;
+			return m_slot - GL_TEXTURE0;
 		}
 		virtual ~Texture2D();
 	protected:
