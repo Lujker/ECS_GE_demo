@@ -16,3 +16,6 @@
 [submodule "engine/ECS_GE/external/sabmodules/imgui"]
 	path = engine/ECS_GE/external/sabmodules/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "engine/ECS_GE/external/sabmodules/imagemagic/ImageMagick-Windows"]
+	path = engine/ECS_GE/external/sabmodules/imagemagic/ImageMagick-Windows
+	url = https://github.com/ImageMagick/ImageMagick-Windows.git
