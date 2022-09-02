@@ -11,6 +11,7 @@
 #include "RenderSystem.h"
 #include "LogSystem.h"
 #include "ServiceLocator.h"
+#include "Magick++.h"
 
 ServiceLocator* Engine::g_service_locator = nullptr;
 
@@ -44,6 +45,12 @@ bool Engine::Init(const std::string& init_path, ServiceLocator* service_locator)
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 #endif
 
+    try {
+        Magick::InitializeMagick(init_path.data());
+    }
+    catch (Magick::Exception& error) {
+        std::cerr << "Caught Magick++ exception: " << error.what() << std::endl;
+    }
     if (!service_locator)
         g_service_locator = new ServiceLocator;
     else

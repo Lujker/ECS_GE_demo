@@ -23,6 +23,8 @@ set(ENGINE_SRC
 	src/Premitives/Render/VertexBuffer.cpp  
 	src/Premitives/Render/texture2D.cpp
 	src/Premitives/Render/Material.cpp
+	src/Premitives/Render/Mesh.cpp
+	src/Premitives/Render/Model.cpp
 	src/Components/Atlas2D.cpp
 	src/Components/Collision.cpp
 	src/Components/Health.cpp
@@ -72,6 +74,8 @@ set(ENGINE_INCLUDE
 	src/Premitives/Render/VertexBuffer.h    
 	src/Premitives/Render/texture2D.h
 	src/Premitives/Render/Material.h
+	src/Premitives/Render/Mesh.h
+	src/Premitives/Render/Model.h
 	src/Components/IComponent.h
 	src/Components/Atlas2D.h
 	src/Components/Collision.h 
@@ -127,7 +131,9 @@ include_directories(
 	src/Widgets
 	external/sabmodules/rapidjson/include
 	external/sabmodules/freetype/include
-	external/sabmodules/assimp/include/assimp
+	external/sabmodules/assimp/include
+	external/sabmodules/assimp/code
+	external/sabmodules/assimp/build/include
 )
 
 target_compile_features(${PROJ_NAME} PUBLIC cxx_std_17)
@@ -136,6 +142,15 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+if(WIN32)
+	add_definitions(-DMAGICKCORE_QUANTUM_DEPTH=16 )
+	add_definitions(-DMAGICKCORE_HDRI_ENABLE=0 )
+	find_package(ImageMagick COMPONENTS Magick++ MagickWand MagickCore)
+	target_link_libraries(${PROJ_NAME} ${ImageMagick_LIBRARIES})
+	include_directories(
+		external/sabmodules/imagemagic/ImageMagick-Windows/ImageMagick/Magick++/lib
+		external/sabmodules/imagemagic/ImageMagick-Windows/ImageMagick)
+endif()
 
 add_subdirectory(external/sabmodules/glfw)
 target_link_libraries(${PROJ_NAME} glfw)
@@ -145,9 +160,6 @@ target_link_libraries(${PROJ_NAME} glad)
 
 add_subdirectory(external/sabmodules/glm)
 target_link_libraries(${PROJ_NAME} glm)
-
-add_subdirectory(external/sabmodules/assimp)
-target_link_libraries(${PROJ_NAME} assimp)
 
 add_library(
 	ImGUI STATIC

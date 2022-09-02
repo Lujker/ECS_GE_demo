@@ -6,7 +6,6 @@
 #include <memory>
 #include <map>
 
-
 class FileSystem
 {
 public:
@@ -25,35 +24,13 @@ public:
 		bool isLoad;
 	};
 
-	struct Pixels
-	{
-		Pixels(const std::string& path = "");
-		~Pixels();
-		const unsigned char* load(const std::string& path = "");
-		void unload();
-
-		bool isLoaded() { return isLoad; }
-		const unsigned char* getData() const { return pixels; }
-		const int getWidth() const { return width; }
-		const int getHeight() const { return height; }
-		const int getChanels() const { return chanel; }
-	private:
-		unsigned char* pixels = nullptr;
-		int chanel = 0, width = 0, height = 0;
-		std::string path;
-		bool isLoad = false;
-	};
-
 	friend class ServiceLocator;
 	void setExecutablePath(const std::string& execPath);
 	void unloadAllFiles();
 	std::string getFormatedPath(const std::string& path);
 	std::shared_ptr<File> loadFile(std::string path = "");
 	std::shared_ptr<File> getFile(std::string path = "");
-	std::shared_ptr<Pixels> loadPixelFile(std::string path = "");
-	std::shared_ptr<Pixels> getPixelFile(std::string path = "");
 	typedef std::map<const std::string, std::shared_ptr<File>> filesMap;
-	typedef std::map<const std::string, std::shared_ptr<Pixels>> pixelsFileMap;
 	FileSystem(const FileSystem&) = delete;
 	FileSystem(FileSystem&&) = delete;
 	FileSystem& operator=(const FileSystem&) = delete;
@@ -62,6 +39,5 @@ private:
 	FileSystem() = default;
 	~FileSystem() = default;
 	filesMap m_files;
-	pixelsFileMap m_pixels;
 	std::string m_path;
 };

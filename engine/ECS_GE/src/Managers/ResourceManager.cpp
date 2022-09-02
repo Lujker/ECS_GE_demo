@@ -5,6 +5,7 @@
 #include "Atlas2D.h"
 #include "Image.h"
 #include "Sprite.h"
+#include "Model.h"
 #include "FileSystemManager.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -383,17 +384,30 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::getShader(const st
 std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath)
 {
 	///Загрузка пикселей в массив байт из файла текстуры
-	const auto& pixels = FILES->getPixelFile(texturePath);
-	if (!pixels->isLoaded() && !pixels->getData())
-	{
-		LOG("Can't load image: " + texturePath, LOG_TYPE::WAR);
-		return nullptr;
-	}
 	const auto newTexture = m_textures.emplace(textureName, std::make_shared<RenderEngine::Texture2D>
-														(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE));
+														(m_path + "\\" + texturePath, 4, "texture_diffuse", GL_TEXTURE0 ,GL_NEAREST, GL_CLAMP_TO_EDGE));
 	if (newTexture.second)
 		return newTexture.first->second;
 	return getTexture(textureName);
+}
+
+std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(
+	const std::string& path, const unsigned int channels, 
+	const std::string& type, const unsigned int textureSlot, 
+	const GLenum filter, const GLenum wrapMode)
+{
+	auto it = m_textures.find(path);
+	if (it != m_textures.end())
+		return it->second;
+	else
+	{
+		const auto newTexture = m_textures.emplace(path, std::make_shared<RenderEngine::Texture2D>
+			(path, channels, type, textureSlot, filter, wrapMode));
+		if (newTexture.second)
+			return newTexture.first->second;
+		else
+			return nullptr;
+	}
 }
 
 std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::string& textureName)
@@ -433,6 +447,25 @@ std::shared_ptr<RenderEngine::Image2D> ResourceManager::getSharedImage(const std
 	if (!image)
 		image = loadImage(path, path, path);
 	return image;
+}
+
+std::shared_ptr<RenderEngine::Model> ResourceManager::loadModel(const std::string& modelName, const std::string& modelPath)
+{
+	auto model = std::make_shared<RenderEngine::Model>(m_path + "\\" + modelPath);
+	if (model)
+		m_models.insert({ modelName , model });
+	else
+		model = nullptr;
+	return model;
+}
+
+std::shared_ptr<RenderEngine::Model> ResourceManager::getModel(const std::string& modelName)
+{
+	auto it = m_models.find(modelName);
+	if (it != m_models.end())
+		return it->second;
+	LOG("Can't find the model: " + modelName, LOG_TYPE::WAR);
+	return nullptr;
 }
 
 bool ResourceManager::removeSharedImage(const std::string& path)
@@ -554,13 +587,6 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::loadSprite(const std::str
 
 std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> ResourceManager::loadAtlas(const std::string& name, const std::string& path)
 {
-	///Загрузка пикселей в массив байт из файла текстуры
-	const auto& pixels = FILES->getPixelFile(path + ".png");
-	if (!pixels->isLoaded() && !pixels->getData())
-	{
-		LOG("Can't load atlas: " + path, LOG_TYPE::WAR);
-		return{ RenderEngine::eAtlasType::eNone, nullptr };
-	}	///Загрузка пикселей в массив байт из файла текстуры
 
 	const auto& json_doc = getFileString(path + ".json");
 	if (json_doc.empty())
@@ -600,7 +626,7 @@ std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> Re
 	if (static_cast<RenderEngine::eAtlasType>(type) == RenderEngine::eAtlasType::eSprite)
 	{
 		std::shared_ptr<RenderEngine::SpriteAtlas> newAtlas = std::make_shared<RenderEngine::SpriteAtlas>
-			(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE);
+			(path, 4, "texture_diffuse", GL_TEXTURE0, GL_NEAREST, GL_CLAMP_TO_EDGE);
 		newAtlas = std::move(loadSpriteAtlas(std::move(newAtlas), document));
 		if (newAtlas) {
 			auto emp = m_SpriteAtlases.emplace(
@@ -613,7 +639,7 @@ std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> Re
 	if(static_cast<RenderEngine::eAtlasType>(type) == RenderEngine::eAtlasType::eFrames)
 	{
 		std::shared_ptr<RenderEngine::FrameAtlas> newAtlas = std::make_shared<RenderEngine::FrameAtlas>
-			(pixels->getWidth(), pixels->getHeight(), pixels->getData(), pixels->getChanels(), GL_NEAREST, GL_CLAMP_TO_EDGE);
+			(path, 4, "texture_diffuse", GL_TEXTURE0, GL_NEAREST, GL_CLAMP_TO_EDGE);
 		newAtlas = loadFrameAtlas(newAtlas, document);
 		if (newAtlas) {
 			auto emp = m_FrameAtlases.emplace(

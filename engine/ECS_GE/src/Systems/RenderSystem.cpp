@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "Sprite.h"
 #include "Cube.h"
+#include "Model.h"
 
 RenderSystem& RenderSystem::Instanse()
 {
@@ -105,6 +106,36 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const Positi
     }
 
     draw(cube->getVertexArray(), *shader);
+}
+
+
+void RenderSystem::Render(std::shared_ptr<RenderEngine::Model> model, const PositionComponent3& position, const CollisionComponent3& collision)
+{
+    if (!model)
+        return;
+    const auto shader = RES->getShader("assimp_3D");
+    if (!shader)
+    {
+        return;
+    }
+    auto cam_pos = CAMERA->getCameraPosition();
+    CAMERA->UseShader(shader);
+    auto transform_model = getTransformModel(position, collision);
+    //transform_model = glm::rotate(transform_model, glm::radians(static_cast<float>(-90.f)), glm::vec3(1.f, 0.f, 0.f));
+    shader->setMatrix4("modelMatrix", transform_model);
+    shader->setVec3("camera_position", cam_pos.cameraPos);
+    shader->setInt("points_lights_count", LIGHT->getPointsLightsCount());
+    auto& lights = LIGHT->getLights();
+    unsigned point_index = 0;
+    for (const auto& it : lights)
+    {
+        if (it.second->type == RenderEngine::LightType::ePoint)
+            setPointLight(shader, it.second, point_index++);
+        else if (it.second->type == RenderEngine::LightType::eDirection)
+            setDirectionLight(shader, it.second);
+    }
+    for (const auto& it : model->meshes)
+        draw(shader, it);
 }
 
 void RenderSystem::Render(std::shared_ptr<RenderEngine::Light> light)
@@ -448,6 +479,43 @@ float RenderSystem::GetLastTransformAlpha()
     const auto last_transform = LastTransform();
     const float alpha = last_transform.has_value() ? last_transform->alpha : 1.f;
     return alpha;
+}
+
+void RenderSystem::draw(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::Mesh& mesh)
+{
+    if (!shader)
+        return;
+    // bind appropriate textures
+    unsigned int diffuseNr = 1;
+    unsigned int specularNr = 1;
+    unsigned int normalNr = 1;
+    unsigned int heightNr = 1;
+    for (unsigned int i = 0; i < mesh.textures.size(); i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
+        // retrieve texture number (the N in diffuse_textureN)
+        //std::string number;
+        std::string name = mesh.textures[i]->getTextureType();
+        //if (name == "material.diffuse")
+        //    number = std::to_string(diffuseNr++);
+        //else if (name == "material.specular")
+        //    number = std::to_string(specularNr++); // transfer unsigned int to string
+        if (name == "texture_normal" || name == "texture_height")
+            continue;
+ 
+        // now set the sampler to the correct texture unit
+        shader->setInt(std::string("material." + RenderEngine::GetMaterialTextureName(name.c_str())), i);
+        // and finally bind the texture
+        mesh.textures[0]->bind();
+    }
+    shader->setFloat("material.shininess", 16.f);
+    // draw mesh
+    glBindVertexArray(mesh.VAO);
+    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh.indices.size()), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    // always good practice to set everything back to defaults once configured.
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void RenderSystem::drawRect(const int x, const int y, const int width, const int height, ColorComponent collor)

@@ -20,6 +20,8 @@ namespace RenderEngine
 	class Sprite;
 	class ShaderProgram;
 	class Cube;
+	class Model;
+	class Mesh;
 	class LightCube;
 	struct Light;
 }
@@ -64,6 +66,7 @@ public:
 	void Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision = { false });
+	void Render(std::shared_ptr<RenderEngine::Model> model, const PositionComponent3& position, const CollisionComponent3& collision = { false });
 	void Render(std::shared_ptr<RenderEngine::Light> light);
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale = 1.f, const ColorComponent& collor = ColorComponent{0.5f,0.5f,0.5f});
 	void Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& size = { false }, const ColorComponent& collor = ColorComponent{ 0.5f,0.5f,0.5f });
@@ -96,6 +99,8 @@ public:
 	RenderSystem& operator=(const RenderSystem&) = delete;
 	RenderSystem& operator=(RenderSystem&&) = delete;
 private:
+
+	void draw(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::Mesh& mesh);
 	void drawRect(const int x, const int y, const int width, const int height, ColorComponent = {1,0,0,1});
 	void drawForm(const std::vector<FPoint>& points, float scale, ColorComponent = { 1,0,0,1 });
 	void draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::IndexBuffer& indexBuffer, const RenderEngine::ShaderProgram& shader);

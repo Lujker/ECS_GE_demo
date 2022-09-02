@@ -39,6 +39,9 @@ set(ENGINE_INCL_DIR_demo
 		engine/ECS_GE/src/Widgets
 		engine/ECS_GE/external/sabmodules/rapidjson/include
 		engine/ECS_GE/external/sabmodules/freetype/include
+		engine/ECS_GE/external/sabmodules/assimp/include
+		engine/ECS_GE/external/sabmodules/assimp/code
+		engine/ECS_GE/external/sabmodules/assimp/build/include
 )
 
 include_directories(
@@ -59,15 +62,11 @@ target_link_libraries(${PROJ_NAME} ECS_GE)
 set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 if(WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
-	set(ENGINE_DLL
-		${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/freetype.dll
-	)
 	target_link_libraries(${PROJ_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/freetype.lib)
-	foreach(file_i ${ENGINE_DLL})
-		add_custom_command(TARGET ${PROJ_NAME} POST_BUILD
-			COMMAND ${CMAKE_COMMAND}
-			ARGS -E copy ${file_i} $<TARGET_FILE_DIR:${PROJ_NAME}>) 	
-	endforeach()
+	target_link_libraries(${PROJ_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/libs/Windows/assimp-vc142-mt.lib)
+	add_custom_command(TARGET ${PROJ_NAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_directory
+			${CMAKE_SOURCE_DIR}/libs/Windows/dll $<TARGET_FILE_DIR:${PROJ_NAME}>) 	
 endif()
 set_target_properties(${PROJ_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 add_custom_command(TARGET ${PROJ_NAME} POST_BUILD

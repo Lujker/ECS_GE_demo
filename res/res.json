@@ -25,6 +25,11 @@
       "name" :  "light_3D",
       "fragment_path" :  "res/shaders/fLight3D.glsl",
       "vertex_path" :  "res/shaders/vLight3D.glsl"
+    },
+    {
+      "name" :  "assimp_3D",
+      "fragment_path" :  "res/shaders/fAssimpObject.glsl",
+      "vertex_path" :  "res/shaders/vAssimpObject.glsl"
     }
   ]
 }

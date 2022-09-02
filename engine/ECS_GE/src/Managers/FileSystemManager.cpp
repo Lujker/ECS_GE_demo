@@ -2,6 +2,8 @@
 #include "Engine.h"
 #include "LogSystem.h"
 #include "stb_image.h"
+#include <memory>
+#include "Magick++.h"
 
 void FileSystem::setExecutablePath(const std::string& execPath)
 {
@@ -16,11 +18,6 @@ void FileSystem::unloadAllFiles()
 		it.second->unload();
 	}
 	m_files.clear();
-	for (auto &it : m_pixels)
-	{
-		it.second->unload();
-	}
-	m_pixels.clear();
 }
 
 std::string FileSystem::getFormatedPath(const std::string& path)
@@ -46,27 +43,6 @@ std::shared_ptr<FileSystem::File> FileSystem::getFile(std::string path)
 	const auto& f = m_files.find(getFormatedPath(path));
 	if (f == m_files.end())
 		return loadFile(path);
-	return f->second;
-}
-
-std::shared_ptr<FileSystem::Pixels> FileSystem::loadPixelFile(std::string path)
-{
-	if (!path.empty())
-	{
-		const auto& f = m_pixels.emplace(getFormatedPath(path), std::make_shared<Pixels>(getFormatedPath(path)));
-		if (f.second)
-			return f.first->second;
-	}
-	return nullptr;
-}
-
-std::shared_ptr<FileSystem::Pixels> FileSystem::getPixelFile(std::string path)
-{
-	if (path.empty())
-		return nullptr;
-	const auto& f = m_pixels.find(getFormatedPath(path));
-	if (f == m_pixels.end())
-		return loadPixelFile(path);
 	return f->second;
 }
 
@@ -126,50 +102,5 @@ void FileSystem::File::load(const std::string& path)
 void FileSystem::File::unload()
 {
 	m_buffer.clear();
-	isLoad = false;
-}
-
-FileSystem::Pixels::Pixels(const std::string& path)
-{
-	load(path);
-}
-
-FileSystem::Pixels::~Pixels()
-{
-	unload();
-}
-
-const unsigned char* FileSystem::Pixels::load(const std::string& path)
-{
-	try
-	{
-		this->path = path;
-		unload();
-		stbi_set_flip_vertically_on_load(true); ///Загружать текстуры в порядке OpenGL
-		auto pix = stbi_load(this->path.c_str(), &width, &height, &chanel, 0);
-		if (!pix)
-		{
-			LOG(std::string("Can't load image: ") +this->path, LOG_TYPE::WAR);
-			return nullptr;
-		}
-		isLoad = true;
-		pixels = pix;
-		return pixels;
-	}
-	catch (const std::bad_alloc& exep)
-	{
-		LOG(std::string("Failed catch bad_alloc: ") + exep.what(), LOG_TYPE::WAR);
-	}
-	catch (const std::exception& exep)
-	{
-		LOG(std::string("Failed catch exeption: ") + exep.what(), LOG_TYPE::WAR);
-	}
-	return nullptr;
-}
-
-void FileSystem::Pixels::unload()
-{
-	if (pixels && isLoad)
-		stbi_image_free(pixels);
 	isLoad = false;
 }

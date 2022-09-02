@@ -36,12 +36,11 @@ namespace RenderEngine
 	{
 	public:
 		using frames_iterator = std::map<std::string, SubTexture2D>::const_iterator;
-		FrameAtlas(const GLuint width, GLuint heigh,
-			const unsigned char* data,
-			const unsigned int channels,
+		FrameAtlas(const std::string& path,
+			const unsigned int channels, const std::string& type = "texture_diffuse",
+			const unsigned int textureSlot = GL_TEXTURE0,
 			const GLenum filter = GL_LINEAR,
-			const GLenum wrapMode = GL_CLAMP_TO_EDGE,
-			const unsigned int textureSlot = GL_TEXTURE0);
+			const GLenum wrapMode = GL_CLAMP_TO_EDGE);
 		~FrameAtlas() override = default;
 		virtual void addFrame(std::string name, const SubTexture2D& sub_texture);
 		virtual const std::map<std::string, SubTexture2D>& getFrames() const;
@@ -57,12 +56,11 @@ namespace RenderEngine
 		using animations_frame = std::pair<bool, std::list<SubTexture2D>>;
 		using frames_iterator = std::list<SubTexture2D>::const_iterator;
 		using animations_iterator = std::map<std::string, animations_frame>::const_iterator;
-		SpriteAtlas(const GLuint width, GLuint heigh,
-			const unsigned char* data,
-			const unsigned int channels,
+		SpriteAtlas(const std::string& path,
+			const unsigned int channels, const std::string& type = "texture_diffuse",
+			const unsigned int textureSlot = GL_TEXTURE0,
 			const GLenum filter = GL_LINEAR,
-			const GLenum wrapMode = GL_CLAMP_TO_EDGE,
-			const unsigned int textureSlot = GL_TEXTURE0);
+			const GLenum wrapMode = GL_CLAMP_TO_EDGE);
 		~SpriteAtlas() override = default;
 		virtual void addAnimation(std::string name, const animations_frame& anim);
 		virtual const animations_frame& getAnimation(std::string name);

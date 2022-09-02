@@ -23,6 +23,7 @@ namespace RenderEngine
 	class Image2D;
 	class Sprite;
 	class SpriteAtlas;
+	class Model;
 }
 
 
@@ -36,10 +37,18 @@ public:
 	std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath);
 	std::shared_ptr<RenderEngine::ShaderProgram> getShader(const std::string& shaderName);
 	std::shared_ptr<RenderEngine::Texture2D> loadTexture(const std::string& textureName, const std::string& texturePath);
+	std::shared_ptr<RenderEngine::Texture2D> loadTexture(const std::string& path,
+		const unsigned int channels,
+		const std::string& type = "texture_diffuse",
+		const unsigned int textureSlot = GL_TEXTURE0,
+		const GLenum filter = GL_LINEAR,
+		const GLenum wrapMode = GL_CLAMP_TO_EDGE);
 	std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
 	std::shared_ptr<RenderEngine::Image2D> loadImage(const std::string& imageName, const std::string& textureName, const std::string& texturePath);
 	std::shared_ptr<RenderEngine::Image2D> getImage(const std::string& imageName);
 	std::shared_ptr<RenderEngine::Image2D> getSharedImage(const std::string& path);
+	std::shared_ptr<RenderEngine::Model> loadModel(const std::string& modelName, const std::string& modelPath);
+	std::shared_ptr<RenderEngine::Model> getModel(const std::string& modelName);
 	bool removeSharedImage(const std::string& path);
 
 	std::pair<RenderEngine::eAtlasType, std::shared_ptr<RenderEngine::Texture2D>> loadAtlas(const std::string& name, const std::string& path);
@@ -59,6 +68,7 @@ public:
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteAtlas>> spriteAtlasMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Image2D>> imageMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> spriteMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Model>> modelMap;
 	typedef std::vector<std::vector<std::string>> levels;
 
 	ResourceManager(const ResourceManager&) = delete;
@@ -88,5 +98,6 @@ private:
 	levels m_levels;
 	imageMap m_images;
 	spriteMap m_sprites;
+	modelMap m_models;
 	std::string m_path;
 };

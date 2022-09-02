@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "GlobalWidget.h"
 #include <Components/Cube.h>
+#include "Model.h"
 
 struct CubeObject
 {
@@ -26,5 +27,6 @@ public:
 	void KeyUnpress(const int& key) override;
 private:
 	GameObjectList m_objects;
+	std::shared_ptr<RenderEngine::Model> model;
 	std::list<CubeObject> m_cubs;
 };

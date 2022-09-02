@@ -1,13 +1,74 @@
 #include "texture2D.h"
 #include <gl/GL.h>
+#include "Magick++.h"
+#include "Engine.h"
+#include "LogSystem.h"
 
-RenderEngine::Texture2D::Texture2D(const GLuint width,	GLuint heigh, 
-	const unsigned char* data, 
+RenderEngine::Texture2D::Texture2D(const std::string& path,
 	const unsigned int channels,
+	const std::string& type,
+	const unsigned int textureSlot,
 	const GLenum filter, 
-	const GLenum wrapMode,
-	const unsigned int textureSlot):
-	m_width(width), m_height(heigh), m_slot(textureSlot)
+	const GLenum wrapMode): m_slot(textureSlot), m_type(type), m_path(path)
+{
+	switch (channels)
+	{
+	case 4:
+		m_mode = GL_RGBA;
+		break;
+	case 3:
+		m_mode = GL_RGB;
+		break;
+	case 1:
+		m_mode = GL_RED;
+		break;
+	default:
+		m_mode = GL_RGBA;
+		break;
+	}
+	std::string filename = std::string(path);
+	Magick::Image pImage;
+	Magick::Blob blob;
+	try {
+		pImage.read(filename);
+		pImage.write(&blob, channels == 4 ? "RGBA" : "RGB");
+	}
+	catch (Magick::Error& Error)
+	{
+		LOG(std::string("Error loading texture: " + filename + " : " + Error.what()));
+	}
+	m_width = pImage.columns(); m_height = pImage.rows();
+	//!генерируем текстуру под новым id и делаем ее активным в opengl движке
+	glGenTextures(1, &m_ID);
+	//!Указываем слот в котром должна быть текстура
+	glActiveTexture(m_slot);
+	bind();
+	//загружаеми данные для активной тектсуры
+	glTexImage2D(GL_TEXTURE_2D, 0, m_mode, pImage.columns(), pImage.rows(), 0, m_mode, GL_UNSIGNED_BYTE, blob.data());
+	//! wrapMode указывает параметр как именно заполнять координаты за гранциами размера текстуры например
+	//!CLAMP_TO_EDGE повторяет последний пиксель текстуры на гранциах выходящих за ее размеры
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
+	//! min_filter выбиоает фильтрацию когда пикселей в текстуре меньше чем нужно для указанных размеров
+	//! например на отсутвующие пиксели накладывается среднее значение между соседними при GL_LINEAR
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+	//! max_filter таже проблема при отдалении при большом отдалении нужно избегать артефактов и наложения пикселей
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+	//! генерируем все уровни minmap
+	glGenerateMipmap(GL_TEXTURE_2D);
+	//Очищаем текущий слот текстуры от нашей текстуры
+	glBindTexture(GL_TEXTURE_2D, 0);
+	is_init = true;
+}
+
+RenderEngine::Texture2D::Texture2D(const GLuint width, GLuint heigh,
+	const unsigned char* data,
+	const unsigned int channels,
+	const std::string& type,
+	const unsigned int textureSlot,
+	const GLenum filter,
+	const GLenum wrapMode) :
+	m_width(width), m_height(heigh), m_slot(textureSlot), m_type(type)
 {
 	switch (channels)
 	{
@@ -44,7 +105,8 @@ RenderEngine::Texture2D::Texture2D(const GLuint width,	GLuint heigh,
 	//! генерируем все уровни minmap
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//Очищаем текущий слот текстуры от нашей текстуры
-	glBindTexture(GL_TEXTURE_2D, 0); 
+	glBindTexture(GL_TEXTURE_2D, 0);
+	is_init = true;
 }
 
 RenderEngine::Texture2D::Texture2D(Texture2D&& texture2D) noexcept :
@@ -65,7 +127,7 @@ RenderEngine::Texture2D& RenderEngine::Texture2D::operator=(Texture2D&& texture2
 	return *this;
 }
 
-void RenderEngine::Texture2D::bind() const
+void RenderEngine::Texture2D::bind(int iTextureUnit) const
 {
 	glActiveTexture(m_slot);
 	glBindTexture(GL_TEXTURE_2D, m_ID); //! установка текстуры под данным id как текущую текстуру в движке

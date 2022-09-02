@@ -2,11 +2,11 @@
 
 namespace RenderEngine
 {
-	SpriteAtlas::SpriteAtlas(const GLuint width, GLuint heigh, 
-		const unsigned char* data, const unsigned int channels, 
-		const GLenum filter, const GLenum wrapMode, 
-		const unsigned int textureSlot) :
-	Texture2D(width, heigh, data, channels, filter, wrapMode, textureSlot)
+	SpriteAtlas::SpriteAtlas(const std::string& path, const unsigned int channels,
+		const std::string& type,
+		const unsigned int textureSlot,
+		const GLenum filter, const GLenum wrapMode) :
+	Texture2D(path, channels, type, textureSlot, filter, wrapMode)
 	{}
 
 	//const SubTexture2D& SpriteAtlas::addSubTexture(std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV)
@@ -34,11 +34,12 @@ namespace RenderEngine
 		return def_anim;
 	}
 
-	FrameAtlas::FrameAtlas(const GLuint width, GLuint heigh, 
-		const unsigned char* data, const unsigned int channels, 
-		const GLenum filter, const GLenum wrapMode, 
-		const unsigned int textureSlot) :
-		Texture2D(width, heigh, data, channels, filter, wrapMode, textureSlot)
+	FrameAtlas::FrameAtlas(const std::string& path,
+							const unsigned int channels,
+							const std::string& type,
+							const unsigned int textureSlot,
+							const GLenum filter, const GLenum wrapMode) :
+		Texture2D(path, channels, type, textureSlot, filter, wrapMode)
 	{
 	}
 	void FrameAtlas::addFrame(std::string name, const SubTexture2D& sub_texture)

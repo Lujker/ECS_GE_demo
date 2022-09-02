@@ -49,6 +49,7 @@ void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
  //       it->Init();
  //       PHYSICS->Registrate(it);
  //   }
+    model = RES->loadModel("res/models/Wolf/Wolf.obj", "res/models/Wolf/Wolf.obj");
 
     auto cube = std::make_shared<RenderEngine::Cube>(
         RES->loadTexture("res/images/container2.png", "res/images/container2.png"), 
@@ -73,11 +74,11 @@ void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
     light_1->specular = { 1.0f, 1.0f, 1.0f };
 
     auto worldLight = std::make_shared<RenderEngine::DirectionLight>();
-    worldLight->lightCube.setColor({ 0.2f, 0.2f, 1.0f });
+    worldLight->lightCube.setColor({ 1.0f, 1.0f, 1.0f });
     worldLight->direction = {1.0f, -1.0f, -0.2f };
     worldLight->size = { 10.f, 10.f, 10.f };
-    worldLight->ambient = { 0.2f, 0.2f, 0.2f };
-    worldLight->diffuse = { 0.5f, 0.5f, 0.5f };
+    worldLight->ambient = { 1.0f, 1.0f, 1.0f };
+    worldLight->diffuse = { 1.0f, 1.0f, 1.0f };
     worldLight->specular = { 1.0f, 1.0f, 1.0f };
 
     LIGHT->pushLight("first", light);
@@ -101,6 +102,8 @@ void SandboxWindow::Draw()
     }
     for (const auto& it : m_cubs)
         RENDER->Render(it.cub, it.cub_pos, it.cub_size);
+    if (model)
+        RENDER->Render(model, { 100.f, 0.f, 0.f }, { 5.f, 5.f, 5.f });
 }
 
 void SandboxWindow::Update(float deltaTime)
