@@ -24,6 +24,7 @@ namespace RenderEngine
 	class Mesh;
 	class LightCube;
 	struct Light;
+	class FrameBuffer;
 }
 
 struct Transform2D
@@ -76,8 +77,11 @@ public:
 	void setClearColor(float r, float g, float b, float alpha);
 	void setBlendMode(bool on);
 	void setDepthTest(bool on);
+	void setCullFace(bool on, int mode = GL_BACK, int gl_dict = GL_CCW);
 	void clear();
+	void PostRender();
 	void setMaterial(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::Material& material);
+	void setMaterial(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::TextureMaterial& material);
 	void setPointLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light, unsigned index);
 	void setDirectionLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light);
 	void setViewport(unsigned int width, unsigned int height, unsigned int leftOffset = 0, unsigned int bottomOffset = 0);
@@ -93,6 +97,8 @@ public:
 	void ClearGlobalTransform();
 	std::optional<Transform2D> LastTransform();
 	float GetLastTransformAlpha();
+	bool isEnablePostProc();
+	void setEnablePostProc(bool enable);
 
 	RenderSystem(const RenderSystem&) = delete;
 	RenderSystem(RenderSystem&&) = delete;
@@ -105,7 +111,11 @@ private:
 	void drawForm(const std::vector<FPoint>& points, float scale, ColorComponent = { 1,0,0,1 });
 	void draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::IndexBuffer& indexBuffer, const RenderEngine::ShaderProgram& shader);
 	void draw(const RenderEngine::VertexArray& vertexArray, const RenderEngine::ShaderProgram& shader);
+	void init();
 
+	std::shared_ptr<RenderEngine::FrameBuffer> m_framebuffer = nullptr;
+	ColorComponent clearCollorComponent = { 1.f,1.f,1.f,1.f };
+	bool isEnablePostProcessing = false;
 	std::stack<Transform2D> m_accumTransfStack;
 	RenderSystem() = default;
 	~RenderSystem() = default;

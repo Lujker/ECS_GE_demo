@@ -20,7 +20,8 @@ set(ENGINE_SRC
 	src/Premitives/Render/VertexArray.cpp 
 	src/Premitives/Render/VertexBufferLayout.cpp
 	src/Premitives/Render/ShaderProgram.cpp 
-	src/Premitives/Render/VertexBuffer.cpp  
+	src/Premitives/Render/VertexBuffer.cpp
+	src/Premitives/Render/FrameBuffer.cpp 
 	src/Premitives/Render/texture2D.cpp
 	src/Premitives/Render/Material.cpp
 	src/Premitives/Render/Mesh.cpp
@@ -71,7 +72,8 @@ set(ENGINE_INCLUDE
 	src/Premitives/Render/VertexArray.h  
 	src/Premitives/Render/VertexBufferLayout.h 
 	src/Premitives/Render/ShaderProgram.h 
-	src/Premitives/Render/VertexBuffer.h    
+	src/Premitives/Render/VertexBuffer.h
+	src/Premitives/Render/FrameBuffer.h    
 	src/Premitives/Render/texture2D.h
 	src/Premitives/Render/Material.h
 	src/Premitives/Render/Mesh.h

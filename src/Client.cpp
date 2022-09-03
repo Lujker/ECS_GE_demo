@@ -49,6 +49,7 @@ bool Client::init()
 	if (!InitEngine())
 		return false;
     m_isInit = true;
+    RENDER->setEnablePostProc(true);
     WIDGET->SetNextWidget(SandboxWindow::Create());
     return true;
 }
@@ -96,6 +97,7 @@ bool Client::deltaLoop()
             RENDER->clear();
             WIDGET->Draw();
             LIGHT->Draw();
+            RENDER->PostRender();
             drawDebug();
             m_pAppEngine->SwapBuffers();
         }

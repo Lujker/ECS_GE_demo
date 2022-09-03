@@ -30,6 +30,11 @@
       "name" :  "assimp_3D",
       "fragment_path" :  "res/shaders/fAssimpObject.glsl",
       "vertex_path" :  "res/shaders/vAssimpObject.glsl"
+    },
+    {
+      "name" :  "post_processing3D",
+      "fragment_path" :  "res/shaders/fPostProcessing.glsl",
+      "vertex_path" :  "res/shaders/vPostProcessing.glsl"
     }
   ]
 }

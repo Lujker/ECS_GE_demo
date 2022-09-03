@@ -91,6 +91,7 @@ bool Engine::Init(const std::string& init_path, ServiceLocator* service_locator)
     RENDER->setClearColor(0, 0.2f, 0.2f, 1);
     RENDER->setBlendMode(true);
     RENDER->setDepthTest(true);
+    RENDER->setCullFace(true);
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     if (!RES->loadResJSON("res/res.json"))
     {

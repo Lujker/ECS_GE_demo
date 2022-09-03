@@ -10,6 +10,7 @@
 #include "Sprite.h"
 #include "Cube.h"
 #include "Model.h"
+#include "FrameBuffer.h"
 
 RenderSystem& RenderSystem::Instanse()
 {
@@ -83,17 +84,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const Positi
     shader->setMatrix4("modelMatrix", getTransformModel(position, collision));
     shader->setVec3("camera_position", cam_pos.cameraPos);
     shader->setInt("points_lights_count", LIGHT->getPointsLightsCount());
-    if (cub_material.m_pTexture)
-    {
-        shader->setInt("material.diffuse", cub_material.m_pTexture->getSlot());
-        cub_material.m_pTexture->bind();
-    }
-    if (cub_material.m_specularMap)
-    {
-        shader->setInt("material.specular", cub_material.m_specularMap->getSlot());
-        cub_material.m_specularMap->bind();
-    }
-    shader->setFloat("material.shininess", cub_material.shininess);
+    setMaterial(shader, cube->getMaterial());
     //setMaterial(shader, material);
     auto &lights = LIGHT->getLights();
     unsigned point_index = 0;
@@ -253,6 +244,7 @@ void RenderSystem::Render(const CollisionComponent& collision, const PositionCom
 
 void RenderSystem::setClearColor(float r, float g, float b, float alpha)
 {
+    clearCollorComponent = { r, g, b, alpha };
     glClearColor(r, g, b, alpha);
 }
 
@@ -281,9 +273,42 @@ void RenderSystem::setDepthTest(bool on)
     }
 }
 
+void RenderSystem::setCullFace(bool on, int mode, int gl_dict)
+{
+    if (on)
+    {
+        glEnable(GL_CULL_FACE);
+        glCullFace(mode);
+        glFrontFace(gl_dict);
+    }
+    else
+    {
+        glDisable(GL_CULL_FACE);
+    }
+
+}
+
 void RenderSystem::clear()
 {
+    if (isEnablePostProc())
+    {
+        m_framebuffer->bind();
+        glEnable(GL_DEPTH_TEST);
+    }
+    glClearColor(clearCollorComponent.getR(), clearCollorComponent.getG(), clearCollorComponent.getB(), clearCollorComponent.getAlpha());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void RenderSystem::PostRender()
+{
+    if (!isEnablePostProc())
+        return;
+    m_framebuffer->unbind();
+    auto shader = RES->getShader("post_processing3D");
+    shader->use();
+    glDisable(GL_DEPTH_TEST);
+    shader->setInt("screenTexture", 0);
+    m_framebuffer->draw();
 }
 
 void RenderSystem::setMaterial(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::Material& material)
@@ -294,8 +319,24 @@ void RenderSystem::setMaterial(const std::shared_ptr<RenderEngine::ShaderProgram
     shader->setFloat("material.shininess", material.shininess);
 }
 
+void RenderSystem::setMaterial(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::TextureMaterial& material)
+{
+    if (material.m_pTexture)
+    {
+        shader->setInt("material.diffuse", material.m_pTexture->getSlot());
+        material.m_pTexture->bind();
+    }
+    if (material.m_specularMap)
+    {
+        shader->setInt("material.specular", material.m_specularMap->getSlot());
+        material.m_specularMap->bind();
+    }
+    shader->setFloat("material.shininess", material.shininess);
+}
+
 void RenderSystem::setPointLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light, unsigned index)
 {
+    //!set default 
     PositionComponent3  l_pos{ 1.f, 1.f, 1.f };
     ColorComponent      l_col{ 1.f,1.f,1.f,1.f };
     Vector3             l_ambient{ 1.f, 1.f, 1.f };
@@ -304,7 +345,7 @@ void RenderSystem::setPointLight(const std::shared_ptr<RenderEngine::ShaderProgr
     float               constant = 1.0f;
     float               linear = 0.0014f;
     float               quadratic = 0.000007f;
-
+    //! read from struct 
     if (light)
     {
         l_col = light->lightCube.getColor();
@@ -319,7 +360,7 @@ void RenderSystem::setPointLight(const std::shared_ptr<RenderEngine::ShaderProgr
         l_diffuse = light->diffuse;
         l_specular = light->specular;
     }
-
+    //! set to shader
     shader->setVec4(std::string{ "point_lights[" } + std::to_string(index) + "].color", { l_col.getR(), l_col.getG(), l_col.getB(), l_col.getAlpha() });
     shader->setVec3(std::string{ "point_lights[" } + std::to_string(index) + "].position", { l_pos.getPosition().mX, l_pos.getPosition().mY, l_pos.getPosition().mZ });
     //!Свечение
@@ -334,13 +375,13 @@ void RenderSystem::setPointLight(const std::shared_ptr<RenderEngine::ShaderProgr
 
 void RenderSystem::setDirectionLight(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const std::shared_ptr<RenderEngine::Light>& light)
 {
-
+    //!set default 
     Vector3  l_direc{ 1.f, 1.f, 1.f };
     ColorComponent      l_col{ 1.f,1.f,1.f,1.f };
     Vector3             l_ambient{ 1.f, 1.f, 1.f };
     Vector3             l_diffuse{ 1.f, 1.f, 1.f };
     Vector3             l_specular{ 1.f, 1.f, 1.f };
-
+    //! read from struct
     if (light)
     {
         l_col = light->lightCube.getColor();
@@ -352,9 +393,10 @@ void RenderSystem::setDirectionLight(const std::shared_ptr<RenderEngine::ShaderP
             l_direc = dynamic_cast<RenderEngine::DirectionLight*>(light.get())->direction;
         }
     }
-
+    //! set to shader
     shader->setVec4("dirLight.color", { l_col.getR(), l_col.getG(), l_col.getB(), l_col.getAlpha() });
     shader->setVec3("dirLight.direction", { l_direc.x, l_direc.y, l_direc.z });
+    //!Свечение
     shader->setVec3("dirLight.ambient", { l_ambient.x, l_ambient.y, l_ambient.z });
     shader->setVec3("dirLight.diffuse", { l_diffuse.x, l_diffuse.y, l_diffuse.z });
     shader->setVec3("dirLight.specular", { l_specular.x, l_specular.y, l_specular.z });
@@ -479,6 +521,25 @@ float RenderSystem::GetLastTransformAlpha()
     const auto last_transform = LastTransform();
     const float alpha = last_transform.has_value() ? last_transform->alpha : 1.f;
     return alpha;
+}
+
+bool RenderSystem::isEnablePostProc()
+{
+    return isEnablePostProcessing && m_framebuffer;
+}
+
+void RenderSystem::setEnablePostProc(bool enable)
+{
+    if (!isEnablePostProcessing && enable)
+    {
+        isEnablePostProcessing = enable;
+        init();
+    }
+    else if (isEnablePostProcessing && !enable)
+    {
+        isEnablePostProcessing = enable;
+        m_framebuffer.reset();
+    }
 }
 
 void RenderSystem::draw(const std::shared_ptr<RenderEngine::ShaderProgram>& shader, const RenderEngine::Mesh& mesh)
@@ -644,6 +705,15 @@ void RenderSystem::draw(const RenderEngine::VertexArray& vertexArray, const Rend
     vertexArray.bind();
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void RenderSystem::init()
+{
+    if (isEnablePostProcessing)
+    {
+        m_framebuffer.reset();
+        m_framebuffer = std::make_shared<RenderEngine::FrameBuffer>(CAMERA->getActiveWindowRect().mWidth, CAMERA->getActiveWindowRect().mHeight);
+    }
 }
 
 Transform2D::Transform2D(float transX, float transY, float scaleX, float scaleY, float rotate, float alpha):

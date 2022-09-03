@@ -44,6 +44,7 @@ void ServiceLocator::init(const std::string& init_path)
 	p_resource_manager->setExecutablePath(init_path);
 	p_font_manager->init(init_path);
 	p_light_manager->init();
+	p_render_system->init();
 }
 
 void ServiceLocator::postInit(GLFWwindow* main_window)

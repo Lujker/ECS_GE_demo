@@ -139,8 +139,8 @@ namespace RenderEngine
 		//! индексы расположений точек (индекс в массиве вертексов) для двух треугольников
 		constexpr GLuint indexes[] =
 		{
-			0, 1, 2,
-			2, 3, 0
+			0, 3, 2,
+			2, 1, 0
 		};
 
 		m_vertexCoordsBuffer.init(&vertex_coords, sizeof(vertex_coords));
