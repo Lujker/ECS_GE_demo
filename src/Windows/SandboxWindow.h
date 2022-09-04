@@ -28,5 +28,6 @@ public:
 private:
 	GameObjectList m_objects;
 	std::shared_ptr<RenderEngine::Model> model;
+	std::shared_ptr<RenderEngine::SkyBox> sky_box;
 	std::list<CubeObject> m_cubs;
 };

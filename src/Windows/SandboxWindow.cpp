@@ -11,6 +11,7 @@
 #include "ResourceManager.h"
 #include "WidgetsManager.h"
 #include "LightManager.h"
+#include "SkyBox.h"
 
 std::shared_ptr<SandboxWindow> SandboxWindow::Create()
 {
@@ -49,6 +50,16 @@ void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
  //       it->Init();
  //       PHYSICS->Registrate(it);
  //   }
+    std::vector < std::string> TexturesSkyBox
+    {
+       "res/images/skybox/right.jpg",
+        "res/images/skybox/left.jpg",
+        "res/images/skybox/top.jpg",
+        "res/images/skybox/bottom.jpg",
+        "res/images/skybox/front.jpg",
+        "res/images/skybox/back.jpg",
+    };
+    sky_box = std::make_shared<RenderEngine::SkyBox>(RES->loadTexture3("SkyBoxTexture", TexturesSkyBox));
     model = RES->loadModel("res/models/Wolf/Wolf.obj", "res/models/Wolf/Wolf.obj");
 
     auto cube = std::make_shared<RenderEngine::Cube>(
@@ -103,7 +114,9 @@ void SandboxWindow::Draw()
     for (const auto& it : m_cubs)
         RENDER->Render(it.cub, it.cub_pos, it.cub_size);
     if (model)
-        RENDER->Render(model, { 100.f, 0.f, 0.f }, { 5.f, 5.f, 5.f });
+        RENDER->Render(model, { 100.f, 0.f, 0.f }, { 25.f, 25.f, 25.f });
+    if (sky_box)
+        RENDER->Render(sky_box);
 }
 
 void SandboxWindow::Update(float deltaTime)

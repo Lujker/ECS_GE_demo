@@ -23,6 +23,7 @@ set(ENGINE_SRC
 	src/Premitives/Render/VertexBuffer.cpp
 	src/Premitives/Render/FrameBuffer.cpp 
 	src/Premitives/Render/texture2D.cpp
+	src/Premitives/Render/texture3D.cpp
 	src/Premitives/Render/Material.cpp
 	src/Premitives/Render/Mesh.cpp
 	src/Premitives/Render/Model.cpp
@@ -36,6 +37,7 @@ set(ENGINE_SRC
 	src/Components/Collor.cpp
 	src/Components/Sprite.cpp
 	src/Components/DisplayString.cpp
+	src/Components/SkyBox.cpp
 	src/Systems/RenderSystem.cpp
 	src/Systems/UpdateSystem.cpp
 	src/Systems/CollisionSystem.cpp
@@ -75,6 +77,7 @@ set(ENGINE_INCLUDE
 	src/Premitives/Render/VertexBuffer.h
 	src/Premitives/Render/FrameBuffer.h    
 	src/Premitives/Render/texture2D.h
+	src/Premitives/Render/texture3D.h
 	src/Premitives/Render/Material.h
 	src/Premitives/Render/Mesh.h
 	src/Premitives/Render/Model.h
@@ -89,6 +92,7 @@ set(ENGINE_INCLUDE
 	src/Components/Collor.h 
 	src/Components/Sprite.h
 	src/Components/DisplayString.h
+	src/Components/SkyBox.h
 	src/Systems/ISystem.h
 	src/Systems/RenderSystem.h
 	src/Systems/UpdateSystem.h

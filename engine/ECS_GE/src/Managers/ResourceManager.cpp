@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include "ShaderProgram.h"
 #include "texture2D.h"
+#include "texture3D.h"
 #include "Atlas2D.h"
 #include "Image.h"
 #include "Sprite.h"
@@ -414,6 +415,37 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 {
 	auto it = m_textures.find(textureName);
 	if (it != m_textures.end())
+		return it->second;
+	LOG("Can't find the texture: " + textureName, LOG_TYPE::WAR);
+	return nullptr;
+}
+
+std::shared_ptr<RenderEngine::Texture3D> ResourceManager::loadTexture3(const std::string& textureName, std::vector<std::string> texturesPath)
+{
+	for (auto& it : texturesPath)
+	{
+		it = m_path + "\\" + it;
+	}
+	const auto newTexture3 = m_textures3.emplace(textureName, std::make_shared<RenderEngine::Texture3D>
+		(texturesPath, 4, GL_NEAREST, GL_CLAMP_TO_EDGE));
+	if (newTexture3.second)
+		return newTexture3.first->second;
+	return getTexture3(textureName);
+}
+
+std::shared_ptr<RenderEngine::Texture3D> ResourceManager::loadTexture3(const std::string& directory_path, const RenderEngine::eImageFormat& format, const unsigned int channels, const GLenum filter, const GLenum wrapMode)
+{
+	const auto newTexture3 = m_textures3.emplace(directory_path, std::make_shared<RenderEngine::Texture3D>
+		(m_path + "\\" + directory_path, format, channels, filter, wrapMode));
+	if (newTexture3.second)
+		return newTexture3.first->second;
+	return getTexture3(directory_path);
+}
+
+std::shared_ptr<RenderEngine::Texture3D> ResourceManager::getTexture3(const std::string& textureName)
+{
+	auto it = m_textures3.find(textureName);
+	if (it != m_textures3.end())
 		return it->second;
 	LOG("Can't find the texture: " + textureName, LOG_TYPE::WAR);
 	return nullptr;

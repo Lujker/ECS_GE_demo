@@ -80,6 +80,8 @@ public:
 	FRect getActiveWindowRect();
 	FRect getWorldRect();
 	const glm::mat4 getOrthMatrix();
+	glm::mat4 getViewMatrix();
+	glm::mat4 getProjectionMatrix();
 	bool windowOnFocus();
 	[[nodiscard]] double	getNearLayer() const { return m_near; }
 	[[nodiscard]] double	getFarLayer() const { return m_far; }

@@ -11,6 +11,8 @@
 #include "Cube.h"
 #include "Model.h"
 #include "FrameBuffer.h"
+#include "SkyBox.h"
+#include "texture3D.h"
 
 RenderSystem& RenderSystem::Instanse()
 {
@@ -18,7 +20,7 @@ RenderSystem& RenderSystem::Instanse()
 	return render_system;
 }
 
-void RenderSystem::Render(std::shared_ptr<RenderEngine::Sprite> sprite, const PositionComponent& position,
+void RenderSystem::Render(const std::shared_ptr<RenderEngine::Sprite>& sprite, const PositionComponent& position,
 	const CollisionComponent& collision)
 {
     if (!sprite)
@@ -44,7 +46,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Sprite> sprite, const Po
     draw(sprite->getVertexArray(), sprite->getIndexCoordsBuffer(), *shader);
 }
 
-void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const PositionComponent& position, const CollisionComponent& collision)
+void RenderSystem::Render(const std::shared_ptr<RenderEngine::Image2D>& image, const PositionComponent& position, const CollisionComponent& collision)
 {
     if(!image)
         return;
@@ -69,7 +71,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Image2D> image, const Po
 	draw(image->getVertexArray(), image->getIndexCoordsBuffer(), *shader);
 }
 
-void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const PositionComponent3& position, const CollisionComponent3& collision)
+void RenderSystem::Render(const std::shared_ptr<RenderEngine::Cube>& cube, const PositionComponent3& position, const CollisionComponent3& collision)
 {
     if (!cube)
         return;
@@ -100,7 +102,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Cube> cube, const Positi
 }
 
 
-void RenderSystem::Render(std::shared_ptr<RenderEngine::Model> model, const PositionComponent3& position, const CollisionComponent3& collision)
+void RenderSystem::Render(const std::shared_ptr<RenderEngine::Model>& model, const PositionComponent3& position, const CollisionComponent3& collision)
 {
     if (!model)
         return;
@@ -129,7 +131,7 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Model> model, const Posi
         draw(shader, it);
 }
 
-void RenderSystem::Render(std::shared_ptr<RenderEngine::Light> light)
+void RenderSystem::Render(const std::shared_ptr<RenderEngine::Light>& light)
 {
     if (!light || light->type != RenderEngine::LightType::ePoint)
         return;
@@ -145,7 +147,26 @@ void RenderSystem::Render(std::shared_ptr<RenderEngine::Light> light)
     draw(light->lightCube.getVertexArray(), *shader);
 }
 
-void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, float scale, const ColorComponent& collor)
+
+void RenderSystem::Render(const std::shared_ptr<RenderEngine::SkyBox>& skyBox)
+{
+    glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+    const auto shader = RES->getShader("sky_box3D");
+    if (!shader || !skyBox)
+    {
+        return;
+    }
+    shader->use();
+    shader->setMatrix4("projectionMatrix", CAMERA->getProjectionMatrix());
+    shader->setMatrix4("viewMatrix", glm::mat4(glm::mat3(CAMERA->getViewMatrix())));
+
+    shader->setInt("skybox", 0);
+    skyBox->getTexture3D()->bind();
+    draw(skyBox->getVertexArray(), *shader);
+    glDepthFunc(GL_LESS); // set depth function back to default
+}
+
+void RenderSystem::Render(const std::shared_ptr<DisplayString>& string, const PositionComponent& position, float scale, const ColorComponent& collor)
 {
     if (!string || string->isEmpty())
         return;
@@ -177,7 +198,7 @@ void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionC
     }
 }
 
-void RenderSystem::Render(std::shared_ptr<DisplayString> string, const PositionComponent& position, const CollisionComponent& size, const ColorComponent& collor)
+void RenderSystem::Render(const std::shared_ptr<DisplayString>& string, const PositionComponent& position, const CollisionComponent& size, const ColorComponent& collor)
 {
     if (!string || string->isEmpty())
         return;

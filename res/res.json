@@ -35,6 +35,11 @@
       "name" :  "post_processing3D",
       "fragment_path" :  "res/shaders/fPostProcessing.glsl",
       "vertex_path" :  "res/shaders/vPostProcessing.glsl"
+    },
+    {
+      "name" :  "sky_box3D",
+      "fragment_path" :  "res/shaders/fSkyBox.glsl",
+      "vertex_path" :  "res/shaders/vSkyBox.glsl"
     }
   ]
 }

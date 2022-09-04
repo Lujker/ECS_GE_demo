@@ -49,7 +49,7 @@ bool Client::init()
 	if (!InitEngine())
 		return false;
     m_isInit = true;
-    RENDER->setEnablePostProc(true);
+    //RENDER->setEnablePostProc(true);
     WIDGET->SetNextWidget(SandboxWindow::Create());
     return true;
 }

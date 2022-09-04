@@ -117,18 +117,9 @@ void CameraManager::UseShader(const std::shared_ptr<RenderEngine::ShaderProgram>
 {
 	if(!shader)
 		return;
-	glm::mat4 proj;
-	glm::mat4 view;
-
-	if (camPos.isPerspective)
-		proj = glm::perspective(camPos.fov, activeWindowSize.mWidth / activeWindowSize.mHeight, m_near, m_far );
-	else
-		proj = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, -m_far, m_far);
-
-	view = glm::lookAt(camPos.cameraPos, camPos.cameraPos + camPos.cameraFront, camPos.cameraUp);
 	shader->use();
-	shader->setMatrix4("projectionMatrix", proj);
-	shader->setMatrix4("viewMatrix", view);
+	shader->setMatrix4("projectionMatrix", getProjectionMatrix());
+	shader->setMatrix4("viewMatrix", getViewMatrix());
 }
 
 void CameraManager::ChangeCursorInputMode(CursorInputMode mode)
@@ -344,6 +335,23 @@ FRect CameraManager::getProjRect()
 const glm::mat4 CameraManager::getOrthMatrix()
 {
 	return glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, m_near, m_far);
+}
+
+glm::mat4 CameraManager::getViewMatrix()
+{
+	glm::mat4 view;
+	view = glm::lookAt(camPos.cameraPos, camPos.cameraPos + camPos.cameraFront, camPos.cameraUp);
+	return view;
+}
+
+glm::mat4 CameraManager::getProjectionMatrix()
+{
+	glm::mat4 proj;
+	if (camPos.isPerspective)
+		proj = glm::perspective(camPos.fov, activeWindowSize.mWidth / activeWindowSize.mHeight, m_near, m_far);
+	else
+		proj = glm::ortho(projMatrix.mX, projMatrix.mWidth, projMatrix.mY, projMatrix.mHeight, -m_far, m_far);
+	return proj;
 }
 
 FRect CameraManager::getActiveWindowRect()

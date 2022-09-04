@@ -17,9 +17,11 @@
 namespace RenderEngine
 {
 	enum class eAtlasType;
+	enum class eImageFormat : unsigned;
 	class FrameAtlas;
 	class ShaderProgram;
 	class Texture2D;
+	class Texture3D;
 	class Image2D;
 	class Sprite;
 	class SpriteAtlas;
@@ -38,12 +40,20 @@ public:
 	std::shared_ptr<RenderEngine::ShaderProgram> getShader(const std::string& shaderName);
 	std::shared_ptr<RenderEngine::Texture2D> loadTexture(const std::string& textureName, const std::string& texturePath);
 	std::shared_ptr<RenderEngine::Texture2D> loadTexture(const std::string& path,
-		const unsigned int channels,
+		const unsigned int channels = 4,
 		const std::string& type = "texture_diffuse",
 		const unsigned int textureSlot = GL_TEXTURE0,
 		const GLenum filter = GL_LINEAR,
 		const GLenum wrapMode = GL_CLAMP_TO_EDGE);
 	std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
+
+	std::shared_ptr<RenderEngine::Texture3D> loadTexture3(const std::string& textureName, std::vector<std::string> texturesPath);
+	std::shared_ptr<RenderEngine::Texture3D> loadTexture3(const std::string& directory_path, const RenderEngine::eImageFormat& format,
+		const unsigned int channels = 4,
+		const GLenum filter = GL_LINEAR,
+		const GLenum wrapMode = GL_CLAMP_TO_EDGE);
+	std::shared_ptr<RenderEngine::Texture3D> getTexture3(const std::string& textureName);
+
 	std::shared_ptr<RenderEngine::Image2D> loadImage(const std::string& imageName, const std::string& textureName, const std::string& texturePath);
 	std::shared_ptr<RenderEngine::Image2D> getImage(const std::string& imageName);
 	std::shared_ptr<RenderEngine::Image2D> getSharedImage(const std::string& path);
@@ -64,6 +74,7 @@ public:
 
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::ShaderProgram>> shaderProgramMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> texturesMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture3D>> textures3Map;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::FrameAtlas>> frameAtlasMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteAtlas>> spriteAtlasMap;
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Image2D>> imageMap;
@@ -92,7 +103,8 @@ private:
 	std::string getFileString(const std::string& path);
 
 	shaderProgramMap m_shaderPrograms;
-	texturesMap m_textures;
+	texturesMap m_textures;	
+	textures3Map m_textures3;
 	frameAtlasMap m_FrameAtlases;
 	spriteAtlasMap m_SpriteAtlases;
 	levels m_levels;
