@@ -12,6 +12,7 @@
 #include "Model.h"
 #include "FrameBuffer.h"
 #include "SkyBox.h"
+#include "Sphere.h"
 #include "texture3D.h"
 
 RenderSystem& RenderSystem::Instanse()
@@ -164,6 +165,33 @@ void RenderSystem::Render(const std::shared_ptr<RenderEngine::SkyBox>& skyBox)
     skyBox->getTexture3D()->bind();
     draw(skyBox->getVertexArray(), *shader);
     glDepthFunc(GL_LESS); // set depth function back to default
+}
+
+
+void RenderSystem::Render(const std::shared_ptr<RenderEngine::Sphere>& sphere, const PositionComponent3& position, const CollisionComponent3& collision)
+{
+    const auto shader = RES->getShader("default_3D");
+    if (!shader || !sphere)
+    {
+        return;
+    }
+    auto cam_pos = CAMERA->getCameraPosition();
+    auto& cub_material = sphere->getMaterial();
+    CAMERA->UseShader(shader);
+    shader->setMatrix4("modelMatrix", getTransformModel(position, collision));
+    shader->setVec3("camera_position", cam_pos.cameraPos);
+    shader->setInt("points_lights_count", LIGHT->getPointsLightsCount());
+    setMaterial(shader, sphere->getMaterial());
+    auto& lights = LIGHT->getLights();
+    unsigned point_index = 0;
+    for (const auto& it : lights)
+    {
+        if (it.second->type == RenderEngine::LightType::ePoint)
+            setPointLight(shader, it.second, point_index++);
+        else if (it.second->type == RenderEngine::LightType::eDirection)
+            setDirectionLight(shader, it.second);
+    }
+    draw(sphere->getVertexArray(), sphere->getIndexCoordsBuffer(), *shader);
 }
 
 void RenderSystem::Render(const std::shared_ptr<DisplayString>& string, const PositionComponent& position, float scale, const ColorComponent& collor)

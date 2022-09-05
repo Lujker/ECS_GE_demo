@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "Image.h"
+#include "VertexArray.h"
 #include "Collor.h"
 #include "Material.h"
 

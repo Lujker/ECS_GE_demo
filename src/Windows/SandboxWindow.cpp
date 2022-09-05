@@ -12,6 +12,7 @@
 #include "WidgetsManager.h"
 #include "LightManager.h"
 #include "SkyBox.h"
+#include "Sphere.h"
 
 std::shared_ptr<SandboxWindow> SandboxWindow::Create()
 {
@@ -92,6 +93,8 @@ void SandboxWindow::AddedToContainer(SharedWidgetContainer theWidgetContainer)
     worldLight->diffuse = { 1.0f, 1.0f, 1.0f };
     worldLight->specular = { 1.0f, 1.0f, 1.0f };
 
+    sphere = std::make_shared<RenderEngine::Sphere>(RES->getTexture("res/images/container2.png"));
+
     LIGHT->pushLight("first", light);
     LIGHT->pushLight("second", light_1);
     LIGHT->pushLight("world", worldLight);
@@ -117,6 +120,8 @@ void SandboxWindow::Draw()
         RENDER->Render(model, { 100.f, 0.f, 0.f }, { 25.f, 25.f, 25.f });
     if (sky_box)
         RENDER->Render(sky_box);
+    if (sphere)
+        RENDER->Render(sphere, { 200.f, 0.f ,0.f }, { 25.f, 25.f, 25.f });
 }
 
 void SandboxWindow::Update(float deltaTime)

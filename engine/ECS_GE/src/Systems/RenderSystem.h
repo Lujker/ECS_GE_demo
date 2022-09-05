@@ -26,6 +26,7 @@ namespace RenderEngine
 	struct Light;
 	class FrameBuffer;
 	class SkyBox;
+	class Sphere;
 }
 
 struct Transform2D
@@ -71,6 +72,7 @@ public:
 	void Render(const std::shared_ptr<RenderEngine::Model>& model, const PositionComponent3& position, const CollisionComponent3& collision = { false });
 	void Render(const std::shared_ptr<RenderEngine::Light>& light);
 	void Render(const std::shared_ptr<RenderEngine::SkyBox>& skyBox);
+	void Render(const std::shared_ptr<RenderEngine::Sphere>& sphere, const PositionComponent3& position, const CollisionComponent3& collision = { false });
 	void Render(const std::shared_ptr<DisplayString>& string, const PositionComponent& position, float scale = 1.f, const ColorComponent& collor = ColorComponent{0.5f,0.5f,0.5f});
 	void Render(const std::shared_ptr<DisplayString>& string, const PositionComponent& position, const CollisionComponent& size = { false }, const ColorComponent& collor = ColorComponent{ 0.5f,0.5f,0.5f });
 	void Render(const FRect& rect);

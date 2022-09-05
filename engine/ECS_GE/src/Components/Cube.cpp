@@ -1,4 +1,5 @@
 #include "Cube.h"
+#include "texture2D.h"
 namespace RenderEngine
 {
 	void Cube::init()
@@ -60,10 +61,16 @@ namespace RenderEngine
 
 	Cube::Cube(const std::shared_ptr<Texture2D>& pTexture, std::shared_ptr<Texture2D> specularMap)
 	{
-		m_material.m_pTexture = pTexture;
-		m_material.m_pTexture->setSlot(0);
-		m_material.m_specularMap = specularMap;
-		m_material.m_specularMap->setSlot(1);
+		if (pTexture)
+		{
+			m_material.m_pTexture = pTexture;
+			m_material.m_pTexture->setSlot(0);
+		}
+		if (specularMap)
+		{
+			m_material.m_specularMap = specularMap;
+			m_material.m_specularMap->setSlot(1);
+		}
 		init();
 	}
 

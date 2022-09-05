@@ -38,6 +38,7 @@ set(ENGINE_SRC
 	src/Components/Sprite.cpp
 	src/Components/DisplayString.cpp
 	src/Components/SkyBox.cpp
+	src/Components/Sphere.cpp
 	src/Systems/RenderSystem.cpp
 	src/Systems/UpdateSystem.cpp
 	src/Systems/CollisionSystem.cpp
@@ -93,6 +94,7 @@ set(ENGINE_INCLUDE
 	src/Components/Sprite.h
 	src/Components/DisplayString.h
 	src/Components/SkyBox.h
+	src/Components/Sphere.h
 	src/Systems/ISystem.h
 	src/Systems/RenderSystem.h
 	src/Systems/UpdateSystem.h
